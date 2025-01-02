@@ -1,3 +1,10 @@
+//! This module defines the data structures and their deserialization logic
+//! for handling various entity-related information. The main data structure
+//! is `Data`, which contains attributes and relationships of an entity.
+//! The module also includes several supporting structures and enumerations
+//! to represent different aspects of an entity, such as its name, address,
+//! registration details, and event information.
+
 use chrono::{DateTime, Utc};
 use serde::Deserialize;
 

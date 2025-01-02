@@ -3,7 +3,7 @@
 use serde::Deserialize;
 
 /// Represents pagination links in a paginated API response.
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, PartialEq, Eq)]
 pub struct PaginationLinks {
     /// The URL to the first page of results.
     pub first: String,

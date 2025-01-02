@@ -5,7 +5,7 @@ use chrono::{DateTime, Utc};
 use serde::Deserialize;
 
 /// Represents metadata in the API response.
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub struct Meta {
     /// The golden copy information.
@@ -15,7 +15,7 @@ pub struct Meta {
 }
 
 /// Represents the golden copy information.
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 pub struct GoldenCopy {
     /// The publish date of the golden copy.
@@ -23,7 +23,7 @@ pub struct GoldenCopy {
 }
 
 /// Represents pagination information.
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 pub struct Pagination {
     /// The current page number.
