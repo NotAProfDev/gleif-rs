@@ -23,7 +23,7 @@ pub struct ApiResponse {
 /// Represents either a single `Data` object or a vector of `Data` objects.
 #[derive(Debug, Deserialize, PartialEq, Eq)]
 pub enum DataOrVec {
-    Single(Data),
+    Single(Box<Data>),
     Multiple(Vec<Data>),
 }
 
@@ -55,7 +55,7 @@ where
             A: de::MapAccess<'de>,
         {
             let data: Data = Deserialize::deserialize(de::value::MapAccessDeserializer::new(map))?;
-            Ok(DataOrVec::Single(data))
+            Ok(DataOrVec::Single(Box::new(data)))
         }
     }
 
