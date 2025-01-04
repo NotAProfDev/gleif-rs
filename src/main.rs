@@ -1,12 +1,12 @@
+mod api;
 mod model;
 
+use api::client::GleifClient;
+
 #[tokio::main]
-async fn main() -> Result<(), reqwest::Error> {
-    let b =
-        reqwest::get("https://api.gleif.org/api/v1/lei-records?filter[lei]=261700K5E45DJCF5Z735")
-            .await?
-            .text()
-            .await?;
-    println!("Got {:?}", b);
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let client = GleifClient::new();
+    let response = client.get_info_by_lei("254900OPPU84GM83MG36").await?;
+    println!("{:?}", response);
     Ok(())
 }
