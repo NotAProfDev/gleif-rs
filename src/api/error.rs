@@ -11,4 +11,6 @@ pub enum ApiError {
     InvalidUrl(url::ParseError),
     #[error("Failed to build HTTP client: {0}")]
     ClientBuildError(reqwest::Error),
+    #[error("Response type error: {0}")]
+    ResponseTypeError(String),
 }

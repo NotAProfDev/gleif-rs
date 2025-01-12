@@ -57,7 +57,7 @@ impl ApiClient {
         self.timeout = timeout;
     }
 
-    pub fn build_request(&self, endpoint: &str, method: Method) -> RequestBuilder {
+    pub fn build_request<'a>(&'a self, endpoint: &'a str, method: Method) -> RequestBuilder<'a> {
         RequestBuilder::new(self, endpoint, method)
     }
 }
