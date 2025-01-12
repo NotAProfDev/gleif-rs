@@ -1,14 +1,14 @@
-//! Error types for the GLEIF API client.
-
-use reqwest::StatusCode;
+//! Error types for the API client.
 use thiserror::Error;
 
 #[derive(Error, Debug)]
-pub enum GleifError {
+pub enum ApiError {
     #[error("Request failed with status code {0}")]
-    RequestFailed(StatusCode),
-    #[error("Network error: {0}")]
-    NetworkError(#[from] reqwest::Error),
+    RequestError(reqwest::Error),
     #[error("Failed to deserialize response: {0}")]
     DeserializationError(reqwest::Error),
+    #[error("Invalid URL: {0}")]
+    InvalidUrl(url::ParseError),
+    #[error("Failed to build HTTP client: {0}")]
+    ClientBuildError(reqwest::Error),
 }
