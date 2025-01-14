@@ -63,6 +63,7 @@ impl ApiClient {
 
     /// Sets a header for the `ApiClient`.
     pub fn set_header(&mut self, key: &str, value: &str) -> Result<(), ApiError> {
+        log::debug!("Setting header: {}={}", key, value);
         let header_name = HeaderName::from_bytes(key.as_bytes()).map_err(|e| {
             log::error!("Invalid header name: {}", e);
             ApiError::InvalidHeaderName(e)
@@ -79,6 +80,7 @@ impl ApiClient {
 
     /// Sets the User-Agent header for the `ApiClient`.
     pub fn set_user_agent(&mut self, user_agent: &str) -> Result<(), ApiError> {
+        log::debug!("Setting User-Agent header: {}", user_agent);
         let user_agent = HeaderValue::from_str(user_agent).map_err(|e| {
             log::error!("Invalid User-Agent header value: {}", e);
             ApiError::InvalidHeaderValue(e)
@@ -90,6 +92,7 @@ impl ApiClient {
 
     /// Sets the timeout duration in seconds for the `ApiClient`.
     pub fn set_timeout(&mut self, seconds: u64) {
+        log::debug!("Setting timeout duration to {} seconds", seconds);
         assert!(seconds > 0, "Timeout duration must be greater than zero");
         self.timeout = Duration::from_secs(seconds);
     }
