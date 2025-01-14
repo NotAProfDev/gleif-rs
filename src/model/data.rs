@@ -41,7 +41,7 @@ pub struct Attributes {
     /// The S&P Global identifiers.
     pub spglobal: Option<Vec<String>>,
     /// The conformity flag.
-    pub conformity_flag: ConformityFlag,
+    pub conformity_flag: Option<ConformityFlag>,
 }
 
 /// Represents an entity with various details.
@@ -560,7 +560,10 @@ mod tests {
             data.attributes.registration.status,
             RegistrationStatus::Issued
         );
-        assert_eq!(data.attributes.conformity_flag, ConformityFlag::Conforming);
+        assert_eq!(
+            data.attributes.conformity_flag,
+            Some(ConformityFlag::Conforming)
+        );
         assert_eq!(
             data.relationships.managing_lou.links.reporting_exception,
             Some("exampleException".to_string())

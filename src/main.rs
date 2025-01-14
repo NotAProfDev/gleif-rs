@@ -2,11 +2,21 @@ mod api;
 mod model;
 
 use api::client::ApiClient;
+use log::{debug, LevelFilter};
+use model::api_response::ApiResponse;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let client = ApiClient::new("https://leilookup.gleif.org/api/v2");
-    // let response = client.get_data_by_lei("254900OPPU84GM83MG36").await?;
-    // println!("{:?}", response);
+    // Initialize the logger with explicit log level
+    env_logger::Builder::from_default_env()
+        .filter_level(LevelFilter::Debug)
+        .init();
+
+    debug!("Starting the application...");
+
+    let client = ApiClient::new("https://api.gleif.org/api/v1/").unwrap();
+    let response: ApiResponse = client.build_request("lei-records", "get").send().await?;
+
+    println!("{:?}", response);
     Ok(())
 }
