@@ -62,6 +62,9 @@ impl<'a> RequestBuilder<'a> {
 
     /// Sends the request asynchronously and returns the deserialized response.
     pub async fn send<T: for<'de> Deserialize<'de>>(&self) -> Result<T, ApiError> {
+        // Throttle the request to respect the rate limit
+        self.api_client.throttler().throttle().await;
+
         let url = self
             .api_client
             .base_url()
@@ -145,11 +148,13 @@ mod tests {
     use serde::Deserialize;
     use std::collections::HashMap;
 
+    /// The `TestResponse` struct is used for deserializing the response in the tests.
     #[derive(Deserialize, Debug, PartialEq)]
     struct TestResponse {
         message: String,
     }
 
+    /// The `TestSetup` struct holds the test environment setup, including the `ApiClient`, mock server, endpoint, and HTTP method.
     struct TestSetup {
         api_client: ApiClient,
         endpoint: &'static str,
@@ -162,7 +167,7 @@ mod tests {
         let server = mockito::Server::new();
         let url = server.url();
 
-        let api_client = ApiClient::new(&url).expect("Failed to create ApiClient");
+        let api_client = ApiClient::new(&url, 10, 60).expect("Failed to create ApiClient");
         let endpoint = "/test";
         let method = Method::GET;
 
@@ -179,7 +184,7 @@ mod tests {
         let server = mockito::Server::new_async().await;
         let url = server.url();
 
-        let api_client = ApiClient::new(&url).expect("Failed to create ApiClient");
+        let api_client = ApiClient::new(&url, 10, 60).expect("Failed to create ApiClient");
         let endpoint = "/test";
         let method = Method::GET;
 

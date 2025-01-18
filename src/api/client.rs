@@ -6,11 +6,13 @@
 
 use std::time::Duration;
 
+use crate::api::throttler::Throttler;
 use crate::api::{error::ApiError, request_builder::RequestBuilder};
 use reqwest::{
     header::{HeaderMap, HeaderName, HeaderValue, USER_AGENT},
     Client, Method, Url,
 };
+use std::sync::Arc;
 
 /// The default timeout duration for the `ApiClient`.
 const TIMEOUT_DURATION: Duration = Duration::from_secs(30);
@@ -22,23 +24,31 @@ pub struct ApiClient {
     base_url: Url,
     headers: HeaderMap,
     timeout: Duration,
+    throttler: Arc<Throttler>,
 }
 
 impl ApiClient {
     /// Creates a new `ApiClient`.
-    pub fn new(base_url: &str) -> Result<Self, ApiError> {
+    pub fn new(base_url: &str, rate_limit: u32, interval: u64) -> Result<Self, ApiError> {
         log::debug!("Creating ApiClient with base URL: {}", base_url);
         let client = Client::builder()
             .timeout(TIMEOUT_DURATION)
             .build()
             .map_err(ApiError::ClientBuildError)?;
         let base_url = Url::parse(base_url).map_err(ApiError::InvalidUrl)?;
+        let throttler = Arc::new(Throttler::new(rate_limit, interval));
         Ok(ApiClient {
             client,
             base_url,
             headers: HeaderMap::new(),
             timeout: TIMEOUT_DURATION,
+            throttler,
         })
+    }
+
+    /// Returns a reference to the `Throttler`.
+    pub fn throttler(&self) -> Arc<Throttler> {
+        Arc::clone(&self.throttler)
     }
 
     /// Returns a reference to the `reqwest::Client`.
@@ -120,21 +130,38 @@ mod tests {
     };
     use std::time::Duration;
 
+    const TEST_BASE_URL: &str = "http://example.com";
+
+    // Define a struct to hold the test setup
+    struct TestSetup {
+        api_client: ApiClient,
+    }
+
+    /// Creates a new `TestSetup` with a new `ApiClient`.
+    fn setup() -> TestSetup {
+        let base_url = TEST_BASE_URL;
+        let api_client = ApiClient::new(base_url, 10, 60).expect("Failed to create ApiClient");
+
+        TestSetup { api_client }
+    }
+
     /// Tests that a new `ApiClient` can be created successfully.
     #[test]
     fn test_api_client_new_success() {
-        let base_url = "http://example.com";
-        let api_client = ApiClient::new(base_url).expect("Failed to create ApiClient");
+        let setup = setup();
 
-        assert_eq!(api_client.base_url, Url::parse(base_url).unwrap());
-        assert_eq!(api_client.timeout, TIMEOUT_DURATION);
+        assert_eq!(
+            setup.api_client.base_url,
+            Url::parse(TEST_BASE_URL).unwrap()
+        );
+        assert_eq!(setup.api_client.timeout, TIMEOUT_DURATION);
     }
 
     /// Tests that an error is returned when creating a new `ApiClient` with an invalid URL.
     #[test]
     fn test_api_client_new_invalid_url() {
         let base_url = "invalid_url";
-        let result = ApiClient::new(base_url);
+        let result = ApiClient::new(base_url, 10, 60);
 
         assert!(matches!(result, Err(ApiError::InvalidUrl(_))));
     }
@@ -142,48 +169,48 @@ mod tests {
     /// Tests that the base URL of the `ApiClient` is returned correctly.
     #[test]
     fn test_api_client_base_url() {
-        let base_url = "http://example.com";
-        let api_client = ApiClient::new(base_url).expect("Failed to create ApiClient");
+        let setup = setup();
 
-        assert_eq!(api_client.base_url(), &Url::parse(base_url).unwrap());
+        assert_eq!(
+            setup.api_client.base_url(),
+            &Url::parse(TEST_BASE_URL).unwrap()
+        );
     }
 
     /// Tests that the headers of the `ApiClient` are returned correctly.
     #[test]
     fn test_api_client_headers() {
-        let base_url = "http://example.com";
-        let api_client = ApiClient::new(base_url).expect("Failed to create ApiClient");
+        let setup = setup();
 
         // Verify that the headers function returns a reference to the HeaderMap
-        let headers: &HeaderMap = api_client.headers();
+        let headers: &HeaderMap = setup.api_client.headers();
         assert!(headers.is_empty());
     }
 
     /// Tests that the timeout duration of the `ApiClient` is returned correctly.
     #[test]
     fn test_api_client_timeout() {
-        let base_url = "http://example.com";
-        let api_client = ApiClient::new(base_url).expect("Failed to create ApiClient");
+        let setup = setup();
 
         // Verify that the timeout function returns the correct timeout duration
-        let timeout: Duration = api_client.timeout();
+        let timeout: Duration = setup.api_client.timeout();
         assert_eq!(timeout, Duration::from_secs(30));
     }
 
     /// Tests that a header can be set successfully.
     #[test]
     fn test_api_client_set_header_success() {
-        let base_url = "http://example.com";
-        let mut api_client = ApiClient::new(base_url).expect("Failed to create ApiClient");
+        let mut setup = setup();
 
         let key = "X-Custom-Header";
         let value = "CustomValue";
 
-        api_client
+        setup
+            .api_client
             .set_header(key, value)
             .expect("Failed to set header");
 
-        let headers: &HeaderMap = &api_client.headers;
+        let headers: &HeaderMap = &setup.api_client.headers;
         let header_name = HeaderName::from_bytes(key.as_bytes()).unwrap();
         let header_value = HeaderValue::from_str(value).unwrap();
 
@@ -193,13 +220,12 @@ mod tests {
     /// Tests that an error is returned when setting a header with an invalid name.
     #[test]
     fn test_api_client_set_header_invalid_name() {
-        let base_url = "http://example.com";
-        let mut api_client = ApiClient::new(base_url).expect("Failed to create ApiClient");
+        let mut setup = setup();
 
         let key = "Invalid Header Name";
         let value = "CustomValue";
 
-        let result = api_client.set_header(key, value);
+        let result = setup.api_client.set_header(key, value);
 
         assert!(matches!(result, Err(ApiError::InvalidHeaderName(_))));
     }
@@ -207,13 +233,12 @@ mod tests {
     /// Tests that an error is returned when setting a header with an invalid value.
     #[test]
     fn test_api_client_set_header_invalid_value() {
-        let base_url = "http://example.com";
-        let mut api_client = ApiClient::new(base_url).expect("Failed to create ApiClient");
+        let mut setup = setup();
 
         let key = "X-Custom-Header";
         let value = "\nInvalidValue";
 
-        let result = api_client.set_header(key, value);
+        let result = setup.api_client.set_header(key, value);
 
         assert!(matches!(result, Err(ApiError::InvalidHeaderValue(_))));
     }
@@ -221,16 +246,16 @@ mod tests {
     /// Tests that the User-Agent header can be set successfully.
     #[test]
     fn test_api_client_set_user_agent_success() {
-        let base_url = "http://example.com";
-        let mut api_client = ApiClient::new(base_url).expect("Failed to create ApiClient");
+        let mut setup = setup();
 
         let user_agent = "MyApp/1.0";
 
-        api_client
+        setup
+            .api_client
             .set_user_agent(user_agent)
             .expect("Failed to set User-Agent header");
 
-        let headers: &HeaderMap = &api_client.headers;
+        let headers: &HeaderMap = &setup.api_client.headers;
         let header_value = HeaderValue::from_str(user_agent).unwrap();
 
         assert_eq!(headers.get(USER_AGENT), Some(&header_value));
@@ -239,12 +264,11 @@ mod tests {
     /// Tests that an error is returned when setting an invalid User-Agent header value.
     #[test]
     fn test_api_client_set_user_agent_invalid_value() {
-        let base_url = "http://example.com";
-        let mut api_client = ApiClient::new(base_url).expect("Failed to create ApiClient");
+        let mut setup = setup();
 
         let user_agent = "\nInvalidUserAgent";
 
-        let result = api_client.set_user_agent(user_agent);
+        let result = setup.api_client.set_user_agent(user_agent);
 
         assert!(matches!(result, Err(ApiError::InvalidHeaderValue(_))));
     }
@@ -252,35 +276,35 @@ mod tests {
     /// Tests that the timeout duration can be set successfully.
     #[test]
     fn test_api_client_set_timeout_success() {
-        let base_url = "http://example.com";
-        let mut api_client = ApiClient::new(base_url).expect("Failed to create ApiClient");
+        let mut setup = setup();
 
-        let timeout_seconds = 30;
-        api_client.set_timeout(timeout_seconds);
+        let timeout_seconds = 60;
+        setup.api_client.set_timeout(timeout_seconds);
 
-        assert_eq!(api_client.timeout, Duration::from_secs(timeout_seconds));
+        assert_eq!(
+            setup.api_client.timeout,
+            Duration::from_secs(timeout_seconds)
+        );
     }
 
     /// Tests that an error is returned when setting the timeout duration to zero.
     #[test]
     #[should_panic(expected = "Timeout duration must be greater than zero")]
     fn test_api_client_set_timeout_zero() {
-        let base_url = "http://example.com";
-        let mut api_client = ApiClient::new(base_url).expect("Failed to create ApiClient");
+        let mut setup = setup();
 
-        api_client.set_timeout(0);
+        setup.api_client.set_timeout(0);
     }
 
     /// Tests that a `RequestBuilder` can be built successfully.
     #[test]
     fn test_api_client_build_request_success() {
-        let base_url = "http://example.com";
-        let api_client = ApiClient::new(base_url).expect("Failed to create ApiClient");
+        let setup = setup();
 
         let endpoint = "/test";
         let method = "GET";
 
-        let request_builder = api_client.build_request(endpoint, method);
+        let request_builder = setup.api_client.build_request(endpoint, method);
 
         assert_eq!(request_builder.endpoint(), endpoint);
         assert_eq!(request_builder.method(), Method::GET);
@@ -290,12 +314,11 @@ mod tests {
     #[test]
     #[should_panic(expected = "Unsupported HTTP method: PATCH")]
     fn test_api_client_build_request_unsupported_method() {
-        let base_url = "http://example.com";
-        let api_client = ApiClient::new(base_url).expect("Failed to create ApiClient");
+        let setup = setup();
 
         let endpoint = "/test";
         let method = "PATCH";
 
-        api_client.build_request(endpoint, method);
+        setup.api_client.build_request(endpoint, method);
     }
 }
