@@ -1,14 +1,10 @@
-pub fn add(left: u64, right: u64) -> u64 {
-    left + right
-}
+pub mod client;
+pub mod endpoint;
+pub mod error;
+pub mod request_builder;
 
-#[cfg(test)]
-mod tests {
-    use super::*;
+/// Library version
+pub const VERSION: &str = env!("CARGO_PKG_VERSION");
 
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
-    }
-}
+/// The default base URL for the GLEIF API v1.
+pub const DEFAULT_BASE_URL: &str = "https://api.gleif.org/api/v1";
