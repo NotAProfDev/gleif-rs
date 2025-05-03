@@ -1,13 +1,15 @@
 //! Generic request builder for the GLEIF API client.
 
-use crate::client::GleifClient;
-use crate::error::GleifError;
+use crate::{
+    client::GleifClient,
+    error::{GleifError, Result},
+};
 use futures_core::stream::Stream;
 use futures_util::stream::unfold;
 use reqwest::Method;
-use reqwest::Url;
 use serde_json::Value;
 use std::collections::HashMap;
+use url::Url;
 
 /// Builder for constructing and executing GLEIF API requests generically.
 #[derive(Debug, Clone)]
@@ -27,6 +29,16 @@ impl GleifRequestBuilder {
             path: path.into(),
             query: HashMap::new(),
         }
+    }
+
+    /// Returns the current path for this request builder.
+    pub fn get_path(&self) -> &str {
+        &self.path
+    }
+
+    /// Returns a reference to the query parameters for this request builder.
+    pub fn get_query(&self) -> &HashMap<String, String> {
+        &self.query
     }
 
     /// Private helper to insert a filter parameter with the given operator syntax.
@@ -124,84 +136,33 @@ impl GleifRequestBuilder {
         self
     }
 
-    /// Build and execute the request, returning the raw JSON response.
-    pub async fn send(self) -> Result<Value, GleifError> {
-        let url = format!(
-            "{}/{}",
-            self.client.base_url().trim_end_matches('/'),
-            self.path.trim_start_matches('/')
-        );
-        let req = self
-            .client
-            .client()
-            .as_ref()
-            .request(self.method.clone(), &url)
-            .query(&self.query);
-        let resp = req.send().await.map_err(GleifError::Http)?;
-        let status = resp.status();
-        if !status.is_success() {
-            return Err(GleifError::Status(status));
-        }
-        let json = resp.json::<Value>().await?;
-        Ok(json)
+    /// Private helper to construct the full request URL.
+    fn build_url(&self) -> Result<Url> {
+        self.client
+            .base_url()
+            .join(&self.path)
+            .map_err(GleifError::UrlParseError)
     }
 
-    /// Returns an async stream of paginated results, transparently following `links.next`.
-    pub fn paginated(self) -> impl Stream<Item = Result<Value, GleifError>> {
-        let client = self.client.clone();
-        let method = self.method.clone();
-        let path = self.path.clone();
-        let query = self.query.clone();
-        unfold(Some((client, method, path, query)), |state| async move {
-            let (client, method, path, query) = match state {
-                Some(s) => s,
-                None => return None,
-            };
-            let url = format!(
-                "{}/{}",
-                client.base_url().trim_end_matches('/'),
-                path.trim_start_matches('/')
-            );
-            let req = client
-                .client()
-                .as_ref()
-                .request(method.clone(), &url)
-                .query(&query);
-            let resp = match req.send().await {
-                Ok(r) => r,
-                Err(e) => return Some((Err(GleifError::Http(e)), None)),
-            };
-            let status = resp.status();
-            if !status.is_success() {
-                return Some((Err(GleifError::Status(status)), None));
-            }
-            let json: Value = match resp.json().await {
-                Ok(j) => j,
-                Err(e) => return Some((Err(GleifError::Http(e.into())), None)),
-            };
-            // Find next page URL from JSON:API links.next
-            let next_url = json
-                .get("links")
-                .and_then(|links| links.get("next"))
-                .and_then(|n| n.as_str());
-            let next_state = if let Some(next_url) = next_url {
-                // Parse next_url to extract path and query for next request
-                match Url::parse(next_url) {
-                    Ok(parsed) => {
-                        let next_path = parsed.path().trim_start_matches('/').to_string();
-                        let next_query: HashMap<String, String> = parsed
-                            .query_pairs()
-                            .map(|(k, v)| (k.into_owned(), v.into_owned()))
-                            .collect();
-                        Some((client, method, next_path, next_query))
-                    }
-                    Err(_) => None,
-                }
-            } else {
-                None
-            };
-            Some((Ok(json), next_state))
-        })
+    /// Private helper to construct the reqwest_middleware::RequestBuilder for this request.
+    fn build_request(&self, url: Url) -> reqwest_middleware::RequestBuilder {
+        self.client
+            .client()
+            .as_ref()
+            .request(self.method.clone(), url)
+            .query(&self.query)
+    }
+
+    /// Build and execute the request, returning the raw JSON response.
+    pub async fn send(self) -> Result<Value> {
+        let url = self.build_url()?;
+        let req = self.build_request(url);
+        let resp = req.send().await.map_err(GleifError::from)?;
+        let json = resp
+            .json::<Value>()
+            .await
+            .map_err(|e| GleifError::from(reqwest_middleware::Error::from(e)))?;
+        Ok(json)
     }
 }
 
