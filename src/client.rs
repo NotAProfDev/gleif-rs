@@ -80,9 +80,10 @@
 use crate::{
     DEFAULT_BASE_URL, error::GleifError, error::Result, request_builder::GleifRequestBuilder,
 };
-use reqwest::{Client as ReqwestClient, Method, Url};
+use reqwest::{Client as ReqwestClient, Method};
 use reqwest_middleware::{ClientBuilder, ClientWithMiddleware};
 use std::sync::Arc;
+use url::Url;
 
 /// The main entry point for interacting with the GLEIF API.
 ///
@@ -102,45 +103,58 @@ impl Default for GleifClient {
 }
 
 impl GleifClient {
-    /// Create a new `GleifClient` with default settings.
+    /// Create a new `GleifClient` with default configuration.
     ///
-    /// This is a convenience method for creating a client with default configuration.
-    /// For more control over client creation, use `GleifClientBuilder`.
+    /// # Panics
+    ///
+    /// Panics if the default configuration is invalid. This should never happen unless the default constants are changed to invalid values.
+    #[must_use]
     pub fn new() -> Self {
-        Self::default()
+        Self::builder()
+            .build()
+            .expect("Default config should not fail")
     }
 
-    /// Return a builder for creating a customized `GleifClient`.
+    /// Returns a builder for configuring a `GleifClient`.
+    #[must_use]
     pub fn builder() -> GleifClientBuilder {
         GleifClientBuilder::new()
     }
 
-    /// Create a new `GleifClient` from a pre-configured `ClientWithMiddleware`.
+    /// Create a client from a `reqwest_middleware::ClientWithMiddleware`.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the default base URL is invalid. This should never happen unless the constant is changed to an invalid value.
+    #[must_use]
     pub fn from_middleware_client(client: ClientWithMiddleware) -> Self {
         Self {
             client: Arc::new(client),
-            // Unwrap is safe here because the DEFAULT_BASE_URL is a valid URL.
-            base_url: Url::parse(DEFAULT_BASE_URL).unwrap(),
+            base_url: Url::parse(DEFAULT_BASE_URL).expect("Default base URL should be valid"),
         }
     }
 
-    /// Create a new `GleifClient` from a plain `reqwest::Client` (no middleware).
+    /// Create a client from a `reqwest::Client`.
+    #[must_use]
     pub fn from_reqwest_client(client: ReqwestClient) -> Self {
-        let client = reqwest_middleware::ClientBuilder::new(client).build();
-        Self::from_middleware_client(client)
+        let middleware = ClientBuilder::new(client).build();
+        Self::from_middleware_client(middleware)
     }
 
-    /// Returns the base URL used by this client.
+    /// Returns the base URL for the API.
+    #[must_use]
     pub fn base_url(&self) -> &Url {
         &self.base_url
     }
 
-    /// Returns a reference to the underlying reqwest_middleware client.
+    /// Returns a reference to the underlying `reqwest_middleware` client.
+    #[must_use]
     pub fn client(&self) -> &Arc<ClientWithMiddleware> {
         &self.client
     }
 
-    /// Start building a generic request to a GLEIF API endpoint.
+    /// Returns a request builder for the given endpoint path.
+    #[must_use]
     pub fn request(&self, path: &str) -> GleifRequestBuilder {
         GleifRequestBuilder::new(self.clone(), Method::GET, path)
     }
@@ -169,17 +183,20 @@ impl Default for GleifClientBuilder {
 
 impl GleifClientBuilder {
     /// Create a new `GleifClientBuilder` with default settings.
+    #[must_use]
     pub fn new() -> Self {
         Self::default()
     }
 
     /// Set a custom base URL for the API (replacing the default).
+    #[must_use]
     pub fn base_url(mut self, url: impl Into<String>) -> Self {
         self.base_url = url.into();
         self
     }
 
     /// Use a custom reqwest client for the underlying HTTP operations.
+    #[must_use]
     pub fn reqwest_client(mut self, client: ReqwestClient) -> Self {
         self.reqwest_client = Some(client);
         self
@@ -188,6 +205,7 @@ impl GleifClientBuilder {
     /// Use a custom middleware client builder for the underlying HTTP operations.
     ///
     /// This is useful when you need to add middleware like retry, logging, etc.
+    #[must_use]
     pub fn middleware_builder(mut self, builder: ClientBuilder) -> Self {
         self.middleware_builder = Some(builder);
         self
@@ -196,6 +214,10 @@ impl GleifClientBuilder {
     /// Build the `GleifClient` with the configured settings.
     ///
     /// Consumes the builder to prevent accidental reuse.
+    ///
+    /// # Errors
+    ///
+    /// Returns a [`GleifError`] if the base URL is invalid or the client cannot be constructed.
     pub fn build(self) -> Result<GleifClient> {
         // Use the provided reqwest client or create a new one if not provided.
         let reqwest_client = self.reqwest_client.unwrap_or_default();

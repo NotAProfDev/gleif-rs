@@ -1,7 +1,9 @@
 pub mod client;
 pub mod endpoint;
 pub mod error;
+pub mod field;
 pub mod request_builder;
+pub mod value;
 
 /// Library version
 pub const VERSION: &str = env!("CARGO_PKG_VERSION");

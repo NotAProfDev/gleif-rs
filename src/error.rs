@@ -56,7 +56,8 @@ pub enum GleifError {
 }
 
 impl GleifError {
-    /// Returns a possible URL related to this error.
+    /// Returns the URL associated with this error, if available.
+    #[must_use]
     pub fn url(&self) -> Option<&Url> {
         match self {
             GleifError::ReqwestMiddlewareError(inner) => inner.url(),
@@ -75,7 +76,8 @@ impl GleifError {
         }
     }
 
-    /// Adds a url related to this error (overwriting any existing).
+    /// Returns a new error with the given URL attached (overwriting any existing).
+    #[must_use]
     pub fn with_url(self, url: Url) -> Self {
         match self {
             GleifError::ReqwestMiddlewareError(inner) => {
@@ -85,7 +87,8 @@ impl GleifError {
         }
     }
 
-    /// Strips the related URL from this error (if, for example, it contains sensitive information).
+    /// Returns a error with the URL removed (if, for example, it contains sensitive information).
+    #[must_use]
     pub fn without_url(self) -> Self {
         match self {
             GleifError::ReqwestMiddlewareError(inner) => {
@@ -95,7 +98,8 @@ impl GleifError {
         }
     }
 
-    /// Returns true if the error is from any middleware.
+    /// Returns true if this error originated from middleware.
+    #[must_use]
     pub fn is_middleware(&self) -> bool {
         match self {
             GleifError::ReqwestMiddlewareError(inner) => inner.is_middleware(),
@@ -103,7 +107,8 @@ impl GleifError {
         }
     }
 
-    /// Returns true if the error is from a type `Builder`.
+    /// Returns true if this error originated from the builder.
+    #[must_use]
     pub fn is_builder(&self) -> bool {
         match self {
             GleifError::ReqwestMiddlewareError(inner) => inner.is_builder(),
@@ -111,7 +116,8 @@ impl GleifError {
         }
     }
 
-    /// Returns true if the error is from a `RedirectPolicy`.
+    /// Returns true if this error is a redirect error.
+    #[must_use]
     pub fn is_redirect(&self) -> bool {
         match self {
             GleifError::ReqwestMiddlewareError(inner) => inner.is_redirect(),
@@ -119,7 +125,8 @@ impl GleifError {
         }
     }
 
-    /// Returns true if the error is from `Response::error_for_status`.
+    /// Returns true if this error is a status error.
+    #[must_use]
     pub fn is_status(&self) -> bool {
         match self {
             GleifError::ReqwestMiddlewareError(inner) => inner.is_status(),
@@ -127,7 +134,8 @@ impl GleifError {
         }
     }
 
-    /// Returns true if the error is related to a timeout.
+    /// Returns true if this error is a timeout error.
+    #[must_use]
     pub fn is_timeout(&self) -> bool {
         match self {
             GleifError::ReqwestMiddlewareError(inner) => inner.is_timeout(),
@@ -135,7 +143,8 @@ impl GleifError {
         }
     }
 
-    /// Returns true if the error is related to the request.
+    /// Returns true if this error is a request error.
+    #[must_use]
     pub fn is_request(&self) -> bool {
         match self {
             GleifError::ReqwestMiddlewareError(inner) => inner.is_request(),
@@ -143,7 +152,8 @@ impl GleifError {
         }
     }
 
-    /// Returns true if the error is related to connect.
+    /// Returns true if this error is a connection error.
+    #[must_use]
     pub fn is_connect(&self) -> bool {
         match self {
             GleifError::ReqwestMiddlewareError(inner) => inner.is_connect(),
@@ -151,7 +161,8 @@ impl GleifError {
         }
     }
 
-    /// Returns true if the error is related to the request or response body.
+    /// Returns true if this error is related to the request or response body.
+    #[must_use]
     pub fn is_body(&self) -> bool {
         match self {
             GleifError::ReqwestMiddlewareError(inner) => inner.is_body(),
@@ -159,7 +170,8 @@ impl GleifError {
         }
     }
 
-    /// Returns true if the error is related to decoding the response's body.
+    /// Returns true if this error is a decode error.
+    #[must_use]
     pub fn is_decode(&self) -> bool {
         match self {
             GleifError::ReqwestMiddlewareError(inner) => inner.is_decode(),
@@ -167,7 +179,8 @@ impl GleifError {
         }
     }
 
-    /// Returns the status code, if the error was generated from a response.
+    /// Returns the HTTP status code associated with this error, if available.
+    #[must_use]
     pub fn status(&self) -> Option<reqwest::StatusCode> {
         match self {
             GleifError::ReqwestMiddlewareError(inner) => inner.status(),

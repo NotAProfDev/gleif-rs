@@ -1,0 +1,167 @@
+//! Type-safe field names for GLEIF API queries.
+//!
+//! Use the `Field` enum to avoid typos and stringly-typed code when building API requests.
+
+use std::fmt;
+
+/// Enum for known GLEIF API field names.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub enum Field {
+    // Core identifiers
+    /// The Legal Entity Identifier code (20-character alphanumeric code)
+    Lei,
+    /// The Business Identifier Code (`BIC`/`SWIFT` code)
+    Bic,
+    /// The International Securities Identification Number (`ISIN`)
+    Isin,
+
+    // Entity fields
+    /// Legal name of the entity (official registered name)
+    EntityLegalName,
+    /// Other names the entity is known by (trade names, etc.)
+    EntityOtherNames,
+    /// Legal form of the entity (`LLC`, `Inc`, `GmbH`, etc.)
+    EntityLegalForm,
+    /// ID code for the legal form
+    EntityLegalFormId,
+    /// Legal form code according to the entity's local jurisdiction
+    EntityLegalFormCode,
+    /// Category of the legal entity (`FUND`, `BRANCH`, etc.)
+    EntityCategory,
+    /// Country code of the entity's legal address
+    EntityLegalAddressCountry,
+    /// First line of the entity's legal address
+    EntityLegalAddressLine1,
+    /// City of the entity's legal address
+    EntityLegalAddressCity,
+    /// Postal code of the entity's legal address
+    EntityLegalAddressPostalCode,
+    /// Country code of the entity's headquarters address
+    EntityHqAddressCountry,
+    /// First line of the entity's headquarters address
+    EntityHqAddressLine1,
+    /// City of the entity's headquarters address
+    EntityHqAddressCity,
+    /// Postal code of the entity's headquarters address
+    EntityHqAddressPostalCode,
+    /// Business register number for the entity
+    EntityBusinessRegisterNumber,
+    /// Legal jurisdiction of the entity
+    EntityJurisdiction,
+
+    // Registration fields
+    /// Status of the LEI registration (`ISSUED`, `LAPSED`, etc.)
+    RegistrationStatus,
+    /// Initial registration date of the LEI
+    RegistrationInitialRegistrationDate,
+    /// Last update date of the LEI record
+    RegistrationLastUpdateDate,
+    /// Next renewal date for the LEI
+    RegistrationNextRenewalDate,
+    /// The LEI issuer (Local Operating Unit) that manages this LEI
+    RegistrationManagingLou,
+    /// Data quality conformity status flag
+    ConformityFlag,
+
+    // Relationship fields (Level 2 data)
+    /// Filter for relationships where the entity owns others
+    Owns,
+    /// Filter for relationships where the entity is owned by others
+    OwnedBy,
+    /// Start date of a relationship
+    RelationshipStartDate,
+    /// End date of a relationship
+    RelationshipEndDate,
+    /// Status of a relationship (`ACTIVE`, `INACTIVE`)
+    RelationshipStatus,
+    /// Type of relationship between entities
+    RelationshipType,
+
+    // Cross-field search
+    /// Searches all text fields in an LEI record
+    Fulltext,
+}
+
+impl Field {
+    /// Returns the canonical string representation for the API.
+    #[must_use]
+    pub const fn as_str(&self) -> &'static str {
+        match self {
+            // Core identifiers
+            Field::Lei => "lei",
+            Field::Bic => "bic",
+            Field::Isin => "isin",
+
+            // Entity fields
+            Field::EntityLegalName => "entity.legalName",
+            Field::EntityOtherNames => "entity.otherNames",
+            Field::EntityLegalForm => "entity.legalForm",
+            Field::EntityLegalFormId => "entity.legalForm.id",
+            Field::EntityLegalFormCode => "entity.legalForm.code",
+            Field::EntityCategory => "entity.category",
+            Field::EntityLegalAddressCountry => "entity.legalAddress.country",
+            Field::EntityLegalAddressLine1 => "entity.legalAddress.line1",
+            Field::EntityLegalAddressCity => "entity.legalAddress.city",
+            Field::EntityLegalAddressPostalCode => "entity.legalAddress.postalCode",
+            Field::EntityHqAddressCountry => "entity.headquartersAddress.country",
+            Field::EntityHqAddressLine1 => "entity.headquartersAddress.line1",
+            Field::EntityHqAddressCity => "entity.headquartersAddress.city",
+            Field::EntityHqAddressPostalCode => "entity.headquartersAddress.postalCode",
+            Field::EntityBusinessRegisterNumber => "entity.registeredAs",
+            Field::EntityJurisdiction => "entity.jurisdiction",
+
+            // Registration fields
+            Field::RegistrationStatus => "registration.status",
+            Field::RegistrationInitialRegistrationDate => "registration.initialRegistrationDate",
+            Field::RegistrationLastUpdateDate => "registration.lastUpdateDate",
+            Field::RegistrationNextRenewalDate => "registration.nextRenewalDate",
+            Field::RegistrationManagingLou => "registration.managingLou",
+            Field::ConformityFlag => "conformity_flag",
+
+            // Relationship fields
+            Field::Owns => "owns",
+            Field::OwnedBy => "ownedBy",
+            Field::RelationshipStartDate => "relationship.startDate",
+            Field::RelationshipEndDate => "relationship.endDate",
+            Field::RelationshipStatus => "relationship.status",
+            Field::RelationshipType => "relationship.type",
+
+            // Cross-field search
+            Field::Fulltext => "fulltext",
+        }
+    }
+}
+
+// This allows Field to be used seamlessly in formatting macros, logging, and string conversions.
+impl fmt::Display for Field {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
+
+// This enables passing Field directly to APIs expecting `&str` without allocating a new String.
+impl AsRef<str> for Field {
+    fn as_ref(&self) -> &str {
+        self.as_str()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_field_as_str() {
+        assert_eq!(Field::Lei.as_str(), "lei");
+        assert_eq!(Field::EntityLegalName.as_str(), "entity.legalName");
+        assert_eq!(Field::RegistrationStatus.as_str(), "registration.status");
+        assert_eq!(Field::Owns.as_str(), "owns");
+    }
+
+    #[test]
+    fn test_field_display() {
+        assert_eq!(Field::Lei.to_string(), "lei");
+        assert_eq!(Field::EntityLegalName.to_string(), "entity.legalName");
+        assert_eq!(Field::RegistrationStatus.to_string(), "registration.status");
+    }
+}

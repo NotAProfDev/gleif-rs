@@ -9,22 +9,25 @@
 //!
 //! ```rust
 //! use gleif_rs::client::GleifClient;
+//! use gleif_rs::field::Field;
+//! use gleif_rs::value::{RegistrationStatus, EntityCategory};
 //!
 //! # async fn example() -> Result<(), gleif_rs::error::GleifError> {
 //! let client = GleifClient::new();
 //!
-//! // Search for LEI records with multiple filters
+//! // Search for LEI records with a mix of string and enum filters
 //! let results = client.lei_records()
-//!     .filter_eq("entity.status", "ACTIVE")
+//!     .filter_eq(Field::RegistrationStatus, RegistrationStatus::Issued)
 //!     .filter_eq("entity.legalAddress.country", "DE")
-//!     .sort("entity.legalName")
+//!     .filter_eq(Field::EntityCategory, EntityCategory::Fund)
+//!     .sort(Field::EntityLegalName)
 //!     .page_size(10)
 //!     .send()
 //!     .await?;
 //!
 //! println!("Found {} records", results["data"].as_array().unwrap().len());
 //!
-//! // Similarly for other collection endpoints
+//! // Similarly for other collection endpoints (using string literals)
 //! let issuers = client.lei_issuers()
 //!     .filter_eq("status", "ACTIVE")
 //!     .page_size(5)
@@ -38,6 +41,7 @@
 //!
 //! ```rust
 //! use gleif_rs::client::GleifClient;
+//! use gleif_rs::field::Field;
 //!
 //! # async fn example() -> Result<(), gleif_rs::error::GleifError> {
 //! let client = GleifClient::new();
@@ -45,7 +49,7 @@
 //!
 //! // Fetch a specific LEI record
 //! let record = client.lei_record_by_id(lei).await?;
-//! println!("Entity name: {}", record["attributes"]["entity"]["legalName"]);
+//! println!("Entity name: {}", record["attributes"]["entity"][Field::EntityLegalName.to_string()]);
 //!
 //! // Fetch relationship data
 //! let parent = client.direct_parent_relationship(lei).await?;
@@ -60,31 +64,23 @@
 //!
 //! ```rust
 //! use gleif_rs::client::GleifClient;
-//! use futures_util::StreamExt;
 //!
 //! # async fn example() -> Result<(), gleif_rs::error::GleifError> {
 //! let client = GleifClient::new();
 //! let lei = "5493000IBP32UQZ0KL24";
 //!
-//! // Get all direct children with pagination
-//! let children_stream = client.direct_children(lei)
+//! // Get all direct children (first page only)
+//! let page = client.direct_children(lei)
 //!     .page_size(100)
-//!     .paginated();
-//!     
-//! futures_util::pin_mut!(children_stream);
+//!     .send()
+//!     .await?;
 //!
-//! let mut child_count = 0;
-//! while let Some(page_result) = children_stream.next().await {
-//!     let page = page_result?;
-//!     let records = page["data"].as_array().unwrap();
-//!     child_count += records.len();
-//!     
-//!     for record in records {
-//!         let child_lei = record["id"].as_str().unwrap();
-//!         println!("Child LEI: {child_lei}");
-//!     }
+//! let records = page["data"].as_array().unwrap();
+//! for record in records {
+//!     let child_lei = record["id"].as_str().unwrap();
+//!     println!("Child LEI: {child_lei}");
 //! }
-//! println!("Total children: {child_count}");
+//! println!("Total children on first page: {}", records.len());
 //! # Ok(())
 //! # }
 //! ```
@@ -93,13 +89,14 @@
 //!
 //! ```rust
 //! use gleif_rs::client::GleifClient;
+//! use gleif_rs::field::Field;
 //!
 //! # async fn example() -> Result<(), gleif_rs::error::GleifError> {
 //! let client = GleifClient::new();
 //!
-//! // Look up entity legal forms by country
+//! // Look up entity legal forms by country (using Field enum)
 //! let legal_forms = client.entity_legal_forms()
-//!     .filter_eq("country", "GB")
+//!     .filter_eq(Field::EntityLegalAddressCountry, "GB")
 //!     .send()
 //!     .await?;
 //!     
@@ -109,7 +106,7 @@
 //!     println!("{code}: {name}");
 //! }
 //!
-//! // Look up countries
+//! // Look up countries (string literal)
 //! let country = client.country_by_code("US").await?;
 //! println!("Country: {}", country["attributes"]["name"]);
 //! # Ok(())
@@ -121,212 +118,304 @@ use serde_json::Value;
 
 impl GleifClient {
     /// List/search LEI records (`/lei-records`).
+    #[must_use]
     pub fn lei_records(&self) -> GleifRequestBuilder {
         self.request("lei-records")
     }
 
     /// Fetch a single LEI record by LEI (`/lei-records/{lei}`).
+    ///
+    /// # Errors
+    ///
+    /// Returns a [`GleifError`] if the request fails or the response is invalid.
     pub async fn lei_record_by_id(&self, lei: &str) -> Result<Value> {
-        self.request(&format!("lei-records/{}", lei)).send().await
+        self.request(&format!("lei-records/{lei}")).send().await
     }
 
     /// Fetch direct parent relationship for a LEI (`/lei-records/{lei}/direct-parent-relationship`).
+    ///
+    /// # Errors
+    ///
+    /// Returns a [`GleifError`] if the request fails or the response is invalid.
     pub async fn direct_parent_relationship(&self, lei: &str) -> Result<Value> {
-        self.request(&format!("lei-records/{}/direct-parent-relationship", lei))
+        self.request(&format!("lei-records/{lei}/direct-parent-relationship"))
             .send()
             .await
     }
 
     /// Fetch direct parent LEI record (`/lei-records/{lei}/direct-parent`).
+    ///
+    /// # Errors
+    ///
+    /// Returns a [`GleifError`] if the request fails or the response is invalid.
     pub async fn direct_parent(&self, lei: &str) -> Result<Value> {
-        self.request(&format!("lei-records/{}/direct-parent", lei))
+        self.request(&format!("lei-records/{lei}/direct-parent"))
             .send()
             .await
     }
 
     /// Fetch ultimate parent relationship for a LEI (`/lei-records/{lei}/ultimate-parent-relationship`).
+    ///
+    /// # Errors
+    ///
+    /// Returns a [`GleifError`] if the request fails or the response is invalid.
     pub async fn ultimate_parent_relationship(&self, lei: &str) -> Result<Value> {
-        self.request(&format!("lei-records/{}/ultimate-parent-relationship", lei))
+        self.request(&format!("lei-records/{lei}/ultimate-parent-relationship"))
             .send()
             .await
     }
 
     /// Fetch ultimate parent LEI record (`/lei-records/{lei}/ultimate-parent`).
+    ///
+    /// # Errors
+    ///
+    /// Returns a [`GleifError`] if the request fails or the response is invalid.
     pub async fn ultimate_parent(&self, lei: &str) -> Result<Value> {
-        self.request(&format!("lei-records/{}/ultimate-parent", lei))
+        self.request(&format!("lei-records/{lei}/ultimate-parent"))
             .send()
             .await
     }
 
     /// Fetch direct child relationships for a LEI (`/lei-records/{lei}/direct-child-relationships`).
+    #[must_use]
     pub fn direct_child_relationships(&self, lei: &str) -> GleifRequestBuilder {
-        self.request(&format!("lei-records/{}/direct-child-relationships", lei))
+        self.request(&format!("lei-records/{lei}/direct-child-relationships"))
     }
 
     /// Fetch direct children LEI records (`/lei-records/{lei}/direct-children`).
+    #[must_use]
     pub fn direct_children(&self, lei: &str) -> GleifRequestBuilder {
-        self.request(&format!("lei-records/{}/direct-children", lei))
+        self.request(&format!("lei-records/{lei}/direct-children"))
     }
 
     /// Fetch ultimate child relationships for a LEI (`/lei-records/{lei}/ultimate-child-relationships`).
+    #[must_use]
     pub fn ultimate_child_relationships(&self, lei: &str) -> GleifRequestBuilder {
-        self.request(&format!("lei-records/{}/ultimate-child-relationships", lei))
+        self.request(&format!("lei-records/{lei}/ultimate-child-relationships"))
     }
 
     /// Fetch ultimate children LEI records (`/lei-records/{lei}/ultimate-children`).
+    #[must_use]
     pub fn ultimate_children(&self, lei: &str) -> GleifRequestBuilder {
-        self.request(&format!("lei-records/{}/ultimate-children", lei))
+        self.request(&format!("lei-records/{lei}/ultimate-children"))
     }
 
     /// Fetch associated entity (fund manager) for a LEI (`/lei-records/{lei}/associated-entity`).
+    ///
+    /// # Errors
+    ///
+    /// Returns a [`GleifError`] if the request fails or the response is invalid.
     pub async fn associated_entity(&self, lei: &str) -> Result<Value> {
-        self.request(&format!("lei-records/{}/associated-entity", lei))
+        self.request(&format!("lei-records/{lei}/associated-entity"))
             .send()
             .await
     }
 
     /// Fetch successor entity for a LEI (`/lei-records/{lei}/successor-entity`).
+    ///
+    /// # Errors
+    ///
+    /// Returns a [`GleifError`] if the request fails or the response is invalid.
     pub async fn successor_entity(&self, lei: &str) -> Result<Value> {
-        self.request(&format!("lei-records/{}/successor-entity", lei))
+        self.request(&format!("lei-records/{lei}/successor-entity"))
             .send()
             .await
     }
 
     /// Fetch managing LOU for a LEI (`/lei-records/{lei}/managing-lou`).
+    ///
+    /// # Errors
+    ///
+    /// Returns a [`GleifError`] if the request fails or the response is invalid.
     pub async fn managing_lou(&self, lei: &str) -> Result<Value> {
-        self.request(&format!("lei-records/{}/managing-lou", lei))
+        self.request(&format!("lei-records/{lei}/managing-lou"))
             .send()
             .await
     }
 
     /// Fetch LEI issuer for a LEI (`/lei-records/{lei}/lei-issuer`).
+    ///
+    /// # Errors
+    ///
+    /// Returns a [`GleifError`] if the request fails or the response is invalid.
     pub async fn lei_issuer_for_lei(&self, lei: &str) -> Result<Value> {
-        self.request(&format!("lei-records/{}/lei-issuer", lei))
+        self.request(&format!("lei-records/{lei}/lei-issuer"))
             .send()
             .await
     }
 
     /// Fetch field modifications for a LEI (`/lei-records/{lei}/field-modifications`).
+    #[must_use]
     pub fn field_modifications(&self, lei: &str) -> GleifRequestBuilder {
-        self.request(&format!("lei-records/{}/field-modifications", lei))
+        self.request(&format!("lei-records/{lei}/field-modifications"))
     }
 
     /// Fetch ISINs for a LEI (`/lei-records/{lei}/isins`).
+    #[must_use]
     pub fn isins(&self, lei: &str) -> GleifRequestBuilder {
-        self.request(&format!("lei-records/{}/isins", lei))
+        self.request(&format!("lei-records/{lei}/isins"))
     }
 
     /// List all LEI issuers (`/lei-issuers`).
+    #[must_use]
     pub fn lei_issuers(&self) -> GleifRequestBuilder {
         self.request("lei-issuers")
     }
 
     /// Fetch a single LEI issuer by LEI (`/lei-issuers/{lei}`).
+    ///
+    /// # Errors
+    ///
+    /// Returns a [`GleifError`] if the request fails or the response is invalid.
     pub async fn lei_issuer_by_id(&self, lei: &str) -> Result<Value> {
-        self.request(&format!("lei-issuers/{}", lei)).send().await
+        self.request(&format!("lei-issuers/{lei}")).send().await
     }
 
     /// List all fields (`/fields`).
+    #[must_use]
     pub fn fields(&self) -> GleifRequestBuilder {
         self.request("fields")
     }
 
     /// Fetch a single field by ID (`/fields/{id}`).
+    ///
+    /// # Errors
+    ///
+    /// Returns a [`GleifError`] if the request fails or the response is invalid.
     pub async fn field_by_id(&self, id: &str) -> Result<Value> {
-        self.request(&format!("fields/{}", id)).send().await
+        self.request(&format!("fields/{id}")).send().await
     }
 
     /// Fuzzy completions (`/fuzzycompletions`). Requires `field` and `q` params.
+    #[must_use]
     pub fn fuzzycompletions(&self) -> GleifRequestBuilder {
         self.request("fuzzycompletions")
     }
 
     /// List all vLEI issuers (`/vlei-issuers`).
+    #[must_use]
     pub fn vlei_issuers(&self) -> GleifRequestBuilder {
         self.request("vlei-issuers")
     }
 
     /// Fetch a single vLEI issuer by LEI (`/vlei-issuers/{lei}`).
+    ///
+    /// # Errors
+    ///
+    /// Returns a [`GleifError`] if the request fails or the response is invalid.
     pub async fn vlei_issuer_by_id(&self, lei: &str) -> Result<Value> {
-        self.request(&format!("vlei-issuers/{}", lei)).send().await
+        self.request(&format!("vlei-issuers/{lei}")).send().await
     }
 
     /// List all countries (`/countries`).
+    #[must_use]
     pub fn countries(&self) -> GleifRequestBuilder {
         self.request("countries")
     }
 
     /// Fetch a single country by code (`/countries/{code}`).
+    ///
+    /// # Errors
+    ///
+    /// Returns a [`GleifError`] if the request fails or the response is invalid.
     pub async fn country_by_code(&self, code: &str) -> Result<Value> {
-        self.request(&format!("countries/{}", code)).send().await
+        self.request(&format!("countries/{code}")).send().await
     }
 
     /// List all entity legal forms (`/entity-legal-forms`).
+    #[must_use]
     pub fn entity_legal_forms(&self) -> GleifRequestBuilder {
         self.request("entity-legal-forms")
     }
 
     /// Fetch a single entity legal form by ELF code (`/entity-legal-forms/{id}`).
+    ///
+    /// # Errors
+    ///
+    /// Returns a [`GleifError`] if the request fails or the response is invalid.
     pub async fn entity_legal_form_by_id(&self, id: &str) -> Result<Value> {
-        self.request(&format!("entity-legal-forms/{}", id))
+        self.request(&format!("entity-legal-forms/{id}"))
             .send()
             .await
     }
 
     /// List all official organizational roles (`/official-organizational-roles`).
+    #[must_use]
     pub fn official_organizational_roles(&self) -> GleifRequestBuilder {
         self.request("official-organizational-roles")
     }
 
     /// Fetch a single official organizational role by ID (`/official-organizational-roles/{id}`).
+    ///
+    /// # Errors
+    ///
+    /// Returns a [`GleifError`] if the request fails or the response is invalid.
     pub async fn official_organizational_role_by_id(&self, id: &str) -> Result<Value> {
-        self.request(&format!("official-organizational-roles/{}", id))
+        self.request(&format!("official-organizational-roles/{id}"))
             .send()
             .await
     }
 
     /// List all jurisdictions (`/jurisdictions`).
+    #[must_use]
     pub fn jurisdictions(&self) -> GleifRequestBuilder {
         self.request("jurisdictions")
     }
 
     /// Fetch a single jurisdiction by code (`/jurisdictions/{code}`).
+    ///
+    /// # Errors
+    ///
+    /// Returns a [`GleifError`] if the request fails or the response is invalid.
     pub async fn jurisdiction_by_code(&self, code: &str) -> Result<Value> {
-        self.request(&format!("jurisdictions/{}", code))
-            .send()
-            .await
+        self.request(&format!("jurisdictions/{code}")).send().await
     }
 
     /// List all regions (`/regions`).
+    #[must_use]
     pub fn regions(&self) -> GleifRequestBuilder {
         self.request("regions")
     }
 
     /// Fetch a single region by code (`/regions/{code}`).
+    ///
+    /// # Errors
+    ///
+    /// Returns a [`GleifError`] if the request fails or the response is invalid.
     pub async fn region_by_code(&self, code: &str) -> Result<Value> {
-        self.request(&format!("regions/{}", code)).send().await
+        self.request(&format!("regions/{code}")).send().await
     }
 
     /// List all registration authorities (`/registration-authorities`).
+    #[must_use]
     pub fn registration_authorities(&self) -> GleifRequestBuilder {
         self.request("registration-authorities")
     }
 
     /// Fetch a single registration authority by code (`/registration-authorities/{code}`).
+    ///
+    /// # Errors
+    ///
+    /// Returns a [`GleifError`] if the request fails or the response is invalid.
     pub async fn registration_authority_by_code(&self, code: &str) -> Result<Value> {
-        self.request(&format!("registration-authorities/{}", code))
+        self.request(&format!("registration-authorities/{code}"))
             .send()
             .await
     }
 
     /// List all registration agents (`/registration-agents`).
+    #[must_use]
     pub fn registration_agents(&self) -> GleifRequestBuilder {
         self.request("registration-agents")
     }
 
     /// Fetch a single registration agent by ID (`/registration-agents/{id}`).
+    ///
+    /// # Errors
+    ///
+    /// Returns a [`GleifError`] if the request fails or the response is invalid.
     pub async fn registration_agent_by_id(&self, id: &str) -> Result<Value> {
-        self.request(&format!("registration-agents/{}", id))
+        self.request(&format!("registration-agents/{id}"))
             .send()
             .await
     }
@@ -335,6 +424,7 @@ impl GleifClient {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::field::Field;
     use reqwest::Client as ReqwestClient;
     use reqwest_middleware::ClientBuilder;
 
@@ -351,17 +441,17 @@ mod tests {
         let lei = "5493000IBP32UQZ0KL24";
 
         // Compare path construction for record endpoints
-        let record_path = format!("lei-records/{}", lei);
+        let record_path = format!("lei-records/{lei}");
         assert_eq!(c.request(&record_path).get_path(), record_path);
 
         // Test relationship endpoints
-        let direct_parent_rel_path = format!("lei-records/{}/direct-parent-relationship", lei);
+        let direct_parent_rel_path = format!("lei-records/{lei}/direct-parent-relationship");
         assert_eq!(
             c.request(&direct_parent_rel_path).get_path(),
             direct_parent_rel_path
         );
 
-        let direct_parent_path = format!("lei-records/{}/direct-parent", lei);
+        let direct_parent_path = format!("lei-records/{lei}/direct-parent");
         assert_eq!(
             c.request(&direct_parent_path).get_path(),
             direct_parent_path
@@ -371,24 +461,24 @@ mod tests {
         let builder = c.direct_child_relationships(lei);
         assert_eq!(
             builder.get_path(),
-            format!("lei-records/{}/direct-child-relationships", lei)
+            format!("lei-records/{lei}/direct-child-relationships")
         );
 
         let builder = c.direct_children(lei);
         assert_eq!(
             builder.get_path(),
-            format!("lei-records/{}/direct-children", lei)
+            format!("lei-records/{lei}/direct-children")
         );
 
         // Test other entity types
-        let lei_issuer_path = format!("lei-issuers/{}", lei);
+        let lei_issuer_path = format!("lei-issuers/{lei}");
         assert_eq!(c.request(&lei_issuer_path).get_path(), lei_issuer_path);
 
-        let vlei_issuer_path = format!("vlei-issuers/{}", lei);
+        let vlei_issuer_path = format!("vlei-issuers/{lei}");
         assert_eq!(c.request(&vlei_issuer_path).get_path(), vlei_issuer_path);
 
         let country_code = "US";
-        let country_path = format!("countries/{}", country_code);
+        let country_path = format!("countries/{country_code}");
         assert_eq!(c.request(&country_path).get_path(), country_path);
     }
 
@@ -518,25 +608,25 @@ mod tests {
         let builder = c.ultimate_child_relationships(lei);
         assert_eq!(
             builder.get_path(),
-            format!("lei-records/{}/ultimate-child-relationships", lei)
+            format!("lei-records/{lei}/ultimate-child-relationships")
         );
 
         let builder = c.ultimate_children(lei);
         assert_eq!(
             builder.get_path(),
-            format!("lei-records/{}/ultimate-children", lei)
+            format!("lei-records/{lei}/ultimate-children")
         );
 
         // Test field modifications path
         let builder = c.field_modifications(lei);
         assert_eq!(
             builder.get_path(),
-            format!("lei-records/{}/field-modifications", lei)
+            format!("lei-records/{lei}/field-modifications")
         );
 
         // Test ISINs path
         let builder = c.isins(lei);
-        assert_eq!(builder.get_path(), format!("lei-records/{}/isins", lei));
+        assert_eq!(builder.get_path(), format!("lei-records/{lei}/isins"));
     }
 
     #[test]
@@ -545,9 +635,14 @@ mod tests {
         let country_code = "GB";
 
         // Test specialized endpoint methods
-        let builder = c.entity_legal_forms().filter_eq("country", country_code);
+        let builder = c
+            .entity_legal_forms()
+            .filter_eq(Field::EntityLegalAddressCountry, country_code);
         assert_eq!(
-            builder.get_query().get("filter[country]").unwrap(),
+            builder
+                .get_query()
+                .get("filter[entity.legalAddress.country]")
+                .unwrap(),
             country_code
         );
 

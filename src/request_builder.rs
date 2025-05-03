@@ -4,8 +4,6 @@ use crate::{
     client::GleifClient,
     error::{GleifError, Result},
 };
-use futures_core::stream::Stream;
-use futures_util::stream::unfold;
 use reqwest::Method;
 use serde_json::Value;
 use std::collections::HashMap;
@@ -22,6 +20,7 @@ pub struct GleifRequestBuilder {
 
 impl GleifRequestBuilder {
     /// Create a new builder for the given client, method, and endpoint path.
+    #[must_use]
     pub fn new(client: GleifClient, method: Method, path: impl Into<String>) -> Self {
         Self {
             client,
@@ -32,91 +31,142 @@ impl GleifRequestBuilder {
     }
 
     /// Returns the current path for this request builder.
+    #[must_use]
     pub fn get_path(&self) -> &str {
         &self.path
     }
 
     /// Returns a reference to the query parameters for this request builder.
+    #[must_use]
     pub fn get_query(&self) -> &HashMap<String, String> {
         &self.query
     }
 
     /// Private helper to insert a filter parameter with the given operator syntax.
+    #[must_use]
     fn set_filter(mut self, field: &str, value: String) -> Self {
-        self.query.insert(format!("filter[{}]", field), value);
+        self.query.insert(format!("filter[{field}]"), value);
         self
     }
 
-    /// Add a filter for exact match (e.g., filter[field]=value).
-    pub fn filter_eq(self, field: &str, value: &str) -> Self {
-        self.set_filter(field, value.to_string())
-    }
-
-    /// Add a filter for NOT match (e.g., filter[field]=!value).
-    pub fn filter_not(self, field: &str, value: &str) -> Self {
-        self.set_filter(field, format!("!{}", value))
-    }
-
-    /// Add a filter for IN (comma-separated values, e.g., filter[field]=a,b,c).
-    pub fn filter_in<I, S>(self, field: &str, values: I) -> Self
+    /// Add a filter for exact match (e.g., `filter[field]=value`).
+    #[must_use]
+    pub fn filter_eq<F, V>(self, field: F, value: V) -> Self
     where
-        I: IntoIterator<Item = S>,
-        S: AsRef<str>,
+        F: AsRef<str>,
+        V: AsRef<str>,
+    {
+        self.set_filter(field.as_ref(), value.as_ref().to_string())
+    }
+
+    /// Add a filter for NOT match (e.g., `filter[field]=!value`).
+    #[must_use]
+    pub fn filter_not<F, V>(self, field: F, value: V) -> Self
+    where
+        F: AsRef<str>,
+        V: AsRef<str>,
+    {
+        self.set_filter(field.as_ref(), format!("!{}", value.as_ref()))
+    }
+
+    /// Add a filter for IN (comma-separated values, e.g., `filter[field]=a,b,c`).
+    #[must_use]
+    pub fn filter_in<F, I, V>(self, field: F, values: I) -> Self
+    where
+        F: AsRef<str>,
+        I: IntoIterator<Item = V>,
+        V: AsRef<str>,
     {
         let joined = values
             .into_iter()
             .map(|s| s.as_ref().to_owned())
             .collect::<Vec<String>>()
             .join(",");
-        self.set_filter(field, joined)
+        self.set_filter(field.as_ref(), joined)
     }
 
-    /// Add a filter for NOT IN (e.g., filter[field]=!a,b,c).
-    pub fn filter_not_in<I, S>(self, field: &str, values: I) -> Self
+    /// Add a filter for NOT IN (e.g., `filter[field]=!a,b,c`).
+    #[must_use]
+    pub fn filter_not_in<F, I, V>(self, field: F, values: I) -> Self
     where
-        I: IntoIterator<Item = S>,
-        S: AsRef<str>,
+        F: AsRef<str>,
+        I: IntoIterator<Item = V>,
+        V: AsRef<str>,
     {
         let joined = values
             .into_iter()
             .map(|s| s.as_ref().to_owned())
             .collect::<Vec<String>>()
             .join(",");
-        self.set_filter(field, format!("!{}", joined))
+        self.set_filter(field.as_ref(), format!("!{joined}"))
     }
 
-    /// Add a filter for range (e.g., filter[field]=min..max).
-    pub fn filter_range(self, field: &str, min: &str, max: &str) -> Self {
-        self.set_filter(field, format!("{}..{}", min, max))
+    /// Add a filter for range (e.g., `filter[field]=min..max`).
+    #[must_use]
+    pub fn filter_range<F, V>(self, field: F, min: V, max: V) -> Self
+    where
+        F: AsRef<str>,
+        V: AsRef<str>,
+    {
+        self.set_filter(
+            field.as_ref(),
+            format!("{}..{}", min.as_ref(), max.as_ref()),
+        )
     }
 
-    /// Add a filter for greater than (e.g., filter[field]=>value).
-    pub fn filter_gt(self, field: &str, value: &str) -> Self {
-        self.set_filter(field, format!(">{}", value))
+    /// Add a filter for greater than (e.g., `filter[field]=>value`).
+    #[must_use]
+    pub fn filter_gt<F, V>(self, field: F, value: V) -> Self
+    where
+        F: AsRef<str>,
+        V: AsRef<str>,
+    {
+        self.set_filter(field.as_ref(), format!(">{}", value.as_ref()))
     }
 
-    /// Add a filter for greater than or equal (e.g., filter[field]=>=value).
-    pub fn filter_gte(self, field: &str, value: &str) -> Self {
-        self.set_filter(field, format!(">={}", value))
+    /// Add a filter for greater than or equal (e.g., `filter[field]=>=value`).
+    #[must_use]
+    pub fn filter_gte<F, V>(self, field: F, value: V) -> Self
+    where
+        F: AsRef<str>,
+        V: AsRef<str>,
+    {
+        self.set_filter(field.as_ref(), format!(">={}", value.as_ref()))
     }
 
-    /// Add a filter for less than (e.g., filter[field]=<value).
-    pub fn filter_lt(self, field: &str, value: &str) -> Self {
-        self.set_filter(field, format!("<{}", value))
+    /// Add a filter for less than (e.g., `filter[field]=<value`).
+    #[must_use]
+    pub fn filter_lt<F, V>(self, field: F, value: V) -> Self
+    where
+        F: AsRef<str>,
+        V: AsRef<str>,
+    {
+        self.set_filter(field.as_ref(), format!("<{}", value.as_ref()))
     }
 
-    /// Add a filter for less than or equal (e.g., filter[field]=<=value).
-    pub fn filter_lte(self, field: &str, value: &str) -> Self {
-        self.set_filter(field, format!("<={}", value))
+    /// Add a filter for less than or equal (e.g., `filter[field]=<=value`).
+    #[must_use]
+    pub fn filter_lte<F, V>(self, field: F, value: V) -> Self
+    where
+        F: AsRef<str>,
+        V: AsRef<str>,
+    {
+        self.set_filter(field.as_ref(), format!("<={}", value.as_ref()))
     }
 
-    /// Add a sort parameter (e.g., sort=field).
-    pub fn sort(mut self, field: &str) -> Self {
-        self.query.insert("sort".to_string(), field.to_string());
+    /// Add a sort parameter (e.g., `sort=field`).
+    #[must_use]
+    pub fn sort<F>(mut self, field: F) -> Self
+    where
+        F: AsRef<str>,
+    {
+        self.query
+            .insert("sort".to_string(), field.as_ref().to_string());
         self
     }
 
     /// Set the page number (1-based).
+    #[must_use]
     pub fn page_number(mut self, number: usize) -> Self {
         self.query
             .insert("page[number]".to_string(), number.to_string());
@@ -124,6 +174,7 @@ impl GleifRequestBuilder {
     }
 
     /// Set the page size.
+    #[must_use]
     pub fn page_size(mut self, size: usize) -> Self {
         self.query
             .insert("page[size]".to_string(), size.to_string());
@@ -131,6 +182,7 @@ impl GleifRequestBuilder {
     }
 
     /// Add a generic query parameter.
+    #[must_use]
     pub fn param(mut self, key: &str, value: &str) -> Self {
         self.query.insert(key.to_string(), value.to_string());
         self
@@ -144,7 +196,7 @@ impl GleifRequestBuilder {
             .map_err(GleifError::UrlParseError)
     }
 
-    /// Private helper to construct the reqwest_middleware::RequestBuilder for this request.
+    /// Private helper to construct the `reqwest_middleware::RequestBuilder` for this request.
     fn build_request(&self, url: Url) -> reqwest_middleware::RequestBuilder {
         self.client
             .client()
@@ -154,6 +206,10 @@ impl GleifRequestBuilder {
     }
 
     /// Build and execute the request, returning the raw JSON response.
+    ///
+    /// # Errors
+    ///
+    /// Returns a [`GleifError`] if the request fails, the response is not valid JSON, or the URL cannot be constructed.
     pub async fn send(self) -> Result<Value> {
         let url = self.build_url()?;
         let req = self.build_request(url);
