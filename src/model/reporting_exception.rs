@@ -1,0 +1,85 @@
+//! Strongly-typed model for GLEIF Reporting Exception API responses.
+//!
+//! This struct is designed to match the JSON structure returned by the GLEIF API for reporting exceptions.
+//! It is suitable for use with `serde` deserialization and follows the conventions of other response models.
+
+use crate::model::common::RelatedLink;
+use chrono::{DateTime, Utc};
+use serde::Deserialize;
+
+/// A single reporting exception as returned by the GLEIF API.
+#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+pub struct ReportingException {
+    /// The type of the data (should be "reporting-exceptions").
+    #[serde(rename = "type")]
+    pub data_type: String,
+    /// The unique identifier of the reporting exception.
+    pub id: String,
+    /// The attributes of the reporting exception.
+    pub attributes: ReportingExceptionAttributes,
+    /// The relationships of the reporting exception.
+    pub relationships: ReportingExceptionRelationships,
+}
+
+/// Attributes of a reporting exception.
+#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct ReportingExceptionAttributes {
+    /// The start date of the exception validity period (nullable).
+    pub valid_from: Option<DateTime<Utc>>,
+    /// The end date of the exception validity period (nullable).
+    pub valid_to: Option<DateTime<Utc>>,
+    /// The LEI to which this exception applies.
+    pub lei: String,
+    /// The exception category (e.g., "DIRECT_ACCOUNTING_CONSOLIDATION_PARENT").
+    pub category: String,
+    /// The reason for the exception (e.g., "NO_KNOWN_PERSON").
+    pub reason: String,
+    /// An optional reference for the exception.
+    pub reference: Option<String>,
+}
+
+/// Relationships for a reporting exception.
+#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "kebab-case")]
+pub struct ReportingExceptionRelationships {
+    /// The related LEI record.
+    #[serde(rename = "lei-record")]
+    pub lei_record: ReportingExceptionLeiRecordRelationship,
+}
+
+/// Relationship to a LEI record from a reporting exception.
+#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+pub struct ReportingExceptionLeiRecordRelationship {
+    /// The links object for the related LEI record.
+    pub links: RelatedLink,
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::{model::common::GleifApiResponse, test_utils::test_lei_record_files};
+    use std::path::Path;
+
+    #[test]
+    fn test_deserialize_sample_reporting_exceptions() {
+        test_lei_record_files(
+            |filename| filename.ends_with(".json"),
+            |data| serde_json::from_str::<GleifApiResponse<ReportingException>>(data),
+            |filename, response| {
+                let data = &response.data;
+                assert_eq!(
+                    data.data_type, "reporting-exceptions",
+                    "Type mismatch in {filename}"
+                );
+                assert_eq!(
+                    data.attributes.lei.len(),
+                    20,
+                    "LEI should be 20 characters in {filename}"
+                );
+                assert!(!data.id.is_empty(), "ID should not be empty in {filename}");
+            },
+            Path::new("tests/data/reporting_exceptions"),
+        );
+    }
+}

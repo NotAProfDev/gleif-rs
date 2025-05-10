@@ -2,7 +2,10 @@ pub mod client;
 pub mod endpoint;
 pub mod error;
 pub mod field;
+pub mod model;
 pub mod request_builder;
+#[cfg(test)]
+pub mod test_utils;
 pub mod value;
 
 /// Library version
