@@ -1,8 +1,17 @@
 pub mod common;
+pub mod country;
+pub mod entity_legal_form;
 pub mod enums;
+pub mod field;
+pub mod field_modification;
 pub mod isin;
+pub mod jurisdiction;
 pub mod lei_issuer;
 pub mod lei_record;
+pub mod official_organizational_role;
+pub mod region;
+pub mod registration_agent;
+pub mod registration_authority;
 pub mod relationship_record;
 pub mod reporting_exception;
 pub mod vlei_issuer;

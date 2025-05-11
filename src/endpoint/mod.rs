@@ -107,16 +107,24 @@
 //! }
 //!
 //! // Look up countries (string literal)
-//! let country: serde_json::Value = client.country_by_code("US").await?;
+//! let country: serde_json::Value = client.country_by_id("US").await?;
 //! println!("Country: {}", country["attributes"]["name"]);
 //! # Ok(())
 //! # }
 //! ```
 
+pub mod country;
+pub mod entity_legal_form;
+pub mod field;
+pub mod field_modification;
 pub mod isin;
+pub mod jurisdiction;
 pub mod lei_issuer;
 pub mod lei_record;
-pub mod metadata;
+pub mod official_organizational_role;
+pub mod region;
+pub mod registration_agent;
+pub mod registration_authority;
 pub mod relationship_record;
 pub mod reporting_exception;
 pub mod vlei_issuer;
