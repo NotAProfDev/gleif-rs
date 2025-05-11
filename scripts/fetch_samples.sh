@@ -26,6 +26,23 @@
 #   - lei_issuers/lei_issuers_all.json for all LEI Issuers
 #   - vlei_issuers/vlei_issuer_<LEI>.json for vLEI Issuer endpoint data for each LEI
 #   - vlei_issuers/vlei_issuers_all.json for all vLEI Issuers
+#   - field_modifications/field_modifications_<LEI>.json for field modifications endpoint data for each LEI
+#   - fields/fields_all.json for all fields
+#   - fields/field_<ID>.json for specific field details by ID
+#   - countries/countries_all.json for all countries
+#   - countries/country_<ID>.json for specific country details by ID
+#   - entity_legal_forms/entity_legal_forms_all.json for all entity legal forms
+#   - entity_legal_forms/entity_legal_form_<ID>.json for specific entity legal form details by ID
+#   - official_organizational_roles/official_organizational_roles_all.json for all official organizational roles
+#   - official_organizational_roles/official_organizational_role_<ID>.json for specific official organizational role details by ID
+#   - jurisdictions/jurisdictions_all.json for all jurisdictions
+#   - jurisdictions/jurisdiction_<ID>.json for specific jurisdiction details by ID
+#   - regions/regions_all.json for all regions
+#   - regions/region_<ID>.json for specific region details by ID
+#   - registration_authorities/registration_authorities_all.json for all registration authorities
+#   - registration_authorities/registration_authority_<ID>.json for specific registration authority details by ID
+#   - registration_agents/registration_agents_all.json for all registration agents
+#   - registration_agents/registration_agent_<ID>.json for specific registration agent details by ID
 # ---------------------------------------------
 
 set -euo pipefail
@@ -42,6 +59,15 @@ REPORTING_EXCEPTIONS_DIR="$DATA_DIR/reporting_exceptions"
 ISINS_DIR="$DATA_DIR/isins"
 LEI_ISSUERS_DIR="$DATA_DIR/lei_issuers"
 VLEI_ISSUERS_DIR="$DATA_DIR/vlei_issuers"
+FIELD_MODIFICATIONS_DIR="$DATA_DIR/field_modifications"
+FIELD_DIR="$DATA_DIR/fields"
+COUNTRY_DIR="$DATA_DIR/countries"
+ENTITY_LEGAL_FORM_DIR="$DATA_DIR/entity_legal_forms"
+OFFICIAL_ORG_ROLE_DIR="$DATA_DIR/official_organizational_roles"
+JURISDICTION_DIR="$DATA_DIR/jurisdictions"
+REGION_DIR="$DATA_DIR/regions"
+REGISTRATION_AUTHORITY_DIR="$DATA_DIR/registration_authorities"
+REGISTRATION_AGENT_DIR="$DATA_DIR/registration_agents"
 
 # Extra endpoints
 BASE_URL="https://api.gleif.org/api/v1/"
@@ -80,6 +106,24 @@ LEIS=(
   "INR2EJN1ERAN0W5ZP974" # MICROSOFT CORPORATION
 )
 
+# Example IDs for metadata endpoints
+FIELD_IDS=(LEIREC_LEGAL_NAME LEIREC_ENTITY_STATUS ISIN_MAPPING_CODE)
+COUNTRY_CODES=(US DE GB)
+ENTITY_LEGAL_FORM_CODES=(10UR 12N6 1VTA)
+ORG_ROLE_CODES=(0CGNG5 1FWPRU 2YJ8BB)
+JURISDICTION_CODES=(US AO-HUA AF-BGL)
+REGION_CODES=(AD-03 AE-SH AO-LNO)
+REGISTRATION_AUTHORITY_CODES=(RA000001 RA000044 RA000097)
+REGISTRATION_AGENT_IDS=(5d10d4dc929ab6.72309473 5d10d4ddcb58f6.31794003 67bc6e3ad4bcd8.33945795)
+
+# Collect all output directories in an array
+OUTPUT_DIRS=(
+  "$LEI_RECORDS_DIR" "$RELATIONSHIPS_DIR" "$REPORTING_EXCEPTIONS_DIR" "$ISINS_DIR"
+  "$LEI_ISSUERS_DIR" "$VLEI_ISSUERS_DIR" "$FIELD_MODIFICATIONS_DIR" "$FIELD_DIR"
+  "$COUNTRY_DIR" "$ENTITY_LEGAL_FORM_DIR" "$OFFICIAL_ORG_ROLE_DIR" "$JURISDICTION_DIR"
+  "$REGION_DIR" "$REGISTRATION_AUTHORITY_DIR" "$REGISTRATION_AGENT_DIR"
+)
+
 # Global progress counter
 PROGRESS_CURRENT=0
 PROGRESS_TOTAL=0
@@ -90,6 +134,14 @@ calculate_total_fetches() {
   local n_relationships=${#RELATIONSHIP_TYPES[@]}
   local n_extras=${#ADDITIONAL_LEI_RECORD_TYPES[@]}
   local n_reporting_exceptions=${#REPORTING_EXCEPTIONS[@]}
+  local n_field_ids=${#FIELD_IDS[@]}
+  local n_country_ids=${#COUNTRY_CODES[@]}
+  local n_elf_ids=${#ENTITY_LEGAL_FORM_CODES[@]}
+  local n_org_role_ids=${#ORG_ROLE_CODES[@]}
+  local n_jurisdiction_ids=${#JURISDICTION_CODES[@]}
+  local n_region_ids=${#REGION_CODES[@]}
+  local n_ra_ids=${#REGISTRATION_AUTHORITY_CODES[@]}
+  local n_agent_ids=${#REGISTRATION_AGENT_IDS[@]}
   PROGRESS_TOTAL=$((\
     n_leis + \
     n_leis * n_relationships + \
@@ -98,7 +150,16 @@ calculate_total_fetches() {
     n_leis + \
     n_leis * 3 + \
     3 + \
-    n_leis + 1)) # vLEI Issuer endpoints
+    n_leis + 1 + \
+    n_leis + \
+    1 + n_field_ids + \
+    1 + n_country_ids + \
+    1 + n_elf_ids + \
+    1 + n_org_role_ids + \
+    1 + n_jurisdiction_ids + \
+    1 + n_region_ids + \
+    1 + n_ra_ids + \
+    1 + n_agent_ids)) # field_modifications, fields, countries, entity legal forms, org roles, jurisdictions, regions endpoints, registration authorities, registration agents
 }
 
 # Print usage information
@@ -188,10 +249,76 @@ fetch_vlei_issuers_endpoints() {
   fetch_json "${BASE_URL}vlei-issuers" "$VLEI_ISSUERS_DIR/vlei_issuers_all.json"
 }
 
+# Fetch field modifications for each LEI
+fetch_field_modifications() {
+  for lei in "${LEIS[@]}"; do
+    fetch_json "${LEI_RECORDS_ENDPOINT}/$lei/field-modifications" "$FIELD_MODIFICATIONS_DIR/field_modifications_$lei.json"
+  done
+}
+
+# Refactored fetch functions for metadata endpoints
+fetch_fields() {
+  fetch_json "${BASE_URL}fields" "$FIELD_DIR/fields_all.json"
+  for id in "${FIELD_IDS[@]}"; do
+    fetch_json "${BASE_URL}fields/$id" "$FIELD_DIR/field_$id.json"
+  done
+}
+
+fetch_countries() {
+  fetch_json "${BASE_URL}countries" "$COUNTRY_DIR/countries_all.json"
+  for code in "${COUNTRY_CODES[@]}"; do
+    fetch_json "${BASE_URL}countries/$code" "$COUNTRY_DIR/country_$code.json"
+  done
+}
+
+fetch_entity_legal_forms() {
+  fetch_json "${BASE_URL}entity-legal-forms" "$ENTITY_LEGAL_FORM_DIR/entity_legal_forms_all.json"
+  for code in "${ENTITY_LEGAL_FORM_CODES[@]}"; do
+    fetch_json "${BASE_URL}entity-legal-forms/$code" "$ENTITY_LEGAL_FORM_DIR/entity_legal_form_$code.json"
+  done
+}
+
+fetch_official_organizational_roles() {
+  fetch_json "${BASE_URL}official-organizational-roles" "$OFFICIAL_ORG_ROLE_DIR/official_organizational_roles_all.json"
+  for code in "${ORG_ROLE_CODES[@]}"; do
+    fetch_json "${BASE_URL}official-organizational-roles/$code" "$OFFICIAL_ORG_ROLE_DIR/official_organizational_role_$code.json"
+  done
+}
+
+fetch_jurisdictions() {
+  fetch_json "${BASE_URL}jurisdictions" "$JURISDICTION_DIR/jurisdictions_all.json"
+  for code in "${JURISDICTION_CODES[@]}"; do
+    fetch_json "${BASE_URL}jurisdictions/$code" "$JURISDICTION_DIR/jurisdiction_$code.json"
+  done
+}
+
+fetch_regions() {
+  fetch_json "${BASE_URL}regions" "$REGION_DIR/regions_all.json"
+  for code in "${REGION_CODES[@]}"; do
+    fetch_json "${BASE_URL}regions/$code" "$REGION_DIR/region_$code.json"
+  done
+}
+
+fetch_registration_authorities() {
+  fetch_json "${BASE_URL}registration-authorities" "$REGISTRATION_AUTHORITY_DIR/registration_authorities_all.json"
+  for code in "${REGISTRATION_AUTHORITY_CODES[@]}"; do
+    fetch_json "${BASE_URL}registration-authorities/$code" "$REGISTRATION_AUTHORITY_DIR/registration_authority_$code.json"
+  done
+}
+
+fetch_registration_agents() {
+  fetch_json "${BASE_URL}registration-agents" "$REGISTRATION_AGENT_DIR/registration_agents_all.json"
+  for id in "${REGISTRATION_AGENT_IDS[@]}"; do
+    fetch_json "${BASE_URL}registration-agents/$id" "$REGISTRATION_AGENT_DIR/registration_agent_$id.json"
+  done
+}
+
 # Main entry point
 main() {
   # Ensure output directories exist
-  mkdir -p "$LEI_RECORDS_DIR" "$RELATIONSHIPS_DIR" "$REPORTING_EXCEPTIONS_DIR" "$ISINS_DIR" "$LEI_ISSUERS_DIR" "$VLEI_ISSUERS_DIR"
+  for dir in "${OUTPUT_DIRS[@]}"; do
+    mkdir -p "$dir"
+  done
 
   calculate_total_fetches
 
@@ -212,6 +339,33 @@ main() {
 
   echo "Fetching vLEI Issuer endpoints..."
   fetch_vlei_issuers_endpoints
+
+  echo "Fetching field modifications..."
+  fetch_field_modifications
+
+  echo "Fetching fields..."
+  fetch_fields
+
+  echo "Fetching countries..."
+  fetch_countries
+
+  echo "Fetching entity legal forms..."
+  fetch_entity_legal_forms
+
+  echo "Fetching official organizational roles..."
+  fetch_official_organizational_roles
+
+  echo "Fetching jurisdictions..."
+  fetch_jurisdictions
+
+  echo "Fetching regions..."
+  fetch_regions
+
+  echo "Fetching registration authorities..."
+  fetch_registration_authorities
+
+  echo "Fetching registration agents..."
+  fetch_registration_agents
 
   echo "Script completed successfully."
 }
