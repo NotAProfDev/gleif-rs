@@ -5,7 +5,7 @@ use crate::{
     error::{GleifError, Result},
 };
 use reqwest::Method;
-use serde_json::Value;
+use serde::de::DeserializeOwned;
 use std::collections::HashMap;
 use url::Url;
 
@@ -205,20 +205,28 @@ impl GleifRequestBuilder {
             .query(&self.query)
     }
 
-    /// Build and execute the request, returning the raw JSON response.
+    /// Build and execute the request, returning a deserializable response.
+    /// The type R can be serde_json::Value for raw JSON, or a specific
+    /// strongly-typed struct (e.g., GleifApiResponse<LeiRecord>).
     ///
     /// # Errors
     ///
-    /// Returns a [`GleifError`] if the request fails, the response is not valid JSON, or the URL cannot be constructed.
-    pub async fn send(self) -> Result<Value> {
+    /// Returns a [`GleifError`] if the request fails, the response is not valid JSON
+    /// that can be deserialized into `R`, or the URL cannot be constructed.
+    pub async fn send<R>(self) -> Result<R>
+    where
+        R: DeserializeOwned,
+    {
         let url = self.build_url()?;
         let req = self.build_request(url);
         let resp = req.send().await.map_err(GleifError::from)?;
-        let json = resp
-            .json::<Value>()
+
+        // Attempt to deserialize the response body into the type R
+        let parsed_response = resp
+            .json::<R>()
             .await
             .map_err(|e| GleifError::from(reqwest_middleware::Error::from(e)))?;
-        Ok(json)
+        Ok(parsed_response)
     }
 }
 
