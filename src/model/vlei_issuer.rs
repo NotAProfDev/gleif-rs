@@ -64,7 +64,7 @@ mod tests {
     }
 
     #[test]
-    fn test_deserialize_countries_list() {
+    fn test_deserialize_vlei_issuers_list() {
         let dir = Path::new("tests/data/vlei_issuers");
         test_model_files(
             |filename| filename == "vlei_issuers_all.json",

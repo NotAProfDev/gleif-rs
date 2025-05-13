@@ -38,10 +38,10 @@ pub struct FieldAttributes {
     pub operators: Option<Vec<String>>,
     /// The contexts in which the field is used.
     pub contexts: Vec<String>,
-    /// The JSONPath for the field, if any.
+    /// The `JSONPath` for the field, if any.
     #[serde(rename = "jsonPath")]
     pub json_path: Option<String>,
-    /// The XPath for the field, if any.
+    /// The `XPath` for the field, if any.
     pub xpath: Option<String>,
 }
 

@@ -21,7 +21,7 @@
 //!
 //! ```rust
 //! use gleif_rs::{client::GleifClient};
-//! use gleif_rs::model::lei_issuer::{LeiIssuer, LeiIssuerJurisdictions};
+//! use gleif_rs::model::lei_issuer::{LeiIssuer, LeiIssuerJurisdiction};
 //! use gleif_rs::model::common::GleifApiResponse;
 //!
 //! # async fn run() -> Result<(), Box<dyn std::error::Error>> {
@@ -35,7 +35,7 @@
 //! let issuer: GleifApiResponse<LeiIssuer> = client.lei_issuer_by_id("5493000IBP32UQZ0KL24").await?;
 //!
 //! // Fetch jurisdictions for a specific LEI Issuer
-//! let jurisdictions: GleifApiResponse<LeiIssuerJurisdictions> = client
+//! let jurisdictions: GleifApiResponse<LeiIssuerJurisdiction> = client
 //!     .lei_issuer_jurisdictions("549300IBP32UQZ0KL24")
 //!     .send()
 //!     .await?;
@@ -165,6 +165,7 @@ impl GleifClient {
     ///     .send()
     ///     .await?;
     /// ```
+    #[must_use]
     pub fn lei_issuer_jurisdictions(&self, lei: &str) -> GleifRequestBuilder {
         self.request(&format!("lei-issuers/{lei}/jurisdictions"))
     }

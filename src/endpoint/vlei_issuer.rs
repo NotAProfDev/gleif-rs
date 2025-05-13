@@ -59,6 +59,7 @@ impl GleifClient {
     /// let vlei_issuers: GleifApiResponse<Vec<VLeiIssuer>> = client.vlei_issuers().send().await?;
     /// let vlei_issuers: serde_json::Value = client.vlei_issuers().send().await?;
     /// ```
+    #[must_use]
     pub fn vlei_issuers(&self) -> GleifRequestBuilder {
         self.request("vlei-issuers")
     }

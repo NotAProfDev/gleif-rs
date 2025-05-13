@@ -33,9 +33,9 @@ pub struct ReportingExceptionAttributes {
     pub valid_to: Option<DateTime<Utc>>,
     /// The LEI to which this exception applies.
     pub lei: String,
-    /// The exception category (e.g., "DIRECT_ACCOUNTING_CONSOLIDATION_PARENT").
+    /// The exception category (e.g., `DIRECT_ACCOUNTING_CONSOLIDATION_PARENT`).
     pub category: String,
-    /// The reason for the exception (e.g., "NO_KNOWN_PERSON").
+    /// The reason for the exception (e.g., `NO_KNOWN_PERSON`).
     pub reason: String,
     /// An optional reference for the exception.
     pub reference: Option<String>,
