@@ -1,7 +1,9 @@
-//! Strongly-typed model for GLEIF LEI Record API responses.
+//! Model definitions for the GLEIF LEI record endpoint.
 //!
-//! This struct is designed to match the JSON structure returned by the GLEIF API for LEI records.
-//! It is suitable for use with `serde` deserialization and aims to cover the most important fields.
+//! This module contains the data structures used to deserialize responses from the `/lei-records` endpoint of the GLEIF API.
+//! It provides Rust models for the LEI record resource, matching the JSON structure returned by the API.
+//!
+//! For endpoint usage and client methods, see [`crate::endpoint::lei_record`] (`src/endpoint/lei_record.rs`).
 
 use crate::model::{
     common::RelationshipLinks,
@@ -360,14 +362,14 @@ pub struct Relationships {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{model::common::GleifApiResponse, test_utils::test_lei_record_files};
+    use crate::{model::common::GleifApiResponse, test_utils::test_model_files};
     use serde_json;
     use std::path::Path;
 
     #[test]
     fn test_deserialize_single_lei_records() {
         let dir = Path::new("tests/data/lei_records");
-        test_lei_record_files(
+        test_model_files(
             |filename| {
                 filename.contains("single_lei_record_")
                     || filename.contains("direct-parent_")
@@ -405,7 +407,7 @@ mod tests {
     #[test]
     fn test_deserialize_multi_lei_records() {
         let dir = Path::new("tests/data/lei_records");
-        test_lei_record_files(
+        test_model_files(
             |filename| {
                 filename.contains("multi_lei_records")
                     || filename.contains("direct-children_")

@@ -94,6 +94,7 @@ REPORTING_EXCEPTIONS=(
 
 # List of LEIs to fetch (with comments for reference)
 LEIS=(
+  # Companies
   "21380068P1DRHMJ8KU70" # SHELL PLC
   "254900LNRYNOQ9YPU758" # Amazon Digital UK Limited
   "254900MSZM6DMP853B11" # ROCA NETWORKS INC.
@@ -104,6 +105,10 @@ LEIS=(
   "549300YX4S1LLSMK2627" # APPLE ENERGY LLC
   "851WYGNLUQLFZBSYGB56" # COMMERZBANK Aktiengesellschaft
   "INR2EJN1ERAN0W5ZP974" # MICROSOFT CORPORATION
+
+  # Issuers
+  "549300O897ZC5H7CY412" # Nordic Legal Entity Identifier AB (Nord vLEI)
+  "984500983AD71E4FBC41" # Provenant Inc.
 )
 
 # Example IDs for metadata endpoints

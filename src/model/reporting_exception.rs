@@ -1,7 +1,9 @@
-//! Strongly-typed model for GLEIF Reporting Exception API responses.
+//! Model definitions for the GLEIF reporting exception endpoint.
 //!
-//! This struct is designed to match the JSON structure returned by the GLEIF API for reporting exceptions.
-//! It is suitable for use with `serde` deserialization and follows the conventions of other response models.
+//! This module contains the data structures used to deserialize responses from the `/reporting-exceptions` endpoint of the GLEIF API.
+//! It provides Rust models for the reporting exception resource, matching the JSON structure returned by the API.
+//!
+//! For endpoint usage and client methods, see [`crate::endpoint::reporting_exception`] (`src/endpoint/reporting_exception.rs`).
 
 use crate::model::common::RelatedLink;
 use chrono::{DateTime, Utc};
@@ -58,12 +60,12 @@ pub struct ReportingExceptionLeiRecordRelationship {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{model::common::GleifApiResponse, test_utils::test_lei_record_files};
+    use crate::{model::common::GleifApiResponse, test_utils::test_model_files};
     use std::path::Path;
 
     #[test]
     fn test_deserialize_sample_reporting_exceptions() {
-        test_lei_record_files(
+        test_model_files(
             |filename| filename.ends_with(".json"),
             |data| serde_json::from_str::<GleifApiResponse<ReportingException>>(data),
             |filename, response| {

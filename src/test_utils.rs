@@ -1,14 +1,14 @@
 use std::fs;
 use std::path::Path;
 
-/// Helper to test deserialization and validation of LEI record files.
+/// Helper to test deserialization and validation of model files.
 ///
 /// # Parameters
 /// - `file_filter`: Predicate to select relevant files by filename.
 /// - `deserialize`: Function to deserialize file contents to a value.
 /// - `validate`: Function to validate the deserialized value and filename.
 /// - `test_dir`: Directory containing test files.
-pub(crate) fn test_lei_record_files<T, F, D, V, E>(
+pub(crate) fn test_model_files<T, F, D, V, E>(
     file_filter: F,
     deserialize: D,
     validate: V,
@@ -39,5 +39,5 @@ pub(crate) fn test_lei_record_files<T, F, D, V, E>(
         validate(filename, &value);
         checked_files += 1;
     }
-    assert!(checked_files > 0, "No LEI record files were checked");
+    assert!(checked_files > 0, "No model files were checked");
 }

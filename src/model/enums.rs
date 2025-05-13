@@ -339,3 +339,14 @@ pub enum CorroborationLevel {
     /// Based on the validation procedures in use by the LOU responsible for the record, there is sufficient information contained in authoritative public sources to corroborate the information that the submitter has provided for the record.
     FullyCorroborated,
 }
+
+// -- Other Enums --
+
+#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+pub enum ELFStatus {
+    /// The entity is active.
+    Actv,
+    /// The entity is inactive.
+    Inac,
+}

@@ -1,6 +1,9 @@
-//! Strongly-typed model for GLEIF Relationship and Reporting Exception API responses.
+//! Model definitions for the GLEIF relationship record endpoint.
 //!
-//! This module provides deserialization structs for relationship-records and reporting-exceptions endpoints.
+//! This module contains the data structures used to deserialize responses from the `/relationship-records` endpoint of the GLEIF API.
+//! It provides Rust models for the relationship record resource, matching the JSON structure returned by the API.
+//!
+//! For endpoint usage and client methods, see [`crate::endpoint::relationship_record`] (`src/endpoint/relationship_record.rs`).
 
 use crate::model::common::RelationshipLinks;
 use crate::model::enums::{
@@ -13,10 +16,14 @@ use serde::Deserialize;
 /// A single relationship record as returned by the GLEIF API.
 #[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
 pub struct RelationshipRecord {
+    /// The type of the data (e.g., "relationship-records").
     #[serde(rename = "type")]
     pub data_type: String,
+    /// The unique identifier of the relationship record.
     pub id: String,
+    /// The attributes of the relationship record.
     pub attributes: RelationshipRecordAttributes,
+    /// The relationships associated with the relationship record.
     pub relationships: RelationshipRecordRelationships,
 }
 
@@ -24,77 +31,109 @@ pub struct RelationshipRecord {
 #[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 pub struct RelationshipRecordAttributes {
-    pub valid_from: Option<DateTime<Utc>>,
+    /// The start date/time when the relationship is valid.
+    pub valid_from: DateTime<Utc>,
+    /// The end date/time when the relationship is valid, if available.
     pub valid_to: Option<DateTime<Utc>>,
+    /// The details of the relationship.
     pub relationship: RelationshipDetails,
-    pub registration: Option<RelationshipRegistration>,
-    pub extension: Option<RelationshipExtension>,
+    /// The registration information for the relationship.
+    pub registration: RelationshipRegistration,
+    /// The extension information for the relationship.
+    pub extension: RelationshipExtension,
 }
 
+/// Details of a relationship.
 #[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 pub struct RelationshipDetails {
+    /// The start node of the relationship.
     pub start_node: RelationshipNode,
+    /// The end node of the relationship.
     pub end_node: RelationshipNode,
+    /// The type of the relationship.
     #[serde(rename = "type")]
     pub relationship_type: RelationshipType,
+    /// The status of the relationship.
     pub status: RelationshipStatus,
+    /// The periods during which the relationship is/was valid.
     pub periods: Vec<RelationshipPeriod>,
 }
 
+/// A node in a relationship (start or end).
 #[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 pub struct RelationshipNode {
+    /// The unique identifier of the node.
     pub id: String,
+    /// The type of the node.
     #[serde(rename = "type")]
     pub node_type: String,
 }
 
+/// A period during which a relationship is/was valid.
 #[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 pub struct RelationshipPeriod {
-    pub start_date: Option<DateTime<Utc>>,
+    /// The start date of the period.
+    pub start_date: DateTime<Utc>,
+    /// The end date of the period, if available.
     pub end_date: Option<DateTime<Utc>>,
+    /// The type of the period.
     #[serde(rename = "type")]
-    pub period_type: Option<RelationshipPeriodType>,
+    pub period_type: RelationshipPeriodType,
 }
 
+/// Registration information for a relationship.
 #[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 pub struct RelationshipRegistration {
-    pub initial_registration_date: Option<DateTime<Utc>>,
+    /// The initial registration date.
+    pub initial_registration_date: DateTime<Utc>,
+    /// The last update date, if available.
     pub last_update_date: Option<DateTime<Utc>>,
-    pub status: Option<RegistrationStatus>,
-    pub next_renewal_date: Option<DateTime<Utc>>,
-    pub managing_lou: Option<String>,
-    pub corroboration_level: Option<CorroborationLevel>,
-    pub corroboration_documents: Option<CorroborationDocuments>,
+    /// The registration status.
+    pub status: RegistrationStatus,
+    /// The next renewal date.
+    pub next_renewal_date: DateTime<Utc>,
+    /// The managing LOU.
+    pub managing_lou: String,
+    /// The corroboration level.
+    pub corroboration_level: CorroborationLevel,
+    /// The corroboration documents.
+    pub corroboration_documents: CorroborationDocuments,
+    /// The corroboration reference, if available.
     pub corroboration_reference: Option<String>,
 }
 
+/// Extension information for a relationship.
 #[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 pub struct RelationshipExtension {
+    /// The deletion date/time, if the relationship was deleted.
     pub deleted_at: Option<DateTime<Utc>>,
 }
 
+/// Relationship links for the start and end nodes.
 #[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "kebab-case")]
 pub struct RelationshipRecordRelationships {
-    pub start_node: Option<RelationshipLinks>,
-    pub end_node: Option<RelationshipLinks>,
+    /// The links for the start node.
+    pub start_node: RelationshipLinks,
+    /// The links for the end node.
+    pub end_node: RelationshipLinks,
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{model::common::GleifApiResponse, test_utils::test_lei_record_files};
+    use crate::{model::common::GleifApiResponse, test_utils::test_model_files};
     use std::path::Path;
 
     #[test]
     fn test_deserialize_single_relationship_records() {
         let dir = Path::new("tests/data/relationships");
-        test_lei_record_files(
+        test_model_files(
             |filename| {
                 filename.contains("direct-parent-relationship_")
                     || filename.contains("ultimate-parent-relationship_")
@@ -118,7 +157,7 @@ mod tests {
     #[test]
     fn test_deserialize_multi_relationship_records() {
         let dir = Path::new("tests/data/relationships");
-        test_lei_record_files(
+        test_model_files(
             |filename| {
                 filename.contains("direct-child-relationships_")
                     || filename.contains("ultimate-child-relationships_")
