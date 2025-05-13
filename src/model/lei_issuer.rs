@@ -92,7 +92,9 @@ mod tests {
                 (filename.starts_with("lei_issuer_") || filename.starts_with("lei_record_issuer_"))
                     && !filename.starts_with("lei_issuer_jurisdictions_")
                     && !filename.starts_with("lei_issuers_all")
-                    && filename.ends_with(".json")
+                    && Path::new(filename)
+                        .extension()
+                        .is_some_and(|ext| ext.eq_ignore_ascii_case("json"))
             },
             |data| serde_json::from_str::<GleifApiResponse<LeiIssuer>>(data),
             |filename, issuer| {
@@ -120,7 +122,7 @@ mod tests {
                     !issuers.data.is_empty(),
                     "LEI Issuers list should not be empty in {filename}"
                 );
-                for issuer in issuers.data.iter() {
+                for issuer in &issuers.data {
                     assert!(
                         !issuer.id.is_empty(),
                         "LEI Issuer id should not be empty in {filename}"
@@ -136,7 +138,9 @@ mod tests {
         let dir = Path::new("tests/data/lei_issuers");
         test_model_files(
             |filename| {
-                filename.starts_with("lei_issuer_jurisdictions_") && filename.ends_with(".json")
+                filename.starts_with("lei_issuer_jurisdictions_") && Path::new(filename)
+                    .extension()
+                    .is_some_and(|ext| ext.eq_ignore_ascii_case("json"))
             },
             |data| serde_json::from_str::<GleifApiResponse<Vec<LeiIssuerJurisdiction>>>(data),
             |filename, jurisdictions| {
@@ -144,7 +148,7 @@ mod tests {
                     !jurisdictions.data.is_empty(),
                     "LEI Issuer Jurisdictions list should not be empty in {filename}"
                 );
-                for jurisdiction in jurisdictions.data.iter() {
+                for jurisdiction in &jurisdictions.data {
                     assert!(
                         !jurisdiction.id.is_empty(),
                         "LEI Issuer Jurisdiction id should not be empty in {filename}"

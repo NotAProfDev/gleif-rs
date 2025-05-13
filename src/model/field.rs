@@ -56,7 +56,9 @@ mod tests {
     fn test_deserialize_single_field() {
         let dir = Path::new("tests/data/fields");
         test_model_files(
-            |filename| filename.starts_with("field_") && filename.ends_with(".json"),
+            |filename| filename.starts_with("field_") && Path::new(filename)
+                .extension()
+                .is_some_and(|ext| ext.eq_ignore_ascii_case("json")),
             |data| serde_json::from_str::<GleifApiResponse<Field>>(data),
             |filename, field| {
                 assert!(
@@ -79,7 +81,7 @@ mod tests {
                     !fields.data.is_empty(),
                     "Fields list should not be empty in {filename}"
                 );
-                for field in fields.data.iter() {
+                for field in &fields.data {
                     assert!(
                         !field.id.is_empty(),
                         "Field id should not be empty in {filename}"

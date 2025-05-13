@@ -68,7 +68,12 @@ mod tests {
     fn test_deserialize_single_entity_legal_form() {
         let dir = Path::new("tests/data/entity_legal_forms");
         test_model_files(
-            |filename| filename.starts_with("entity_legal_form_") && filename.ends_with(".json"),
+            |filename| {
+                filename.starts_with("entity_legal_form_")
+                    && Path::new(filename)
+                        .extension()
+                        .is_some_and(|ext| ext.eq_ignore_ascii_case("json"))
+            },
             |data| serde_json::from_str::<GleifApiResponse<EntityLegalForm>>(data),
             |filename, elf| {
                 assert!(

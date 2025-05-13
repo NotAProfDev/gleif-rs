@@ -206,8 +206,8 @@ impl GleifRequestBuilder {
     }
 
     /// Build and execute the request, returning a deserializable response.
-    /// The type R can be serde_json::Value for raw JSON, or a specific
-    /// strongly-typed struct (e.g., GleifApiResponse<LeiRecord>).
+    /// The type `R` can be `serde_json::Value` for raw JSON, or a specific
+    /// strongly-typed struct (e.g., `GleifApiResponse`<`LeiRecord`>).
     ///
     /// # Errors
     ///

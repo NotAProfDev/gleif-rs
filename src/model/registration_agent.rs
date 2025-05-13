@@ -44,7 +44,9 @@ mod tests {
     fn test_deserialize_single_registration_agent() {
         let dir = Path::new("tests/data/registration_agents");
         test_model_files(
-            |filename| filename.starts_with("registration_agent_") && filename.ends_with(".json"),
+            |filename| filename.starts_with("registration_agent_") && Path::new(filename)
+                .extension()
+                .is_some_and(|ext| ext.eq_ignore_ascii_case("json")),
             |data| serde_json::from_str::<GleifApiResponse<RegistrationAgent>>(data),
             |filename, agent| {
                 assert!(
@@ -71,7 +73,7 @@ mod tests {
                     !agents.data.is_empty(),
                     "RegistrationAgents list should not be empty in {filename}"
                 );
-                for agent in agents.data.iter() {
+                for agent in &agents.data {
                     assert!(
                         !agent.id.is_empty(),
                         "RegistrationAgent id should not be empty in {filename}"

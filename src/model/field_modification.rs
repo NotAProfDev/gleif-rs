@@ -65,7 +65,9 @@ mod tests {
     fn test_deserialize_multi_field_modifications() {
         let dir = Path::new("tests/data/field_modifications");
         test_model_files(
-            |filename| filename.starts_with("field_modifications_") && filename.ends_with(".json"),
+            |filename| filename.starts_with("field_modifications_") && Path::new(filename)
+                .extension()
+                .is_some_and(|ext| ext.eq_ignore_ascii_case("json")),
             |data| serde_json::from_str::<GleifApiResponse<Vec<FieldModification>>>(data),
             |filename, list| {
                 if list.data.is_empty() {

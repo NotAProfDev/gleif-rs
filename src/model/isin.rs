@@ -39,10 +39,15 @@ mod tests {
     fn test_deserialize_isins_list() {
         let dir = Path::new("tests/data/isins");
         test_model_files(
-            |filename| filename.starts_with("isins_") && filename.ends_with(".json"),
+            |filename| {
+                filename.starts_with("isins_")
+                    && Path::new(filename)
+                        .extension()
+                        .is_some_and(|ext| ext.eq_ignore_ascii_case("json"))
+            },
             |data| serde_json::from_str::<GleifApiResponse<Vec<Isin>>>(data),
             |filename, isins| {
-                // An empty isin list is valid
+                // An empty isin list can be valid
                 if isins.data.is_empty() {
                     return;
                 }
@@ -50,7 +55,7 @@ mod tests {
                     !isins.data.is_empty(),
                     "ISINs list should not be empty in {filename}"
                 );
-                for isin in isins.data.iter() {
+                for isin in &isins.data {
                     assert!(
                         !isin.id.is_empty(),
                         "ISIN id should not be empty in {filename}"

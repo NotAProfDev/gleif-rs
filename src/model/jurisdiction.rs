@@ -39,7 +39,9 @@ mod tests {
     fn test_deserialize_single_jurisdiction() {
         let dir = Path::new("tests/data/jurisdictions");
         test_model_files(
-            |filename| filename.starts_with("jurisdiction_") && filename.ends_with(".json"),
+            |filename| filename.starts_with("jurisdiction_") && Path::new(filename)
+                .extension()
+                .is_some_and(|ext| ext.eq_ignore_ascii_case("json")),
             |data| serde_json::from_str::<GleifApiResponse<Jurisdiction>>(data),
             |filename, jurisdiction| {
                 assert!(
@@ -66,7 +68,7 @@ mod tests {
                     !jurisdictions.data.is_empty(),
                     "Jurisdictions list should not be empty in {filename}"
                 );
-                for jurisdiction in jurisdictions.data.iter() {
+                for jurisdiction in &jurisdictions.data {
                     assert!(
                         !jurisdiction.id.is_empty(),
                         "Jurisdiction id should not be empty in {filename}"

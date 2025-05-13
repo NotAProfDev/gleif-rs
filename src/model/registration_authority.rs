@@ -63,7 +63,9 @@ mod tests {
         let dir = Path::new("tests/data/registration_authorities");
         test_model_files(
             |filename| {
-                filename.starts_with("registration_authority_") && filename.ends_with(".json")
+                filename.starts_with("registration_authority_") && Path::new(filename)
+                    .extension()
+                    .is_some_and(|ext| ext.eq_ignore_ascii_case("json"))
             },
             |data| serde_json::from_str::<GleifApiResponse<RegistrationAuthority>>(data),
             |filename, authority| {
@@ -91,7 +93,7 @@ mod tests {
                     !authorities.data.is_empty(),
                     "RegistrationAuthorities list should not be empty in {filename}"
                 );
-                for authority in authorities.data.iter() {
+                for authority in &authorities.data {
                     assert!(
                         !authority.id.is_empty(),
                         "RegistrationAuthority id should not be empty in {filename}"

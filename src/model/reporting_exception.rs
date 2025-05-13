@@ -66,7 +66,11 @@ mod tests {
     #[test]
     fn test_deserialize_sample_reporting_exceptions() {
         test_model_files(
-            |filename| filename.ends_with(".json"),
+            |filename| {
+                Path::new(filename)
+                    .extension()
+                    .is_some_and(|ext| ext.eq_ignore_ascii_case("json"))
+            },
             |data| serde_json::from_str::<GleifApiResponse<ReportingException>>(data),
             |filename, response| {
                 let data = &response.data;

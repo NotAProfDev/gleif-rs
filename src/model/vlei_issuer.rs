@@ -47,7 +47,9 @@ mod tests {
     fn test_deserialize_single_vlei_issuer() {
         let dir = Path::new("tests/data/vlei_issuers");
         test_model_files(
-            |filename| filename.starts_with("vlei_issuer_") && filename.ends_with(".json"),
+            |filename| filename.starts_with("vlei_issuer_") && Path::new(filename)
+                .extension()
+                .is_some_and(|ext| ext.eq_ignore_ascii_case("json")),
             |data| serde_json::from_str::<GleifApiResponse<VLeiIssuer>>(data),
             |filename, issuer| {
                 assert!(
@@ -74,7 +76,7 @@ mod tests {
                     !issuers.data.is_empty(),
                     "VLeiIssuer list should not be empty in {filename}"
                 );
-                for issuer in issuers.data.iter() {
+                for issuer in &issuers.data {
                     assert!(
                         !issuer.id.is_empty(),
                         "VLeiIssuer id should not be empty in {filename}"

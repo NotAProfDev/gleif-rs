@@ -71,7 +71,9 @@ mod tests {
         let dir = Path::new("tests/data/official_organizational_roles");
         test_model_files(
             |filename| {
-                filename.starts_with("official_organizational_role_") && filename.ends_with(".json")
+                filename.starts_with("official_organizational_role_") && Path::new(filename)
+                    .extension()
+                    .is_some_and(|ext| ext.eq_ignore_ascii_case("json"))
             },
             |data| serde_json::from_str::<GleifApiResponse<OfficialOrganizationalRole>>(data),
             |filename, role| {
@@ -103,7 +105,7 @@ mod tests {
                     !roles.data.is_empty(),
                     "OfficialOrganizationalRoles list should not be empty in {filename}"
                 );
-                for role in roles.data.iter() {
+                for role in &roles.data {
                     assert!(
                         !role.id.is_empty(),
                         "OfficialOrganizationalRole id should not be empty in {filename}"

@@ -39,7 +39,12 @@ mod tests {
     fn test_deserialize_single_country() {
         let dir = Path::new("tests/data/countries");
         test_model_files(
-            |filename| filename.starts_with("country_") && filename.ends_with(".json"),
+            |filename| {
+                filename.starts_with("country_")
+                    && Path::new(filename)
+                        .extension()
+                        .is_some_and(|ext| ext.eq_ignore_ascii_case("json"))
+            },
             |data| serde_json::from_str::<GleifApiResponse<Country>>(data),
             |filename, country| {
                 assert!(
@@ -70,7 +75,7 @@ mod tests {
                     !countries.data.is_empty(),
                     "Countries list should not be empty in {filename}"
                 );
-                for country in countries.data.iter() {
+                for country in &countries.data {
                     assert!(
                         !country.id.is_empty(),
                         "Country id should not be empty in {filename}"
