@@ -1,3 +1,17 @@
+//! Enum definitions for the GLEIF API.
+//!
+//! This module contains enumerations used to deserialize and represent various attributes and statuses
+//! across multiple GLEIF API endpoints. These enums are designed to match the JSON structure returned
+//! by the API and provide a strongly-typed interface for working with GLEIF data.
+//!
+//! The enums in this module are categorized based on their usage in:
+//! - Level 1 (Who is Who): Attributes related to entity names, addresses, categories, and statuses.
+//! - Level 2 (Who Owns Whom): Attributes related to relationships between legal entities.
+//! - Level 1 and Level 2: Attributes that are relevant to both levels, such as registration statuses and corroboration levels.
+//! - Other general attributes used across the GLEIF API.
+//!
+//! For endpoint-specific usage and client methods, refer to the corresponding modules in [`crate::endpoint`].
+
 use serde::Deserialize;
 
 // -- Enums used by Level 1 (who is who) --

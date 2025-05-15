@@ -18,18 +18,17 @@
 //!
 //! ```rust
 //! use gleif_rs::{client::GleifClient};
-//! use gleif_rs::model::country::Country;
-//! use gleif_rs::model::common::GleifApiResponse;
+//! use gleif_rs::model::{Country, CountryList};
 //!
 //! # async fn run() -> Result<(), Box<dyn std::error::Error>> {
 //! # let client = GleifClient::new();
 //!
 //! // Retrieve all countries
-//! let countries: GleifApiResponse<Vec<Country>> = client.countries().send().await?; // strongly typed
+//! let countries: CountryList = client.countries().send().await?; // strongly typed
 //! let countries: serde_json::Value = client.countries().send().await?; // raw JSON
 //!
 //! // Retrieve details of a specific country
-//! let country: GleifApiResponse<Country> = client.country_by_id("US").await?;
+//! let country: Country = client.country_by_id("US").await?;
 //! # Ok(()) }
 //! ```
 //!
@@ -55,7 +54,7 @@ impl GleifClient {
     /// # Examples
     ///
     /// ```rust, ignore
-    /// let countries: GleifApiResponse<Vec<Country>> = client.countries().send().await?; // strongly typed
+    /// let countries: CountryList = client.countries().send().await?; // strongly typed
     /// let countries: serde_json::Value = client.countries().send().await?; // raw JSON
     /// ```
     #[must_use]
@@ -80,7 +79,7 @@ impl GleifClient {
     /// # Examples
     ///
     /// ```rust, ignore
-    /// let country: GleifApiResponse<Country> = client.country_by_id("US").await?; // strongly typed
+    /// let country: Country = client.country_by_id("US").await?; // strongly typed
     /// let country: serde_json::Value = client.country_by_id("US").await?; // raw JSON
     /// ```
     pub async fn country_by_id<R>(&self, id: &str) -> Result<R>

@@ -154,8 +154,7 @@ impl GleifClient {
     }
 
     /// Returns a request builder for the given endpoint path.
-    #[must_use]
-    pub fn request(&self, path: &str) -> GleifRequestBuilder {
+    pub(crate) fn request(&self, path: &str) -> GleifRequestBuilder {
         GleifRequestBuilder::new(self.clone(), Method::GET, path)
     }
 }

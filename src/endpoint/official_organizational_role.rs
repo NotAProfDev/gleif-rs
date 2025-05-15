@@ -17,18 +17,17 @@
 //!
 //! ```rust
 //! use gleif_rs::{client::GleifClient};
-//! use gleif_rs::model::official_organizational_role::OfficialOrganizationalRole;
-//! use gleif_rs::model::common::GleifApiResponse;
+//! use gleif_rs::model::{OfficialOrganizationalRole, OfficialOrganizationalRoleList};
 //!
 //! # async fn run() -> Result<(), Box<dyn std::error::Error>> {
 //! # let client = GleifClient::new();
 //!
 //! // Fetch all Official Organizational Roles
-//! let roles: GleifApiResponse<Vec<OfficialOrganizationalRole>> = client.official_organizational_roles().send().await?; // strongly typed
+//! let roles: OfficialOrganizationalRoleList = client.official_organizational_roles().send().await?; // strongly typed
 //! let roles: serde_json::Value = client.official_organizational_roles().send().await?; // raw JSON
 //!
 //! // Fetch a specific Official Organizational Role by ID
-//! let role: GleifApiResponse<OfficialOrganizationalRole> = client.official_organizational_role_by_id("0CGNG5").await?;
+//! let role: OfficialOrganizationalRole = client.official_organizational_role_by_id("0CGNG5").await?;
 //! # Ok(()) }
 //! ```
 //!
@@ -65,17 +64,17 @@ impl GleifClient {
     ///
     /// ```rust, ignore
     /// // Retrieve all roles
-    /// let roles: GleifApiResponse<Vec<OfficialOrganizationalRole>> = client.official_organizational_roles().send().await?;
+    /// let roles: OfficialOrganizationalRoleList = client.official_organizational_roles().send().await?;
     ///
     /// // Filter by primary name
-    /// let roles: GleifApiResponse<Vec<OfficialOrganizationalRole>> = client
+    /// let roles: OfficialOrganizationalRoleList = client
     ///     .official_organizational_roles()
     ///     .filter_eq("name", "управног")
     ///     .send()
     ///     .await?;
     ///
     /// // Filter by country code
-    /// let roles: GleifApiResponse<Vec<OfficialOrganizationalRole>> = client
+    /// let roles: OfficialOrganizationalRoleList = client
     ///     .official_organizational_roles()
     ///     .filter_eq("countryCode", "CA")
     ///     .send()
@@ -103,7 +102,7 @@ impl GleifClient {
     /// # Examples
     ///
     /// ```rust, ignore
-    /// let role: GleifApiResponse<OfficialOrganizationalRole> = client.official_organizational_role_by_id("0CGNG5").await?; // strongly typed
+    /// let role: OfficialOrganizationalRole = client.official_organizational_role_by_id("0CGNG5").await?; // strongly typed
     /// let role: serde_json::Value = client.official_organizational_role_by_id("0CGNG5").await?; // raw JSON
     /// ```
     pub async fn official_organizational_role_by_id<R>(&self, id: &str) -> Result<R>

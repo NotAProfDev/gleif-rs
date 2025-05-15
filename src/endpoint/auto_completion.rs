@@ -16,14 +16,13 @@
 //!
 //! ```rust
 //! use gleif_rs::{client::GleifClient};
-//! use gleif_rs::model::auto_completion::AutoCompletion;
-//! use gleif_rs::model::common::GleifApiResponse;
+//! use gleif_rs::model::AutoCompletionList;
 //!
 //! # async fn run() -> Result<(), Box<dyn std::error::Error>> {
 //! # let client = GleifClient::new();
 //!
 //! // Fetch auto-completions for the term "Global" in the "fulltext" field
-//! let results: GleifApiResponse<Vec<AutoCompletion>> = client
+//! let results: AutoCompletionList = client
 //!     .auto_completions("fulltext", "Global")
 //!     .await?;
 //!
@@ -67,7 +66,7 @@ impl GleifClient {
     /// # Examples
     ///
     /// ```rust, ignore
-    /// let auto_completion: GleifApiResponse<Vec<AutoCompletion>> = client.auto_completions("fulltext", "Global").send().await?; // strongly typed
+    /// let auto_completion: AutoCompletionList = client.auto_completions("fulltext", "Global").send().await?; // strongly typed
     /// let auto_completion: serde_json::Value = client.auto_completions("fulltext", "Global").send().await?; // raw JSON
     /// ```
     pub async fn auto_completions<R>(&self, field: &str, q: &str) -> Result<R>

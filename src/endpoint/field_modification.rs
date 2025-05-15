@@ -15,14 +15,13 @@
 //!
 //! ```rust
 //! use gleif_rs::{client::GleifClient};
-//! use gleif_rs::model::field_modification::FieldModification;
-//! use gleif_rs::model::common::GleifApiResponse;
+//! use gleif_rs::model::FieldModificationList;
 //!
 //! # async fn run() -> Result<(), Box<dyn std::error::Error>> {
 //! # let client = GleifClient::new();
 //!
 //! // Fetch field modifications for a specific LEI
-//! let modifications: GleifApiResponse<Vec<FieldModification>> = client.field_modifications("5493000IBP32UQZ0KL24").send().await?; // strongly typed
+//! let modifications: FieldModificationList = client.field_modifications("5493000IBP32UQZ0KL24").send().await?; // strongly typed
 //! let modifications: serde_json::Value = client.field_modifications("5493000IBP32UQZ0KL24").send().await?; // raw JSON
 //! # Ok(()) }
 //! ```
@@ -59,7 +58,7 @@ impl GleifClient {
     /// # Examples
     ///
     /// ```rust, ignore
-    /// let modifications: GleifApiResponse<Vec<LeiFieldModification>> = client.field_modifications("5493000IBP32UQZ0KL24").send().await?; // strongly typed
+    /// let modifications: FieldModificationList = client.field_modifications("5493000IBP32UQZ0KL24").send().await?; // strongly typed
     /// let modifications: serde_json::Value = client.field_modifications("5493000IBP32UQZ0KL24").send().await?; // raw JSON
     /// ```
     #[must_use]

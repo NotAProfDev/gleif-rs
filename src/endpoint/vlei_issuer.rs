@@ -18,18 +18,17 @@
 //!
 //! ```rust
 //! use gleif_rs::{client::GleifClient};
-//! use gleif_rs::model::vlei_issuer::VLeiIssuer;
-//! use gleif_rs::model::common::GleifApiResponse;
+//! use gleif_rs::model::{VLeiIssuer, VLeiIssuerList};
 //!
 //! # async fn run() -> Result<(), Box<dyn std::error::Error>> {
 //! # let client = GleifClient::new();
 //!
 //! // Fetch all vLEI Issuers
-//! let vlei_issuers: GleifApiResponse<Vec<VLeiIssuer>> = client.vlei_issuers().send().await?; // strongly typed
+//! let vlei_issuers: VLeiIssuerList = client.vlei_issuers().send().await?; // strongly typed
 //! let vlei_issuers: serde_json::Value = client.vlei_issuers().send().await?; // raw JSON
 //!
 //! // Fetch a specific vLEI Issuer by LEI
-//! let vlei_issuer: GleifApiResponse<VLeiIssuer> = client.vlei_issuer_by_id("5493000IBP32UQZ0KL24").await?;
+//! let vlei_issuer: VLeiIssuer = client.vlei_issuer_by_id("5493000IBP32UQZ0KL24").await?;
 //! # Ok(()) }
 //! ```
 //!
@@ -56,7 +55,7 @@ impl GleifClient {
     /// # Examples
     ///
     /// ```rust, ignore
-    /// let vlei_issuers: GleifApiResponse<Vec<VLeiIssuer>> = client.vlei_issuers().send().await?;
+    /// let vlei_issuers: VLeiIssuerList = client.vlei_issuers().send().await?;
     /// let vlei_issuers: serde_json::Value = client.vlei_issuers().send().await?;
     /// ```
     #[must_use]
@@ -83,7 +82,7 @@ impl GleifClient {
     /// # Examples
     ///
     /// ```rust, ignore
-    /// let vlei_issuer: GleifApiResponse<VLeiIssuer> = client.vlei_issuer_by_id("5493000IBP32UQZ0KL24").await?; // strongly typed
+    /// let vlei_issuer: VLeiIssuer = client.vlei_issuer_by_id("5493000IBP32UQZ0KL24").await?; // strongly typed
     /// let vlei_issuer: serde_json::Value = client.vlei_issuer_by_id("5493000IBP32UQZ0KL24").await?; // raw JSON
     /// ```
     pub async fn vlei_issuer_by_id<R>(&self, lei: &str) -> Result<R>

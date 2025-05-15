@@ -26,24 +26,23 @@
 //!
 //! ```rust
 //! use gleif_rs::{client::GleifClient};
-//! use gleif_rs::model::relationship_record::RelationshipRecord;
-//! use gleif_rs::model::common::GleifApiResponse;
+//! use gleif_rs::model::{RelationshipRecord, RelationshipRecordList};
 //!
 //! # async fn run() -> Result<(), Box<dyn std::error::Error>> {
 //! # let client = GleifClient::new();
 //!
 //! // Fetch the direct parent relationship for a specific LEI
-//! let relationship: GleifApiResponse<RelationshipRecord> = client.direct_parent_relationship("5493000IBP32UQZ0KL24").await?; // strongly typed
+//! let relationship: RelationshipRecord = client.direct_parent_relationship("5493000IBP32UQZ0KL24").await?; // strongly typed
 //! let relationship: serde_json::Value = client.direct_parent_relationship("5493000IBP32UQZ0KL24").await?; // raw JSON
 //!
 //! // Fetch the ultimate parent relationship for a specific LEI
-//! let relationship: GleifApiResponse<RelationshipRecord> = client.ultimate_parent_relationship("5493000IBP32UQZ0KL24").await?;
+//! let relationship: RelationshipRecord = client.ultimate_parent_relationship("5493000IBP32UQZ0KL24").await?;
 //!
 //! // Fetch the direct child relationships for a specific LEI
-//! let relationships: GleifApiResponse<Vec<RelationshipRecord>> = client.direct_child_relationships("5493000IBP32UQZ0KL24").send().await?;
+//! let relationships: RelationshipRecordList = client.direct_child_relationships("5493000IBP32UQZ0KL24").send().await?;
 //!
 //! // Fetch the ultimate child relationships for a specific LEI
-//! let relationships: GleifApiResponse<Vec<RelationshipRecord>> = client.ultimate_child_relationships("5493000IBP32UQZ0KL24").send().await?;
+//! let relationships: RelationshipRecordList = client.ultimate_child_relationships("5493000IBP32UQZ0KL24").send().await?;
 //! # Ok(()) }
 //! ```
 
@@ -70,7 +69,7 @@ impl GleifClient {
     /// # Examples
     ///
     /// ```rust, ignore
-    /// let relationship: GleifApiResponse<RelationshipRecord> = client.direct_parent_relationship("5493000IBP32UQZ0KL24").await?; // strongly typed
+    /// let relationship: RelationshipRecord = client.direct_parent_relationship("5493000IBP32UQZ0KL24").await?; // strongly typed
     /// let relationship: serde_json::Value = client.direct_parent_relationship("5493000IBP32UQZ0KL24").await?; // raw JSON
     /// ```
     pub async fn direct_parent_relationship<R>(&self, lei: &str) -> Result<R>
@@ -101,7 +100,7 @@ impl GleifClient {
     /// # Examples
     ///
     /// ```rust, ignore
-    /// let relationship: GleifApiResponse<RelationshipRecord> = client.ultimate_parent_relationship("5493000IBP32UQZ0KL24").await?; // strongly typed
+    /// let relationship: RelationshipRecord = client.ultimate_parent_relationship("5493000IBP32UQZ0KL24").await?; // strongly typed
     /// let relationship: serde_json::Value = client.ultimate_parent_relationship("5493000IBP32UQZ0KL24").await?; // raw JSON
     /// ```
     pub async fn ultimate_parent_relationship<R>(&self, lei: &str) -> Result<R>
@@ -132,7 +131,7 @@ impl GleifClient {
     /// # Examples
     ///
     /// ```rust, ignore
-    /// let relationships: GleifApiResponse<Vec<RelationshipRecord>> = client.ultimate_child_relationships("5493000IBP32UQZ0KL24").send().await?; // strongly typed
+    /// let relationships: RelationshipRecordList = client.ultimate_child_relationships("5493000IBP32UQZ0KL24").send().await?; // strongly typed
     /// let relationships: serde_json::Value = client.ultimate_child_relationships("5493000IBP32UQZ0KL24").send().await?; // raw JSON
     /// ```
     #[must_use]
@@ -159,7 +158,7 @@ impl GleifClient {
     /// # Examples
     ///
     /// ```rust, ignore
-    /// let relationships: GleifApiResponse<Vec<RelationshipRecord>> = client.direct_child_relationships("5493000IBP32UQZ0KL24").send().await?; // strongly typed
+    /// let relationships: RelationshipRecordList = client.direct_child_relationships("5493000IBP32UQZ0KL24").send().await?; // strongly typed
     /// let relationships: serde_json::Value = client.direct_child_relationships("5493000IBP32UQZ0KL24").send().await?; // raw JSON
     /// ```
     #[must_use]

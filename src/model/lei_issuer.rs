@@ -138,9 +138,10 @@ mod tests {
         let dir = Path::new("tests/data/lei_issuers");
         test_model_files(
             |filename| {
-                filename.starts_with("lei_issuer_jurisdictions_") && Path::new(filename)
-                    .extension()
-                    .is_some_and(|ext| ext.eq_ignore_ascii_case("json"))
+                filename.starts_with("lei_issuer_jurisdictions_")
+                    && Path::new(filename)
+                        .extension()
+                        .is_some_and(|ext| ext.eq_ignore_ascii_case("json"))
             },
             |data| serde_json::from_str::<GleifApiResponse<Vec<LeiIssuerJurisdiction>>>(data),
             |filename, jurisdictions| {

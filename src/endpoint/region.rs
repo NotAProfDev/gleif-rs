@@ -17,18 +17,17 @@
 //!
 //! ```rust
 //! use gleif_rs::{client::GleifClient};
-//! use gleif_rs::model::region::Region;
-//! use gleif_rs::model::common::GleifApiResponse;
+//! use gleif_rs::model::{Region, RegionList};
 //!
 //! # async fn run() -> Result<(), Box<dyn std::error::Error>> {
 //! # let client = GleifClient::new();
 //!
 //! // Fetch all regions
-//! let regions: GleifApiResponse<Vec<Region>> = client.regions().send().await?; // strongly typed
+//! let regions: RegionList = client.regions().send().await?; // strongly typed
 //! let regions: serde_json::Value = client.regions().send().await?; // raw JSON
 //!
 //! // Fetch a specific region by its code
-//! let region: GleifApiResponse<Region> = client.region_by_id("AD-03").await?;
+//! let region: Region = client.region_by_id("AD-03").await?;
 //! # Ok(()) }
 //! ```
 //!
@@ -54,7 +53,7 @@ impl GleifClient {
     /// # Examples
     ///
     /// ```rust, ignore
-    /// let regions: GleifApiResponse<Vec<Region>> = client.regions().send().await?; // strongly typed
+    /// let regions: RegionList = client.regions().send().await?; // strongly typed
     /// let regions: serde_json::Value = client.regions().send().await?; // raw JSON
     /// ```
     #[must_use]
@@ -79,7 +78,7 @@ impl GleifClient {
     /// # Examples
     ///
     /// ```rust, ignore
-    /// let region: GleifApiResponse<Region> = client.region_by_id("AD-03").await?; // strongly typed
+    /// let region: Region = client.region_by_id("AD-03").await?; // strongly typed
     /// let region: serde_json::Value = client.region_by_id("AD-03").await?; // raw JSON
     /// ```
     pub async fn region_by_id<R>(&self, id: &str) -> Result<R>

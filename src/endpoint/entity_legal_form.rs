@@ -17,18 +17,17 @@
 //!
 //! ```rust
 //! use gleif_rs::{client::GleifClient};
-//! use gleif_rs::model::entity_legal_form::EntityLegalForm;
-//! use gleif_rs::model::common::GleifApiResponse;
+//! use gleif_rs::model::{EntityLegalForm, EntityLegalFormList};
 //!
 //! # async fn run() -> Result<(), Box<dyn std::error::Error>> {
 //! # let client = GleifClient::new();
 //!
 //! // Fetch all entity legal forms
-//! let legal_forms: GleifApiResponse<Vec<EntityLegalForm>> = client.entity_legal_forms().send().await?; // strongly typed
+//! let legal_forms: EntityLegalFormList = client.entity_legal_forms().send().await?; // strongly typed
 //! let legal_forms: serde_json::Value = client.entity_legal_forms().send().await?; // raw JSON
 //!
 //! // Fetch a specific entity legal form by ELF code
-//! let legal_form: GleifApiResponse<EntityLegalForm> = client.entity_legal_form_by_id("10UR").await?;
+//! let legal_form: EntityLegalForm = client.entity_legal_form_by_id("10UR").await?;
 //! # Ok(()) }
 //! ```
 //!
@@ -54,7 +53,7 @@ impl GleifClient {
     /// # Examples
     ///
     /// ```rust, ignore
-    /// let legal_forms: GleifApiResponse<Vec<EntityLegalForm>> = client.entity_legal_forms().send().await?; // strongly typed
+    /// let legal_forms: EntityLegalFormList = client.entity_legal_forms().send().await?; // strongly typed
     /// let legal_forms: serde_json::Value = client.entity_legal_forms().send().await?; // raw JSON
     /// ```
     #[must_use]
@@ -79,7 +78,7 @@ impl GleifClient {
     /// # Examples
     ///
     /// ```rust, ignore
-    /// let legal_form: GleifApiResponse<EntityLegalForm> = client.entity_legal_form_by_id("10UR").await?; // strongly typed
+    /// let legal_form: EntityLegalForm = client.entity_legal_form_by_id("10UR").await?; // strongly typed
     /// let legal_form: serde_json::Value = client.entity_legal_form_by_id("10UR").await?; // raw JSON
     /// ```
     pub async fn entity_legal_form_by_id<R>(&self, id: &str) -> Result<R>

@@ -17,17 +17,16 @@
 //!
 //! ```rust
 //! use gleif_rs::{client::GleifClient};
-//! use gleif_rs::model::reporting_exception::ReportingException;
-//! use gleif_rs::model::common::GleifApiResponse;
+//! use gleif_rs::model::ReportingException;
 //!
 //! # async fn run() -> Result<(), Box<dyn std::error::Error>> {
 //! # let client = GleifClient::new();
 //!
 //! // Fetch the direct parent reporting exception for a specific LEI
-//! let exception: GleifApiResponse<ReportingException> = client.direct_parent_reporting_exception("5493000IBP32UQZ0KL24").await?;
+//! let exception: ReportingException = client.direct_parent_reporting_exception("5493000IBP32UQZ0KL24").await?;
 //!
 //! // Fetch the ultimate parent reporting exception for a specific LEI
-//! let exception: GleifApiResponse<ReportingException> = client.ultimate_parent_reporting_exception("5493000IBP32UQZ0KL24").await?;
+//! let exception: ReportingException = client.ultimate_parent_reporting_exception("5493000IBP32UQZ0KL24").await?;
 //! # Ok(()) }
 //! ```
 //!
@@ -59,7 +58,7 @@ impl GleifClient {
     /// # Examples
     ///
     /// ```rust, ignore
-    /// let exception: GleifApiResponse<ReportingException> = client.direct_parent_reporting_exception("5493000IBP32UQZ0KL24").await?; // strongly typed
+    /// let exception: ReportingException = client.direct_parent_reporting_exception("5493000IBP32UQZ0KL24").await?;
     /// let exception: serde_json::Value = client.direct_parent_reporting_exception("5493000IBP32UQZ0KL24").await?; // raw JSON
     /// ```
     pub async fn direct_parent_reporting_exception<R>(&self, lei: &str) -> Result<R>
@@ -92,7 +91,7 @@ impl GleifClient {
     /// # Examples
     ///
     /// ```rust, ignore
-    /// let exception: GleifApiResponse<ReportingException> = client.ultimate_parent_reporting_exception("5493000IBP32UQZ0KL24").await?; // strongly typed
+    /// let exception: ReportingException = client.ultimate_parent_reporting_exception("5493000IBP32UQZ0KL24").await?; // strongly typed
     /// let exception: serde_json::Value = client.ultimate_parent_reporting_exception("5493000IBP32UQZ0KL24").await?; // raw JSON
     /// ```
     pub async fn ultimate_parent_reporting_exception<R>(&self, lei: &str) -> Result<R>

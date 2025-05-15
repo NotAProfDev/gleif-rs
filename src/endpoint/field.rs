@@ -16,18 +16,17 @@
 //!
 //! ```rust
 //! use gleif_rs::{client::GleifClient};
-//! use gleif_rs::model::field::Field;
-//! use gleif_rs::model::common::GleifApiResponse;
+//! use gleif_rs::model::{Field, FieldList};
 //!
 //! # async fn run() -> Result<(), Box<dyn std::error::Error>> {
 //! # let client = GleifClient::new();
 //!
 //! // Fetch all available fields
-//! let fields: GleifApiResponse<Vec<Field>> = client.fields().send().await?; // strongly typed
+//! let fields: FieldList = client.fields().send().await?; // strongly typed
 //! let fields: serde_json::Value = client.fields().send().await?; // raw JSON
 //!
 //! // Fetch details of a specific field
-//! let field: GleifApiResponse<Field> = client.field_by_id("LEIREC_LEGAL_NAME").await?;
+//! let field: Field = client.field_by_id("LEIREC_LEGAL_NAME").await?;
 //! # Ok(()) }
 //! ```
 //!
@@ -53,7 +52,7 @@ impl GleifClient {
     /// # Examples
     ///
     /// ```rust, ignore
-    /// let fields: GleifApiResponse<Vec<Field>> = client.fields().send().await?; // strongly typed
+    /// let fields: FieldList = client.fields().send().await?; // strongly typed
     /// let fields: serde_json::Value = client.fields().send().await?; // raw JSON
     /// ```
     #[must_use]
@@ -78,7 +77,7 @@ impl GleifClient {
     /// # Examples
     ///
     /// ```rust, ignore
-    /// let field: GleifApiResponse<Field> = client.field_by_id("LEIREC_LEGAL_NAME").await?; // strongly typed
+    /// let field: Field = client.field_by_id("LEIREC_LEGAL_NAME").await?; // strongly typed
     /// let field: serde_json::Value = client.field_by_id("LEIREC_LEGAL_NAME").await?; // raw JSON
     /// ```
     pub async fn field_by_id<R>(&self, id: &str) -> Result<R>

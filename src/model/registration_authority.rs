@@ -63,9 +63,10 @@ mod tests {
         let dir = Path::new("tests/data/registration_authorities");
         test_model_files(
             |filename| {
-                filename.starts_with("registration_authority_") && Path::new(filename)
-                    .extension()
-                    .is_some_and(|ext| ext.eq_ignore_ascii_case("json"))
+                filename.starts_with("registration_authority_")
+                    && Path::new(filename)
+                        .extension()
+                        .is_some_and(|ext| ext.eq_ignore_ascii_case("json"))
             },
             |data| serde_json::from_str::<GleifApiResponse<RegistrationAuthority>>(data),
             |filename, authority| {

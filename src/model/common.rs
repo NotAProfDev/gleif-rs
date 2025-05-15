@@ -1,3 +1,11 @@
+//! Common model definitions for the GLEIF API.
+//!
+//! This module contains shared data structures used across multiple GLEIF API endpoints. These models
+//! are designed to deserialize JSON:API-compliant responses from the GLEIF API, including metadata,
+//! pagination, and relationship links.
+//!
+//! For endpoint-specific usage and client methods, refer to the corresponding modules in [`crate::endpoint`].
+
 use chrono::{DateTime, Utc};
 use serde::Deserialize;
 

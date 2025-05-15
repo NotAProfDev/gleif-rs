@@ -14,12 +14,11 @@
 //!
 //! ```rust
 //! use gleif_rs::{client::GleifClient};
-//! use gleif_rs::model::isin::Isin;
-//! use gleif_rs::model::common::GleifApiResponse;
+//! use gleif_rs::model::IsinList;
 //!
 //! # async fn run() -> Result<(), Box<dyn std::error::Error>> {
 //! # let client = GleifClient::new();
-//! let isins: GleifApiResponse<Vec<Isin>> = client.isins("5493000IBP32UQZ0KL24").send().await?; // strongly typed
+//! let isins: IsinList = client.isins("5493000IBP32UQZ0KL24").send().await?; // strongly typed
 //! let isins: serde_json::Value = client.isins("5493000IBP32UQZ0KL24").send().await?; // raw JSON
 //! # Ok(()) }
 //! ```
@@ -49,7 +48,7 @@ impl GleifClient {
     /// # Examples
     ///
     /// ```rust, ignore
-    /// let isins: GleifApiResponse<Vec<Isin>> = client.isins("5493000IBP32UQZ0KL24").send().await?; // strongly typed
+    /// let isins: IsinList = client.isins("5493000IBP32UQZ0KL24").send().await?; // strongly typed
     /// let isins: serde_json::Value = client.isins("5493000IBP32UQZ0KL24").send().await?; // raw JSON
     /// ```
     #[must_use]

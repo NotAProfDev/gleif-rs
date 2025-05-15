@@ -1,6 +1,34 @@
-//! Type-safe field names for GLEIF API queries.
+//! Field Module
 //!
-//! Use the `Field` enum to avoid typos and stringly-typed code when building API requests.
+//! This module defines the `Field` enum, which provides type-safe representations of field names
+//! used in GLEIF API queries. By using this enum, developers can avoid typos and reduce reliance
+//! on stringly-typed code when constructing API requests.
+//!
+//! # Features
+//!
+//! - Comprehensive list of known GLEIF API field names, categorized by their purpose.
+//! - Methods for converting fields to their canonical string representations (`as_str`).
+//! - Parsing functionality to convert strings into `Field` variants, with optional restrictions
+//!   on allowed fields (`parse_with_allowed`).
+//! - Integration with formatting and string conversion traits for seamless usage in APIs and logs.
+//!
+//! # Examples
+//!
+//! ## Convert a Field to its String Representation
+//! ```rust
+//! use gleif_rs::field::Field;
+//!
+//! let field = Field::EntityLegalName;
+//! assert_eq!(field.as_str(), "entity.legalName");
+//! ```
+//!
+//! ## Parse a String into a Field
+//! ```rust
+//! use gleif_rs::field::Field;
+//!
+//! let field = Field::parse_with_allowed("lei", None).unwrap();
+//! assert_eq!(field, Field::Lei);
+//! ```
 
 use crate::error::{GleifError, Result};
 use std::fmt;

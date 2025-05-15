@@ -2,6 +2,15 @@
 name = "gleif-rs"
 version = "0.1.0"
 edition = "2024"
+authors = ["NotAProfDev <84450364+NotAProfDev@users.noreply.github.com>"]
+description = "A Rust client for interacting with the GLEIF API and parsing LEI records."
+license = "MIT"
+repository = "https://github.com/NotAProfDev/gleif-rs"
+homepage = "https://github.com/NotAProfDev/gleif-rs"
+documentation = "https://docs.rs/gleif-rs"
+readme = "README.md"
+categories = ["api-bindings", "data-structures", "finance"]
+keywords = ["gleif", "lei", "api", "client", "finance"]
 
 [dependencies]
 thiserror = "2.0.12"
@@ -14,3 +23,4 @@ chrono = { version = "0.4.41", features = ["serde"] }
 
 [dev-dependencies]
 reqwest-retry = "0.7"
+tokio = { version = "1.45.0", features = ["full"] }

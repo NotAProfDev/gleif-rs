@@ -15,14 +15,13 @@
 //!
 //! ```rust
 //! use gleif_rs::{client::GleifClient};
-//! use gleif_rs::model::fuzzy_completion::FuzzyCompletion;
-//! use gleif_rs::model::common::GleifApiResponse;
+//! use gleif_rs::model::FuzzyCompletionList;
 //!
 //! # async fn run() -> Result<(), Box<dyn std::error::Error>> {
 //! # let client = GleifClient::new();
 //!
 //! // Perform a fuzzy search on the `entity.legalName` field
-//! let results: GleifApiResponse<Vec<FuzzyCompletion>> = client
+//! let results: FuzzyCompletionList = client
 //!     .fuzzy_completions("entity.legalName", "factbook")
 //!     .await?;
 //!
@@ -66,7 +65,7 @@ impl GleifClient {
     /// # Examples
     ///
     /// ```rust, ignore
-    /// let fuzzy_completion: GleifApiResponse<Vec<FuzzyCompletion>> = client.fuzzy_completions("entity.legalName", "factbook").send().await?; // strongly typed
+    /// let fuzzy_completion: FuzzyCompletionList = client.fuzzy_completions("entity.legalName", "factbook").send().await?; // strongly typed
     /// let fuzzy_completion: serde_json::Value = client.fuzzy_completions("entity.legalName", "factbook").send().await?; // raw JSON
     /// ```
     pub async fn fuzzy_completions<R>(&self, field: &str, q: &str) -> Result<R>

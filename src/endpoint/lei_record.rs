@@ -22,22 +22,21 @@
 //!
 //! ```rust
 //! use gleif_rs::{client::GleifClient};
-//! use gleif_rs::model::lei_record::LeiRecord;
-//! use gleif_rs::model::common::GleifApiResponse;
+//! use gleif_rs::model::{LeiRecord, LeiRecordList};
 //!
 //! # async fn run() -> Result<(), Box<dyn std::error::Error>> {
 //! # let client = GleifClient::new();
 //!
 //! // Fetching a specific LEI record
-//! let record: GleifApiResponse<LeiRecord> = client.lei_record_by_id("5493000IBP32UQZ0KL24").await?; // strongly typed
+//! let record: LeiRecord = client.lei_record_by_id("5493000IBP32UQZ0KL24").await?; // strongly typed
 //! let record: serde_json::Value = client.lei_record_by_id("5493000IBP32UQZ0KL24").await?; // raw JSON
 //!
 //! // Fetching LEI records with filters
-//! let records: GleifApiResponse<Vec<LeiRecord>> = client.lei_records().filter_eq("status", "ACTIVE").send().await?;
+//! let records: LeiRecordList = client.lei_records().filter_eq("status", "ACTIVE").send().await?;
 //!
 //! // Fetching parent and child relationships
-//! let parent: GleifApiResponse<LeiRecord> = client.ultimate_parent("5493000IBP32UQZ0KL24").await?;
-//! let children: GleifApiResponse<Vec<LeiRecord>> = client.direct_children("5493000IBP32UQZ0KL24").send().await?;
+//! let parent: LeiRecord = client.ultimate_parent("5493000IBP32UQZ0KL24").await?;
+//! let children: LeiRecordList = client.direct_children("5493000IBP32UQZ0KL24").send().await?;
 //! # Ok(()) }
 //! ```
 //!
@@ -67,7 +66,7 @@ impl GleifClient {
     /// # Examples
     ///
     /// ```rust, ignore
-    /// let record: GleifApiResponse<LeiRecord> = client.lei_record_by_id("5493000IBP32UQZ0KL24").await?; // strongly typed
+    /// let record: LeiRecord = client.lei_record_by_id("5493000IBP32UQZ0KL24").await?; // strongly typed
     /// let record: serde_json::Value = client.lei_record_by_id("5493000IBP32UQZ0KL24").await?; // raw JSON
     /// ```
     pub async fn lei_record_by_id<R>(&self, lei: &str) -> Result<R>
@@ -92,7 +91,7 @@ impl GleifClient {
     /// # Examples
     ///
     /// ```rust, ignore
-    /// let records: GleifApiResponse<Vec<LeiRecord>> = client.lei_records().send().await?; // strongly typed
+    /// let records: LeiRecordList = client.lei_records().send().await?; // strongly typed
     /// let records: serde_json::Value = client.lei_records().send().await?; // raw JSON
     /// ```
     #[must_use]
@@ -120,7 +119,7 @@ impl GleifClient {
     /// # Examples
     ///
     /// ```rust, ignore
-    /// let record: GleifApiResponse<LeiRecord> = client.ultimate_parent("5493000IBP32UQZ0KL24").await?; // strongly typed
+    /// let record: LeiRecord = client.ultimate_parent("5493000IBP32UQZ0KL24").await?; // strongly typed
     /// let record: serde_json::Value = client.ultimate_parent("5493000IBP32UQZ0KL24").await?; // raw JSON
     /// ```
     pub async fn ultimate_parent<R>(&self, lei: &str) -> Result<R>
@@ -152,7 +151,7 @@ impl GleifClient {
     /// # Examples
     ///
     /// ```rust, ignore
-    /// let record: GleifApiResponse<LeiRecord> = client.direct_parent("5493000IBP32UQZ0KL24").await?; // strongly typed
+    /// let record: LeiRecord = client.direct_parent("5493000IBP32UQZ0KL24").await?; // strongly typed
     /// let record: serde_json::Value = client.direct_parent("5493000IBP32UQZ0KL24").await?; // raw JSON
     /// ```
     pub async fn direct_parent<R>(&self, lei: &str) -> Result<R>
@@ -182,7 +181,7 @@ impl GleifClient {
     /// # Examples
     ///
     /// ```rust, ignore
-    /// let records: GleifApiResponse<Vec<LeiRecord>> = client.ultimate_children("5493000IBP32UQZ0KL24").send().await?; // strongly typed
+    /// let records: LeiRecordList = client.ultimate_children("5493000IBP32UQZ0KL24").send().await?; // strongly typed
     /// let records: serde_json::Value = client.ultimate_children("5493000IBP32UQZ0KL24").send().await?; // raw JSON
     /// ```
     #[must_use]
@@ -208,7 +207,7 @@ impl GleifClient {
     /// # Examples
     ///
     /// ```rust, ignore
-    /// let records: GleifApiResponse<Vec<LeiRecord>> = client.direct_children("5493000IBP32UQZ0KL24").send().await?; // strongly typed
+    /// let records: LeiRecordList = client.direct_children("5493000IBP32UQZ0KL24").send().await?; // strongly typed
     /// let records: serde_json::Value = client.direct_children("5493000IBP32UQZ0KL24").send().await?; // raw JSON
     /// ```
     #[must_use]
@@ -235,7 +234,7 @@ impl GleifClient {
     /// # Examples
     ///
     /// ```rust, ignore
-    /// let record: GleifApiResponse<LeiRecord> = client.associated_entity("5493000IBP32UQZ0KL24").await?; // strongly typed
+    /// let record: LeiRecord = client.associated_entity("5493000IBP32UQZ0KL24").await?; // strongly typed
     /// let record: serde_json::Value = client.associated_entity("5493000IBP32UQZ0KL24").await?; // raw JSON
     /// ```
     pub async fn associated_entity<R>(&self, lei: &str) -> Result<R>
@@ -266,7 +265,7 @@ impl GleifClient {
     /// # Examples
     ///
     /// ```rust, ignore
-    /// let record: GleifApiResponse<LeiRecord> = client.successor_entity("5493000IBP32UQZ0KL24").await?; // strongly typed
+    /// let record: LeiRecord = client.successor_entity("5493000IBP32UQZ0KL24").await?; // strongly typed
     /// let record: serde_json::Value = client.successor_entity("5493000IBP32UQZ0KL24").await?; // raw JSON
     /// ```
     pub async fn successor_entity<R>(&self, lei: &str) -> Result<R>
@@ -297,7 +296,7 @@ impl GleifClient {
     /// # Examples
     ///
     /// ```rust, ignore
-    /// let record: GleifApiResponse<LeiRecord> = client.managing_lou("5493000IBP32UQZ0KL24").await?; // strongly typed
+    /// let record: LeiRecord = client.managing_lou("5493000IBP32UQZ0KL24").await?; // strongly typed
     /// let record: serde_json::Value = client.managing_lou("5493000IBP32UQZ0KL24").await?; // raw JSON
     /// ```
     pub async fn managing_lou<R>(&self, lei: &str) -> Result<R>

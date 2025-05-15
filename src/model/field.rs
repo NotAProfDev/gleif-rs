@@ -56,9 +56,12 @@ mod tests {
     fn test_deserialize_single_field() {
         let dir = Path::new("tests/data/fields");
         test_model_files(
-            |filename| filename.starts_with("field_") && Path::new(filename)
-                .extension()
-                .is_some_and(|ext| ext.eq_ignore_ascii_case("json")),
+            |filename| {
+                filename.starts_with("field_")
+                    && Path::new(filename)
+                        .extension()
+                        .is_some_and(|ext| ext.eq_ignore_ascii_case("json"))
+            },
             |data| serde_json::from_str::<GleifApiResponse<Field>>(data),
             |filename, field| {
                 assert!(

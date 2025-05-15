@@ -17,18 +17,17 @@
 //!
 //! ```rust
 //! use gleif_rs::{client::GleifClient};
-//! use gleif_rs::model::registration_agent::RegistrationAgent;
-//! use gleif_rs::model::common::GleifApiResponse;
+//! use gleif_rs::model::{RegistrationAgent, RegistrationAgentList};
 //!
 //! # async fn run() -> Result<(), Box<dyn std::error::Error>> {
 //! # let client = GleifClient::new();
 //!
 //! // Fetch all Registration Agents
-//! let agents: GleifApiResponse<Vec<RegistrationAgent>> = client.registration_agents().send().await?; // strongly typed
+//! let agents: RegistrationAgentList = client.registration_agents().send().await?; // strongly typed
 //! let agents: serde_json::Value = client.registration_agents().send().await?; // raw JSON
 //!
 //! // Fetch a specific Registration Agent by ID
-//! let agent: GleifApiResponse<RegistrationAgent> = client.registration_agent_by_id("5d10d4dc9f3764.95022907").await?;
+//! let agent: RegistrationAgent = client.registration_agent_by_id("5d10d4dc9f3764.95022907").await?;
 //! # Ok(()) }
 //! ```
 //!
@@ -56,7 +55,7 @@ impl GleifClient {
     /// # Examples
     ///
     /// ```rust, ignore
-    /// let agents: GleifApiResponse<Vec<RegistrationAgent>> = client.registration_agents().send().await?; // strongly typed
+    /// let agents: RegistrationAgentList = client.registration_agents().send().await?; // strongly typed
     /// let agents: serde_json::Value = client.registration_agents().send().await?; // raw JSON
     /// ```
     #[must_use]
@@ -81,7 +80,7 @@ impl GleifClient {
     /// # Examples
     ///
     /// ```rust, ignore
-    /// let agent: GleifApiResponse<RegistrationAgent> = client.registration_agent_by_id("5d10d4dc9f3764.95022907").await?; // strongly typed
+    /// let agent: RegistrationAgent = client.registration_agent_by_id("5d10d4dc9f3764.95022907").await?; // strongly typed
     /// let agent: serde_json::Value = client.registration_agent_by_id("5d10d4dc9f3764.95022907").await?; // raw JSON
     /// ```
     pub async fn registration_agent_by_id<R>(&self, id: &str) -> Result<R>

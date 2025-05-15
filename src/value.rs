@@ -1,6 +1,30 @@
-//! Type-safe enums for common GLEIF API field values.
+//! This module defines type-safe enums for common GLEIF API field values.
 //!
-//! These enums help prevent typos and invalid values when constructing API requests, improving reliability and clarity.
+//! The enums in this module represent specific fields used in the GLEIF API, such as
+//! `EntityCategory`, `RegistrationStatus`, and `ConformityFlag`. By using these enums,
+//! developers can avoid typos and invalid values when constructing API requests, ensuring
+//! better reliability and clarity in the code.
+//!
+//! Each enum provides:
+//! - A `const fn as_str()` method to retrieve the canonical string representation for the API.
+//! - Implementations of `fmt::Display` for ergonomic formatting and logging.
+//! - Implementations of `AsRef<str>` to allow seamless usage in APIs expecting `&str`.
+//!
+//! # Examples
+//!
+//! ```rust
+//! use gleif_rs::value::{EntityCategory, RegistrationStatus, ConformityFlag};
+//!
+//! let category = EntityCategory::Branch;
+//! assert_eq!(category.as_str(), "BRANCH");
+//! assert_eq!(category.to_string(), "BRANCH");
+//!
+//! let status = RegistrationStatus::Lapsed;
+//! assert_eq!(status.as_str(), "LAPSED");
+//!
+//! let flag = ConformityFlag::NonConforming;
+//! assert_eq!(flag.as_str(), "NON_CONFORMING");
+//! ```
 
 use std::fmt;
 

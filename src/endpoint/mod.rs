@@ -3,6 +3,25 @@
 //! This module provides convenient, idiomatic access to all primary GLEIF API endpoints
 //! using the generic `GleifRequestBuilder` and consistent naming.
 //!
+//! The submodules include:
+//! - `auto_completion`: Auto-completion endpoint.
+//! - `country`: Country-related endpoints.
+//! - `entity_legal_form`: Entity legal form endpoints.
+//! - `field`: Field-related endpoints.
+//! - `field_modification`: Field modification endpoints.
+//! - `fuzzy_completion`: Fuzzy completion endpoint.
+//! - `isin`: ISIN-related endpoints.
+//! - `jurisdiction`: Jurisdiction-related endpoints.
+//! - `lei_issuer`: LEI issuer endpoints.
+//! - `lei_record`: LEI record endpoints.
+//! - `official_organizational_role`: Official organizational role endpoints.
+//! - `region`: Region-related endpoints.
+//! - `registration_agent`: Registration agent endpoints.
+//! - `registration_authority`: Registration authority endpoints.
+//! - `relationship_record`: Relationship record endpoints.
+//! - `reporting_exception`: Reporting exception endpoints.
+//! - `vlei_issuer`: vLEI issuer endpoints.
+//!
 //! # Examples
 //!
 //! ## Working with collections

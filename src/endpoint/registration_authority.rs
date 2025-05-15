@@ -19,18 +19,17 @@
 //!
 //! ```rust
 //! use gleif_rs::{client::GleifClient};
-//! use gleif_rs::model::registration_authority::RegistrationAuthority;
-//! use gleif_rs::model::common::GleifApiResponse;
+//! use gleif_rs::model::{RegistrationAuthority, RegistrationAuthorityList};
 //!
 //! # async fn run() -> Result<(), Box<dyn std::error::Error>> {
 //! # let client = GleifClient::new();
 //!
 //! // Fetch all Registration Authorities
-//! let authorities: GleifApiResponse<Vec<RegistrationAuthority>> = client.registration_authorities().send().await?; // strongly typed
+//! let authorities: RegistrationAuthorityList = client.registration_authorities().send().await?; // strongly typed
 //! let authorities: serde_json::Value = client.registration_authorities().send().await?; // raw JSON
 //!
 //! // Fetch a specific Registration Authority by RA List Code
-//! let authority: GleifApiResponse<RegistrationAuthority> = client.registration_authority_by_id("RA000001").await?;
+//! let authority: RegistrationAuthority = client.registration_authority_by_id("RA000001").await?;
 //! # Ok(()) }
 //! ```
 //!
@@ -57,7 +56,7 @@ impl GleifClient {
     /// # Examples
     ///
     /// ```rust, ignore
-    /// let authorities: GleifApiResponse<Vec<RegistrationAuthority>> = client.registration_authorities().send().await?; // strongly typed
+    /// let authorities: RegistrationAuthorityList = client.registration_authorities().send().await?; // strongly typed
     /// let authorities: serde_json::Value = client.registration_authorities().send().await?; // raw JSON
     /// ```
     #[must_use]
@@ -82,7 +81,7 @@ impl GleifClient {
     /// # Examples
     ///
     /// ```rust, ignore
-    /// let authority: GleifApiResponse<RegistrationAuthority> = client.registration_authority_by_id("RA000001").await?; // strongly typed
+    /// let authority: RegistrationAuthority = client.registration_authority_by_id("RA000001").await?; // strongly typed
     /// let authority: serde_json::Value = client.registration_authority_by_id("RA000001").await?; // raw JSON
     /// ```
     pub async fn registration_authority_by_id<R>(&self, id: &str) -> Result<R>

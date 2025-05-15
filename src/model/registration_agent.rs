@@ -44,9 +44,12 @@ mod tests {
     fn test_deserialize_single_registration_agent() {
         let dir = Path::new("tests/data/registration_agents");
         test_model_files(
-            |filename| filename.starts_with("registration_agent_") && Path::new(filename)
-                .extension()
-                .is_some_and(|ext| ext.eq_ignore_ascii_case("json")),
+            |filename| {
+                filename.starts_with("registration_agent_")
+                    && Path::new(filename)
+                        .extension()
+                        .is_some_and(|ext| ext.eq_ignore_ascii_case("json"))
+            },
             |data| serde_json::from_str::<GleifApiResponse<RegistrationAgent>>(data),
             |filename, agent| {
                 assert!(

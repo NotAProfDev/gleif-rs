@@ -19,18 +19,17 @@
 //!
 //! ```rust
 //! use gleif_rs::{client::GleifClient};
-//! use gleif_rs::model::jurisdiction::Jurisdiction;
-//! use gleif_rs::model::common::GleifApiResponse;
+//! use gleif_rs::model::{Jurisdiction, JurisdictionList};
 //!
 //! # async fn run() -> Result<(), Box<dyn std::error::Error>> {
 //! # let client = GleifClient::new();
 //!
 //! // Fetch all jurisdictions
-//! let jurisdictions: GleifApiResponse<Vec<Jurisdiction>> = client.jurisdictions().send().await?; // strongly typed
+//! let jurisdictions: JurisdictionList = client.jurisdictions().send().await?; // strongly typed
 //! let jurisdictions: serde_json::Value = client.jurisdictions().send().await?; // raw JSON
 //!
 //! // Fetch a specific jurisdiction by its code
-//! let jurisdiction: GleifApiResponse<Jurisdiction> = client.jurisdiction_by_id("US").await?;
+//! let jurisdiction: Jurisdiction = client.jurisdiction_by_id("US").await?;
 //! # Ok(()) }
 //! ```
 //!
@@ -56,7 +55,7 @@ impl GleifClient {
     /// # Examples
     ///
     /// ```rust, ignore
-    /// let jurisdictions: GleifApiResponse<Vec<Jurisdiction>> = client.jurisdictions().send().await?; // strongly typed
+    /// let jurisdictions: JurisdictionList = client.jurisdictions().send().await?; // strongly typed
     /// let jurisdictions: serde_json::Value = client.jurisdictions().send().await?; // raw JSON
     /// ```
     #[must_use]
@@ -81,7 +80,7 @@ impl GleifClient {
     /// # Examples
     ///
     /// ```rust, ignore
-    /// let jurisdiction: GleifApiResponse<Jurisdiction> = client.jurisdiction_by_id("US").await?; // strongly typed
+    /// let jurisdiction: Jurisdiction = client.jurisdiction_by_id("US").await?; // strongly typed
     /// let jurisdiction: serde_json::Value = client.jurisdiction_by_id("US").await?; // raw JSON
     /// ```
     pub async fn jurisdiction_by_id<R>(&self, id: &str) -> Result<R>

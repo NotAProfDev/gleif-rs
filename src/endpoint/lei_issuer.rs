@@ -21,27 +21,26 @@
 //!
 //! ```rust
 //! use gleif_rs::{client::GleifClient};
-//! use gleif_rs::model::lei_issuer::{LeiIssuer, LeiIssuerJurisdiction};
-//! use gleif_rs::model::common::GleifApiResponse;
+//! use gleif_rs::model::{LeiIssuer, LeiIssuerList, LeiIssuerJurisdictionList};
 //!
 //! # async fn run() -> Result<(), Box<dyn std::error::Error>> {
 //! # let client = GleifClient::new();
 //!
 //! // Fetch all LEI Issuers
-//! let issuers: GleifApiResponse<Vec<LeiIssuer>> = client.lei_issuers().send().await?; // strongly typed
+//! let issuers: LeiIssuerList = client.lei_issuers().send().await?; // strongly typed
 //! let issuers: serde_json::Value = client.lei_issuers().send().await?; // raw JSON
 //!
 //! // Fetch a specific LEI Issuer by LEI
-//! let issuer: GleifApiResponse<LeiIssuer> = client.lei_issuer_by_id("5493000IBP32UQZ0KL24").await?;
+//! let issuer: LeiIssuer = client.lei_issuer_by_id("5493000IBP32UQZ0KL24").await?;
 //!
 //! // Fetch jurisdictions for a specific LEI Issuer
-//! let jurisdictions: GleifApiResponse<LeiIssuerJurisdiction> = client
+//! let jurisdictions: LeiIssuerJurisdictionList = client
 //!     .lei_issuer_jurisdictions("549300IBP32UQZ0KL24")
 //!     .send()
 //!     .await?;
 //!
 //! // Fetch the LEI Issuer responsible for a specific LEI
-//! let issuer: GleifApiResponse<LeiIssuer> = client
+//! let issuer: LeiIssuer = client
 //!     .lei_issuer("5493000IBP32UQZ0KL24")
 //!     .await?;
 //! # Ok(()) }
@@ -75,7 +74,7 @@ impl GleifClient {
     /// # Examples
     ///
     /// ```rust, ignore
-    /// let issuer: GleifApiResponse<LeiIssuer> = client.lei_issuer("5493000IBP32UQZ0KL24").await?; // strongly typed
+    /// let issuer: LeiIssuer = client.lei_issuer("5493000IBP32UQZ0KL24").await?; // strongly typed
     /// let issuer: serde_json::Value = client.lei_issuer("5493000IBP32UQZ0KL24").await?; // raw JSON
     /// ```
     pub async fn lei_issuer<R>(&self, lei: &str) -> Result<R>
@@ -102,7 +101,7 @@ impl GleifClient {
     /// # Examples
     ///
     /// ```rust, ignore
-    /// let issuers: GleifApiResponse<Vec<LeiIssuer>> = client.lei_issuers().send().await?; // strongly typed
+    /// let issuers: LeiIssuerList = client.lei_issuers().send().await?; // strongly typed
     /// let issuers: serde_json::Value = client.lei_issuers().send().await?; // raw JSON
     /// ```
     #[must_use]
@@ -128,7 +127,7 @@ impl GleifClient {
     /// # Examples
     ///
     /// ```rust, ignore
-    /// let issuer: GleifApiResponse<LeiIssuer> = client.lei_issuer_by_id("5493000IBP32UQZ0KL24").await?; // strongly typed
+    /// let issuer: LeiIssuer = client.lei_issuer_by_id("5493000IBP32UQZ0KL24").await?; // strongly typed
     /// let issuer: serde_json::Value = client.lei_issuer_by_id("5493000IBP32UQZ0KL24").await?; // raw JSON
     /// ```
     pub async fn lei_issuer_by_id<R>(&self, lei: &str) -> Result<R>
@@ -156,7 +155,7 @@ impl GleifClient {
     /// # Examples
     ///
     /// ```rust, ignore
-    /// let jurisdictions: GleifApiResponse<LeiIssuerJurisdictions> = client
+    /// let jurisdictions: LeiIssuerJurisdictionsList = client
     ///     .lei_issuer_jurisdictions("5493000IBP32UQZ0KL24")
     ///     .send()
     ///     .await?;

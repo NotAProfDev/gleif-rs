@@ -1,4 +1,19 @@
 //! Generic request builder for the GLEIF API client.
+//!
+//! This module provides the `GleifRequestBuilder` struct, which is a flexible and reusable
+//! builder for constructing and executing requests to the GLEIF API. It allows users to
+//! customize various aspects of the request, such as HTTP method, endpoint path, query
+//! parameters, filters, sorting, and pagination.
+//!
+//! The builder pattern is used to enable a fluent and ergonomic API for constructing requests.
+//! Each method returns a modified instance of the builder, allowing for method chaining.
+//!
+//! # Features
+//!
+//! - Add filters for exact matches, ranges, inclusion/exclusion, and comparisons.
+//! - Specify sorting and pagination options.
+//! - Add custom query parameters.
+//! - Execute the request and deserialize the response into a strongly-typed struct or raw JSON.
 
 use crate::{
     client::GleifClient,

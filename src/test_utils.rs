@@ -1,3 +1,25 @@
+//! This module provides utility functions for testing the `model` module.
+//!
+//! The utilities in this module are designed to assist with testing the deserialization
+//! and validation of model files. These functions simplify the process of iterating over
+//! test files, applying filters, and validating the correctness of the deserialized data.
+//!
+//! # Example
+//!
+//! ```rust
+//! use std::path::Path;
+//! use crate::test_utils::test_model_files;
+//!
+//! let test_dir = Path::new("path/to/test/files");
+//! test_model_files(
+//!     |filename| filename.ends_with(".json"),
+//!     |data| serde_json::from_str::<MyModel>(data),
+//!     |filename, value| assert!(value.is_valid(), "Invalid data in {filename}"),
+//!     test_dir,
+//! );
+//! ```
+
+//! Test utilities for the `model` module.
 use std::fs;
 use std::path::Path;
 
