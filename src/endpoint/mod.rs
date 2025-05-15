@@ -113,10 +113,12 @@
 //! # }
 //! ```
 
+pub mod auto_completion;
 pub mod country;
 pub mod entity_legal_form;
 pub mod field;
 pub mod field_modification;
+pub mod fuzzy_completion;
 pub mod isin;
 pub mod jurisdiction;
 pub mod lei_issuer;

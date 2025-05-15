@@ -2,6 +2,7 @@
 //!
 //! Use the `Field` enum to avoid typos and stringly-typed code when building API requests.
 
+use crate::error::{GleifError, Result};
 use std::fmt;
 
 /// Enum for known GLEIF API field names.
@@ -129,6 +130,61 @@ impl Field {
             // Cross-field search
             Field::Fulltext => "fulltext",
         }
+    }
+
+    /// Parse a string to a Field, optionally restricting to a set of allowed values.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`GleifError::FieldParseError`] if the input string is not a valid field name or is not allowed.
+    pub fn parse_with_allowed(input: &str, allowed: Option<&[Field]>) -> Result<Field> {
+        let parsed = match input {
+            "lei" => Field::Lei,
+            "bic" => Field::Bic,
+            "isin" => Field::Isin,
+            "entity.legalName" => Field::EntityLegalName,
+            "entity.otherNames" => Field::EntityOtherNames,
+            "entity.legalForm" => Field::EntityLegalForm,
+            "entity.legalForm.id" => Field::EntityLegalFormId,
+            "entity.legalForm.code" => Field::EntityLegalFormCode,
+            "entity.category" => Field::EntityCategory,
+            "entity.legalAddress.country" => Field::EntityLegalAddressCountry,
+            "entity.legalAddress.line1" => Field::EntityLegalAddressLine1,
+            "entity.legalAddress.city" => Field::EntityLegalAddressCity,
+            "entity.legalAddress.postalCode" => Field::EntityLegalAddressPostalCode,
+            "entity.headquartersAddress.country" => Field::EntityHqAddressCountry,
+            "entity.headquartersAddress.line1" => Field::EntityHqAddressLine1,
+            "entity.headquartersAddress.city" => Field::EntityHqAddressCity,
+            "entity.headquartersAddress.postalCode" => Field::EntityHqAddressPostalCode,
+            "entity.registeredAs" => Field::EntityBusinessRegisterNumber,
+            "entity.jurisdiction" => Field::EntityJurisdiction,
+            "registration.status" => Field::RegistrationStatus,
+            "registration.initialRegistrationDate" => Field::RegistrationInitialRegistrationDate,
+            "registration.lastUpdateDate" => Field::RegistrationLastUpdateDate,
+            "registration.nextRenewalDate" => Field::RegistrationNextRenewalDate,
+            "registration.managingLou" => Field::RegistrationManagingLou,
+            "conformity_flag" => Field::ConformityFlag,
+            "owns" => Field::Owns,
+            "ownedBy" => Field::OwnedBy,
+            "relationship.startDate" => Field::RelationshipStartDate,
+            "relationship.endDate" => Field::RelationshipEndDate,
+            "relationship.status" => Field::RelationshipStatus,
+            "relationship.type" => Field::RelationshipType,
+            "fulltext" => Field::Fulltext,
+            _ => {
+                return Err(GleifError::FieldParseError(
+                    "Unknown field name".to_string(),
+                ));
+            }
+        };
+        if let Some(allowed) = allowed {
+            if !allowed.contains(&parsed) {
+                return Err(GleifError::FieldParseError(
+                    "Field not allowed for this operation".to_string(),
+                ));
+            }
+        }
+        Ok(parsed)
     }
 }
 

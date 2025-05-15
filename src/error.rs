@@ -53,6 +53,10 @@ pub enum GleifError {
     /// Error when the URL is invalid
     #[error(transparent)]
     UrlParseError(#[from] url::ParseError),
+
+    /// Error when parsing a field name fails or the field is not allowed
+    #[error("Field parse error: {0}")]
+    FieldParseError(String),
 }
 
 impl GleifError {
@@ -61,7 +65,7 @@ impl GleifError {
     pub fn url(&self) -> Option<&Url> {
         match self {
             GleifError::ReqwestMiddlewareError(inner) => inner.url(),
-            GleifError::UrlParseError(_) => None,
+            GleifError::UrlParseError(_) | GleifError::FieldParseError(_) => None,
         }
     }
 
@@ -72,7 +76,7 @@ impl GleifError {
     pub fn url_mut(&mut self) -> Option<&mut Url> {
         match self {
             GleifError::ReqwestMiddlewareError(inner) => inner.url_mut(),
-            GleifError::UrlParseError(_) => None,
+            GleifError::UrlParseError(_) | GleifError::FieldParseError(_) => None,
         }
     }
 
@@ -84,6 +88,7 @@ impl GleifError {
                 GleifError::ReqwestMiddlewareError(inner.with_url(url))
             }
             GleifError::UrlParseError(e) => GleifError::UrlParseError(e),
+            GleifError::FieldParseError(e) => GleifError::FieldParseError(e),
         }
     }
 
@@ -95,6 +100,7 @@ impl GleifError {
                 GleifError::ReqwestMiddlewareError(inner.without_url())
             }
             GleifError::UrlParseError(e) => GleifError::UrlParseError(e),
+            GleifError::FieldParseError(e) => GleifError::FieldParseError(e),
         }
     }
 
@@ -103,7 +109,7 @@ impl GleifError {
     pub fn is_middleware(&self) -> bool {
         match self {
             GleifError::ReqwestMiddlewareError(inner) => inner.is_middleware(),
-            GleifError::UrlParseError(_) => false,
+            GleifError::UrlParseError(_) | GleifError::FieldParseError(_) => false,
         }
     }
 
@@ -112,7 +118,7 @@ impl GleifError {
     pub fn is_builder(&self) -> bool {
         match self {
             GleifError::ReqwestMiddlewareError(inner) => inner.is_builder(),
-            GleifError::UrlParseError(_) => false,
+            GleifError::UrlParseError(_) | GleifError::FieldParseError(_) => false,
         }
     }
 
@@ -121,7 +127,7 @@ impl GleifError {
     pub fn is_redirect(&self) -> bool {
         match self {
             GleifError::ReqwestMiddlewareError(inner) => inner.is_redirect(),
-            GleifError::UrlParseError(_) => false,
+            GleifError::UrlParseError(_) | GleifError::FieldParseError(_) => false,
         }
     }
 
@@ -130,7 +136,7 @@ impl GleifError {
     pub fn is_status(&self) -> bool {
         match self {
             GleifError::ReqwestMiddlewareError(inner) => inner.is_status(),
-            GleifError::UrlParseError(_) => false,
+            GleifError::UrlParseError(_) | GleifError::FieldParseError(_) => false,
         }
     }
 
@@ -139,7 +145,7 @@ impl GleifError {
     pub fn is_timeout(&self) -> bool {
         match self {
             GleifError::ReqwestMiddlewareError(inner) => inner.is_timeout(),
-            GleifError::UrlParseError(_) => false,
+            GleifError::UrlParseError(_) | GleifError::FieldParseError(_) => false,
         }
     }
 
@@ -148,7 +154,7 @@ impl GleifError {
     pub fn is_request(&self) -> bool {
         match self {
             GleifError::ReqwestMiddlewareError(inner) => inner.is_request(),
-            GleifError::UrlParseError(_) => false,
+            GleifError::UrlParseError(_) | GleifError::FieldParseError(_) => false,
         }
     }
 
@@ -157,7 +163,7 @@ impl GleifError {
     pub fn is_connect(&self) -> bool {
         match self {
             GleifError::ReqwestMiddlewareError(inner) => inner.is_connect(),
-            GleifError::UrlParseError(_) => false,
+            GleifError::UrlParseError(_) | GleifError::FieldParseError(_) => false,
         }
     }
 
@@ -166,7 +172,7 @@ impl GleifError {
     pub fn is_body(&self) -> bool {
         match self {
             GleifError::ReqwestMiddlewareError(inner) => inner.is_body(),
-            GleifError::UrlParseError(_) => false,
+            GleifError::UrlParseError(_) | GleifError::FieldParseError(_) => false,
         }
     }
 
@@ -175,7 +181,7 @@ impl GleifError {
     pub fn is_decode(&self) -> bool {
         match self {
             GleifError::ReqwestMiddlewareError(inner) => inner.is_decode(),
-            GleifError::UrlParseError(_) => false,
+            GleifError::UrlParseError(_) | GleifError::FieldParseError(_) => false,
         }
     }
 
@@ -184,7 +190,7 @@ impl GleifError {
     pub fn status(&self) -> Option<reqwest::StatusCode> {
         match self {
             GleifError::ReqwestMiddlewareError(inner) => inner.status(),
-            GleifError::UrlParseError(_) => None,
+            GleifError::UrlParseError(_) | GleifError::FieldParseError(_) => None,
         }
     }
 }

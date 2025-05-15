@@ -85,14 +85,3 @@ pub struct RelatedLink {
     /// The LEI record.
     pub lei_record: Option<String>,
 }
-
-/// Enum for all top-level GLEIF resource types, for polymorphic deserialization.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
-#[serde(tag = "type")]
-pub enum GleifResource {
-    #[serde(rename = "lei-records")]
-    LeiRecord,
-    #[serde(rename = "relationship-records")]
-    RelationshipRecord,
-    // Add more resource types as needed
-}

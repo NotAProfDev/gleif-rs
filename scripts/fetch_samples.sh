@@ -43,6 +43,8 @@
 #   - registration_authorities/registration_authority_<ID>.json for specific registration authority details by ID
 #   - registration_agents/registration_agents_all.json for all registration agents
 #   - registration_agents/registration_agent_<ID>.json for specific registration agent details by ID
+#   - fuzzy_completions/fuzzycompletions_all.json for fuzzy completions endpoint data
+#   - autocompletions/autocompletions_all.json for autocompletions endpoint data
 # ---------------------------------------------
 
 set -euo pipefail
@@ -68,6 +70,8 @@ JURISDICTION_DIR="$DATA_DIR/jurisdictions"
 REGION_DIR="$DATA_DIR/regions"
 REGISTRATION_AUTHORITY_DIR="$DATA_DIR/registration_authorities"
 REGISTRATION_AGENT_DIR="$DATA_DIR/registration_agents"
+FUZZY_COMPLETION_DIR="$DATA_DIR/fuzzy_completions"
+AUTOCOMPLETION_DIR="$DATA_DIR/auto_completions"
 
 # Extra endpoints
 BASE_URL="https://api.gleif.org/api/v1/"
@@ -126,7 +130,7 @@ OUTPUT_DIRS=(
   "$LEI_RECORDS_DIR" "$RELATIONSHIPS_DIR" "$REPORTING_EXCEPTIONS_DIR" "$ISINS_DIR"
   "$LEI_ISSUERS_DIR" "$VLEI_ISSUERS_DIR" "$FIELD_MODIFICATIONS_DIR" "$FIELD_DIR"
   "$COUNTRY_DIR" "$ENTITY_LEGAL_FORM_DIR" "$OFFICIAL_ORG_ROLE_DIR" "$JURISDICTION_DIR"
-  "$REGION_DIR" "$REGISTRATION_AUTHORITY_DIR" "$REGISTRATION_AGENT_DIR"
+  "$REGION_DIR" "$REGISTRATION_AUTHORITY_DIR" "$REGISTRATION_AGENT_DIR" "$FUZZY_COMPLETION_DIR" "$AUTOCOMPLETION_DIR"
 )
 
 # Global progress counter
@@ -164,7 +168,8 @@ calculate_total_fetches() {
     1 + n_jurisdiction_ids + \
     1 + n_region_ids + \
     1 + n_ra_ids + \
-    1 + n_agent_ids)) # field_modifications, fields, countries, entity legal forms, org roles, jurisdictions, regions endpoints, registration authorities, registration agents
+    1 + n_agent_ids + \
+    1)) # field_modifications, fields, countries, entity legal forms, org roles, jurisdictions, regions endpoints, registration authorities, registration agents, fuzzy completions, autocompletions
 }
 
 # Print usage information
@@ -318,6 +323,14 @@ fetch_registration_agents() {
   done
 }
 
+fetch_fuzzy_completions() {
+  fetch_json "${BASE_URL}fuzzycompletions?field=fulltext&q=factbook" "$FUZZY_COMPLETION_DIR/fuzzycompletions_all.json"
+}
+
+fetch_autocompletions() {
+  fetch_json "${BASE_URL}autocompletions?field=fulltext&q=Global" "$AUTOCOMPLETION_DIR/autocompletions_all.json"
+}
+
 # Main entry point
 main() {
   # Ensure output directories exist
@@ -371,6 +384,12 @@ main() {
 
   echo "Fetching registration agents..."
   fetch_registration_agents
+
+  echo "Fetching fuzzy completions..."
+  fetch_fuzzy_completions
+
+  echo "Fetching autocompletions..."
+  fetch_autocompletions
 
   echo "Script completed successfully."
 }
