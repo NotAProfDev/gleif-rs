@@ -59,6 +59,11 @@ async fn test_lei_records_endpoint() {
     );
     let data = value.get("data").expect("Missing 'data' field in response");
     assert!(data.is_array(), "'data' field is not an array");
+    // Check that the number of records is at most 3
+    assert!(
+        data.as_array().unwrap().len() <= 3,
+        "More than 3 records returned in response"
+    );
 
     // Strongly typed example
     let result_typed = client
@@ -67,7 +72,7 @@ async fn test_lei_records_endpoint() {
         .filter_eq(Field::RegistrationStatus, RegistrationStatus::Issued)
         .sort(Field::EntityLegalName)
         .page_size(3)
-        .send::<LeiRecordList>()
+        .send()
         .await;
 
     assert!(
@@ -75,7 +80,7 @@ async fn test_lei_records_endpoint() {
         "Expected Ok result from strongly typed lei_records endpoint, got: {:?}",
         result_typed
     );
-    let list = result_typed.unwrap();
+    let list: LeiRecordList = result_typed.unwrap();
     // Check that the number of records is at most 3
     assert!(
         list.data.len() <= 3,
