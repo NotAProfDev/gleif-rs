@@ -12,8 +12,7 @@ async fn test_lei_record_by_id() {
     let result = client.lei_record_by_id(lei).await;
     assert!(
         result.is_ok(),
-        "Expected Ok result from lei_record_by_id, got: {:?}",
-        result
+        "Expected Ok result from lei_record_by_id, got: {result:?}"
     );
     let value: serde_json::Value = result.unwrap();
     // Check that the response contains a 'data' field
@@ -23,8 +22,7 @@ async fn test_lei_record_by_id() {
     let result_typed = client.lei_record_by_id::<LeiRecord>(lei).await;
     assert!(
         result_typed.is_ok(),
-        "Expected Ok result from strongly typed lei_record_by_id, got: {:?}",
-        result_typed
+        "Expected Ok result from strongly typed lei_record_by_id, got: {result_typed:?}"
     );
     let record = result_typed.unwrap();
     // Check that the LEI in the strongly typed response matches the requested LEI
@@ -47,15 +45,13 @@ async fn test_lei_records_endpoint() {
         .await;
     assert!(
         result.is_ok(),
-        "Expected Ok result from lei_records, got: {:?}",
-        result
+        "Expected Ok result from lei_records, got: {result:?}"
     );
     let value: serde_json::Value = result.unwrap();
     // Check that the response contains a 'data' field which is an array
     assert!(
         value.get("data").is_some(),
-        "Expected 'data' field in response, got: {:?}",
-        value
+        "Expected 'data' field in response, got: {value:?}"
     );
     let data = value.get("data").expect("Missing 'data' field in response");
     assert!(data.is_array(), "'data' field is not an array");
@@ -77,8 +73,7 @@ async fn test_lei_records_endpoint() {
 
     assert!(
         result_typed.is_ok(),
-        "Expected Ok result from strongly typed lei_records endpoint, got: {:?}",
-        result_typed
+        "Expected Ok result from strongly typed lei_records endpoint, got: {result_typed:?}"
     );
     let list: LeiRecordList = result_typed.unwrap();
     // Check that the number of records is at most 3
