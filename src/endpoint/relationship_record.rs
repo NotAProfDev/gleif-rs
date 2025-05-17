@@ -20,7 +20,7 @@
 //! # Errors
 //!
 //! Errors may occur during network communication, server-side issues, or deserialization of the response.
-//! These errors are returned as [`GleifError`] instances.
+//! These errors are returned as [`crate::error::GleifError`] instances.
 //!
 //! # Examples
 //!
@@ -62,7 +62,7 @@ impl GleifClient {
     ///
     /// # Errors
     ///
-    /// This method returns a [`GleifError`] in the following cases:
+    /// This method returns a [`crate::error::GleifError`] in the following cases:
     /// * The request could not be completed due to network or server issues.
     /// * The response body could not be deserialized into the expected type.
     ///
@@ -93,7 +93,7 @@ impl GleifClient {
     ///
     /// # Errors
     ///
-    /// This method returns a [`GleifError`] in the following cases:
+    /// This method returns a [`crate::error::GleifError`] in the following cases:
     /// * The request could not be completed due to network or server issues.
     /// * The response body could not be deserialized into the expected type.
     ///

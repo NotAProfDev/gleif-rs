@@ -99,14 +99,14 @@
 //!
 //! ## Modules
 //!
-//! - `client`: Main API client.
-//! - `endpoint`: Definitions of API endpoints.
-//! - `error`: Error types and handling.
-//! - `field`: Type-safe representations of API field names.
-//! - `model`: Data models for API responses.
-//! - `request_builder`: Utilities for building API requests.
-//! - `test_utils`: Utilities for testing the library.
-//! - `value`: Type-safe enums for common API field values.
+//! - [`crate::client`]: Main API client.
+//! - [`crate::endpoint`]: Definitions of API endpoints.
+//! - [`crate::error`]: Error types and handling.
+//! - [`crate::field`]: Type-safe representations of API field names.
+//! - [`crate::model`]: Data models for API responses.
+//! - [`crate::request_builder`]: Utilities for building API requests.
+//! - [`crate::test_utils`]: Utilities for testing the library.
+//! - [`crate::value`]: Type-safe enums for common API field values.
 //!
 //! ## Constants
 //!

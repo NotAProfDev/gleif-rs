@@ -164,7 +164,7 @@ impl Field {
     ///
     /// # Errors
     ///
-    /// Returns [`GleifError::FieldParseError`] if the input string is not a valid field name or is not allowed.
+    /// Returns [`crate::error::GleifError::FieldParseError`] if the input string is not a valid field name or is not allowed.
     pub fn parse_with_allowed(input: &str, allowed: Option<&[Field]>) -> Result<Field> {
         let parsed = match input {
             "lei" => Field::Lei,

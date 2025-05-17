@@ -71,7 +71,7 @@ pub enum OtherAddressType {
 /// Represents the type of the transliterated address.
 #[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
-pub enum TransliteratedAdressType {
+pub enum TransliteratedAddressType {
     /// Registered address of the entity in the legal jurisdiction, transliterated to ASCII characters, auto-transliterated by the managing LOU.
     AutoAsciiTransliteratedLegalAddress,
     /// Address of the headquarters of the entity, transliterated to ASCII characters, auto-transliterated by the managing LOU.
@@ -289,6 +289,7 @@ pub enum MeasurementMethodType {
 #[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "UPPERCASE")]
 pub enum QuantifierUnitsType {
+    /// Percentage type for representing percentage values.
     Percentage,
 }
 
@@ -334,7 +335,7 @@ pub enum CorroborationDocuments {
     RegulatoryFiling,
     /// Other documents supporting the validation of legal entities and/or their relationships.
     SupportingDocuments,
-    /// Contract(s) attesting to the validity of egal entities and/or their relationships.
+    /// Contract(s) attesting to the validity of legal entities and/or their relationships.
     Contracts,
     /// Other official document(s) attesting to the validity of legal entities and/or their relationships.
     OtherOfficialDocuments,
@@ -356,6 +357,7 @@ pub enum CorroborationLevel {
 
 // -- Other Enums --
 
+/// `ELFStatus` represents the status of an Entity Legal Form (ELF).
 #[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum ELFStatus {

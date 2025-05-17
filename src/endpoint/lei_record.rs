@@ -59,7 +59,7 @@ impl GleifClient {
     ///
     /// # Errors
     ///
-    /// This method returns a [`GleifError`] in the following cases:
+    /// This method returns a [`crate::error::GleifError`] in the following cases:
     /// * The request could not be completed due to network or server issues.
     /// * The response body could not be deserialized into the expected type.
     ///
@@ -112,7 +112,7 @@ impl GleifClient {
     ///
     /// # Errors
     ///
-    /// This method returns a [`GleifError`] in the following cases:
+    /// This method returns a [`crate::error::GleifError`] in the following cases:
     /// * The request could not be completed due to network or server issues.
     /// * The response body could not be deserialized into the expected type.
     ///
@@ -144,7 +144,7 @@ impl GleifClient {
     ///
     /// # Errors
     ///
-    /// This method returns a [`GleifError`] in the following cases:
+    /// This method returns a [`crate::error::GleifError`] in the following cases:
     /// * The request could not be completed due to network or server issues.
     /// * The response body could not be deserialized into the expected type.
     ///
@@ -227,7 +227,7 @@ impl GleifClient {
     ///
     /// # Errors
     ///
-    /// This method returns a [`GleifError`] in the following cases:
+    /// This method returns a [`crate::error::GleifError`] in the following cases:
     /// * The request could not be completed due to network or server issues.
     /// * The response body could not be deserialized into the expected type.
     ///
@@ -258,7 +258,7 @@ impl GleifClient {
     ///
     /// # Errors
     ///
-    /// This method returns a [`GleifError`] in the following cases:
+    /// This method returns a [`crate::error::GleifError`] in the following cases:
     /// * The request could not be completed due to network or server issues.
     /// * The response body could not be deserialized into the expected type.
     ///
@@ -289,7 +289,7 @@ impl GleifClient {
     ///
     /// # Errors
     ///
-    /// This method returns a [`GleifError`] in the following cases:
+    /// This method returns a [`crate::error::GleifError`] in the following cases:
     /// * The request could not be completed due to network or server issues.
     /// * The response body could not be deserialized into the expected type.
     ///

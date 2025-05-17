@@ -29,7 +29,7 @@
 //! # Errors
 //!
 //! Errors may occur during network communication, server-side issues, or deserialization of the response.
-//! These errors are returned as [`GleifError`] instances.
+//! These errors are returned as [`crate::error::GleifError`] instances.
 
 use crate::{client::GleifClient, request_builder::GleifRequestBuilder};
 

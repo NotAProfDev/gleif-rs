@@ -226,7 +226,7 @@ impl GleifRequestBuilder {
     ///
     /// # Errors
     ///
-    /// Returns a [`GleifError`] if the request fails, the response is not valid JSON
+    /// Returns a [`crate::error::GleifError`] if the request fails, the response is not valid JSON
     /// that can be deserialized into `R`, or the URL cannot be constructed.
     pub async fn send<R>(self) -> Result<R>
     where

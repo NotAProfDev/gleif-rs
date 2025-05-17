@@ -48,41 +48,72 @@ pub mod reporting_exception;
 pub mod vlei_issuer;
 
 // Types alias for convenience
+
+/// Type alias for a list of auto-completion responses from the GLEIF API.
 pub type AutoCompletionList = common::GleifApiResponse<Vec<auto_completion::AutoCompletion>>;
+/// Type alias for a country response from the GLEIF API.
 pub type Country = common::GleifApiResponse<country::Country>;
+/// Type alias for a list of countries from the GLEIF API.
 pub type CountryList = common::GleifApiResponse<Vec<country::Country>>;
+/// Type alias for an entity legal form response from the GLEIF API.
 pub type EntityLegalForm = common::GleifApiResponse<entity_legal_form::EntityLegalForm>;
+/// Type alias for a list of entity legal forms from the GLEIF API.
 pub type EntityLegalFormList = common::GleifApiResponse<Vec<entity_legal_form::EntityLegalForm>>;
+/// Type alias for a field response from the GLEIF API.
 pub type Field = common::GleifApiResponse<field::Field>;
+/// Type alias for a list of fields from the GLEIF API.
 pub type FieldList = common::GleifApiResponse<Vec<field::Field>>;
+/// Type alias for a list of field modifications from the GLEIF API.
 pub type FieldModificationList =
     common::GleifApiResponse<Vec<field_modification::FieldModification>>;
+/// Type alias for a list of fuzzy completions from the GLEIF API.
 pub type FuzzyCompletionList = common::GleifApiResponse<Vec<fuzzy_completion::FuzzyCompletion>>;
+/// Type alias for a list of ISINs from the GLEIF API.
 pub type IsinList = common::GleifApiResponse<Vec<isin::Isin>>;
+/// Type alias for a jurisdiction response from the GLEIF API.
 pub type Jurisdiction = common::GleifApiResponse<jurisdiction::Jurisdiction>;
+/// Type alias for a list of jurisdictions from the GLEIF API.
 pub type JurisdictionList = common::GleifApiResponse<Vec<jurisdiction::Jurisdiction>>;
+/// Type alias for a LEI issuer response from the GLEIF API.
 pub type LeiIssuer = common::GleifApiResponse<lei_issuer::LeiIssuer>;
+/// Type alias for a list of LEI issuers from the GLEIF API.
 pub type LeiIssuerList = common::GleifApiResponse<Vec<lei_issuer::LeiIssuer>>;
+/// Type alias for a list of LEI issuer jurisdictions from the GLEIF API.
 pub type LeiIssuerJurisdictionList =
     common::GleifApiResponse<Vec<lei_issuer::LeiIssuerJurisdiction>>;
+/// Type alias for a LEI record response from the GLEIF API.
 pub type LeiRecord = common::GleifApiResponse<lei_record::LeiRecord>;
+/// Type alias for a list of LEI records from the GLEIF API.
 pub type LeiRecordList = common::GleifApiResponse<Vec<lei_record::LeiRecord>>;
+/// Type alias for an official organizational role response from the GLEIF API.
 pub type OfficialOrganizationalRole =
     common::GleifApiResponse<official_organizational_role::OfficialOrganizationalRole>;
+/// Type alias for a list of official organizational roles from the GLEIF API.
 pub type OfficialOrganizationalRoleList =
     common::GleifApiResponse<Vec<official_organizational_role::OfficialOrganizationalRole>>;
+/// Type alias for a region response from the GLEIF API.
 pub type Region = common::GleifApiResponse<region::Region>;
+/// Type alias for a list of regions from the GLEIF API.
 pub type RegionList = common::GleifApiResponse<Vec<region::Region>>;
+/// Type alias for a registration agent response from the GLEIF API.
 pub type RegistrationAgent = common::GleifApiResponse<registration_agent::RegistrationAgent>;
+/// Type alias for a list of registration agents from the GLEIF API.
 pub type RegistrationAgentList =
     common::GleifApiResponse<Vec<registration_agent::RegistrationAgent>>;
+/// Type alias for a registration authority response from the GLEIF API.
 pub type RegistrationAuthority =
     common::GleifApiResponse<registration_authority::RegistrationAuthority>;
+/// Type alias for a list of registration authorities from the GLEIF API.
 pub type RegistrationAuthorityList =
     common::GleifApiResponse<Vec<registration_authority::RegistrationAuthority>>;
+/// Type alias for a relationship record response from the GLEIF API.
 pub type RelationshipRecord = common::GleifApiResponse<relationship_record::RelationshipRecord>;
+/// Type alias for a list of relationship records from the GLEIF API.
 pub type RelationshipRecordList =
     common::GleifApiResponse<Vec<relationship_record::RelationshipRecord>>;
+/// Type alias for a reporting exception response from the GLEIF API.
 pub type ReportingException = common::GleifApiResponse<reporting_exception::ReportingException>;
+/// Type alias for a vLEI issuer response from the GLEIF API.
 pub type VLeiIssuer = common::GleifApiResponse<vlei_issuer::VLeiIssuer>;
+/// Type alias for a list of vLEI issuers from the GLEIF API.
 pub type VLeiIssuerList = common::GleifApiResponse<Vec<vlei_issuer::VLeiIssuer>>;

@@ -1,13 +1,14 @@
+# gleif-rs
+
 [![Build Status](https://github.com/NotAProfDev/gleif-rs/actions/workflows/ci.yml/badge.svg)](https://github.com/NotAProfDev/gleif-rs/actions)
 [![Crates.io](https://img.shields.io/crates/v/gleif-rs.svg)](https://crates.io/crates/gleif-rs)
 [![Docs.rs](https://docs.rs/gleif-rs/badge.svg)](https://docs.rs/gleif-rs)
 [![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
 
-# gleif-rs
-
 A modern, strongly-typed Rust client for the [GLEIF API](https://www.gleif.org/en/lei-data/gleif-api), offering ergonomic access to Legal Entity Identifier (LEI) records and related resources.
 
 ## Features
+
 - **Flexible request building**: Use a builder-pattern API to apply filters, sorting, and pagination.
 - **Strongly-typed models**: Access GLEIF endpoints with type safety.
 - **Async/await support**: Built on `reqwest` for modern asynchronous programming.
@@ -78,7 +79,7 @@ gleif-rs = "0.1"
 
 Run all tests with:
 
-```
+```shell
 cargo test
 ```
 
@@ -87,6 +88,7 @@ cargo test
 This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
 
 ## Acknowledgments
+
 - [GLEIF](https://www.gleif.org/) for the API and data
 - [reqwest](https://github.com/seanmonstar/reqwest) and [tokio](https://tokio.rs/) for async HTTP support
 - [reqwest_middleware](https://docs.rs/reqwest-middleware/) for extensibility and middleware support

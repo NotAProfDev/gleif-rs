@@ -49,7 +49,9 @@
 				"fill-labs.dependi",
 				"tamasfe.even-better-toml",
 				"vadimcn.vscode-lldb",
-				"foxundermoon.shell-format"
+				"foxundermoon.shell-format",
+				"davidanson.vscode-markdownlint",
+				"redhat.vscode-yaml"
 			]
 		}
 	}

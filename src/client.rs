@@ -216,7 +216,7 @@ impl GleifClientBuilder {
     ///
     /// # Errors
     ///
-    /// Returns a [`GleifError`] if the base URL is invalid or the client cannot be constructed.
+    /// Returns a [`crate::error::GleifError`] if the base URL is invalid or the client cannot be constructed.
     pub fn build(self) -> Result<GleifClient> {
         // Use the provided reqwest client or create a new one if not provided.
         let reqwest_client = self.reqwest_client.unwrap_or_default();

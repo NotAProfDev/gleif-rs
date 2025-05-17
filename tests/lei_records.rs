@@ -1,3 +1,5 @@
+//! Integration tests for the GLEIF API client and LEI record parsing.
+
 use gleif_rs::{
     client::GleifClient,
     field::Field,
