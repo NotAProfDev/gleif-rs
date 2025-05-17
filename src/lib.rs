@@ -105,7 +105,6 @@
 //! - [`crate::field`]: Type-safe representations of API field names.
 //! - [`crate::model`]: Data models for API responses.
 //! - [`crate::request_builder`]: Utilities for building API requests.
-//! - [`crate::test_utils`]: Utilities for testing the library.
 //! - [`crate::value`]: Type-safe enums for common API field values.
 //!
 //! ## Constants

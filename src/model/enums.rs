@@ -17,7 +17,6 @@ use serde::Deserialize;
 // -- Enums used by Level 1 (who is who) --
 
 /// Represents the type of the name.
-#[allow(clippy::enum_variant_names)]
 #[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum EntityNameType {
@@ -58,7 +57,6 @@ pub enum TransliteratedNameType {
 }
 
 /// Represents the type of the other address.
-#[allow(clippy::enum_variant_names)]
 #[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum OtherAddressType {
