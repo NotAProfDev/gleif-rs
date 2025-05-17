@@ -17,20 +17,38 @@ A modern, strongly-typed Rust client for the [GLEIF API](https://www.gleif.org/e
 - **Robust error handling**: Comprehensive error management for all operations.
 - **Real-world testing**: Includes a test suite with real-world data samples.
 
+## Installation
+
+Add the following to your `Cargo.toml`:
+
+```toml
+[dependencies]
+gleif-rs = "0.1"
+```
+
+Alternatively, you can add it using:
+
+```shell
+cargo add gleif-rs
+```
+
 ## Example Usage
 
 ### Basic Example
 
+This example shows how to use `gleif-rs` to fetch and filter Legal Entity Identifier (LEI) records. It retrieves a single LEI record by querying an entity and displaying its LEI and legal name. You can explore the available information for a LEI record [here](https://search.gleif.org/#/record/5493001KJTIIGC8Y1R12). It also fetches multiple LEI records with filters, selecting Funds with an Issued status, sorting by Entity Legal Name, and limiting results to three, displaying them in JSON format.
+
 ```rust
-use gleif_rs::{client::GleifClient, field::Field, value::{EntityCategory, RegistrationStatus}};
+use gleif_rs::{client::GleifClient, model::LeiRecord, error:: GleifError, field::Field, value::{EntityCategory, RegistrationStatus}};
 
 #[tokio::main]
-async fn main() -> Result<(), gleif_rs::error::GleifError> {
+async fn main() -> Result<(), GleifError> {
+    // Setup default client
     let client = GleifClient::new();
     let lei = "5493001KJTIIGC8Y1R12";
 
     // Fetch a single LEI record (strongly typed)
-    let record = client.lei_record_by_id::<gleif_rs::model::lei_record::LeiRecord>(lei).await?;
+    let record: LeiRecord = client.lei_record_by_id(lei).await?;
     println!("LEI: {} Legal Name: {}", record.data.attributes.lei, record.data.attributes.entity.legal_name.name);
 
     // Fetch multiple LEI records with filters (as JSON)
@@ -48,7 +66,9 @@ async fn main() -> Result<(), gleif_rs::error::GleifError> {
 }
 ```
 
-### Adding a Retry Policy
+### Adding a Retry Policy via `reqwest_middleware`
+
+This section explains how to add middleware via `reqwest-middleware` for improved request handling. Using `reqwest-retry` as an example, it demonstrates how to apply a retry policy with exponential backoff, making API requests more resilient to temporary failures.
 
 ```rust
 use gleif_rs::client::GleifClient;
@@ -56,32 +76,25 @@ use reqwest::Client as ReqwestClient;
 use reqwest_middleware::{ClientBuilder, Result};
 use reqwest_retry::{RetryTransientMiddleware, policies::ExponentialBackoff};
 
+// Create a basic Reqwest HTTP client
 let reqwest_client = ReqwestClient::new();
+// Define an exponential backoff retry policy with a maximum of 3 retries
 let retry_policy = ExponentialBackoff::builder().build_with_max_retries(3);
+// Wrap the Reqwest client with middleware that applies the retry policy
 let middleware_client = ClientBuilder::new(reqwest_client)
     .with(RetryTransientMiddleware::new_with_policy(retry_policy))
     .build();
-let client = GleifClient::from_reqwest_client(middleware_client);
+// Initialize the GleifClient using the middleware-enabled HTTP client
+let client = GleifClient::from_middleware_client(middleware_client);
 ```
 
 Stack any middleware supported by `reqwest_middleware` to customize request behavior for your use case.
 
-## Installation
+## Contributing
 
-Add the following to your `Cargo.toml`:
+We welcome contributions! To get started, please check out our [CONTRIBUTING.md](CONTRIBUTING.md), which outlines the guidelines and best practices for contributing to this project.
 
-```toml
-[dependencies]
-gleif-rs = "0.1"
-```
-
-## Testing
-
-Run all tests with:
-
-```shell
-cargo test
-```
+If you have ideas, bug reports, or feature requests, feel free to open an issue or submit a pull request. Whether it's fixing a bug, improving documentation, or suggesting enhancements, all contributions are appreciated!
 
 ## License
 
