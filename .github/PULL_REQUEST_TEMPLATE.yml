@@ -1,0 +1,55 @@
+name: "Pull Request"
+description: "Propose changes to the codebase via a pull request."
+title: "[TYPE] Brief description of your change"
+labels: ["pull request"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for your contribution! Please fill out the following sections to help us review your pull request.
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: Please provide a concise summary of your changes and the motivation behind them.
+      placeholder: "What does this PR do? Why is it needed?"
+    validations:
+      required: true
+
+  - type: textarea
+    id: related-issues
+    attributes:
+      label: Related Issues
+      description: List any related issues, discussions, or pull requests.
+      placeholder: "Closes #123, relates to #456, etc."
+    validations:
+      required: false
+
+  - type: textarea
+    id: implementation-details
+    attributes:
+      label: Implementation Details
+      description: Describe any important implementation details, design decisions, or caveats.
+      placeholder: "Explain any tricky parts, design choices, or limitations."
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      description: Please confirm the following before submitting.
+      options:
+        - label: I have read the [Contributing Guidelines](../CONTRIBUTING.md)
+          required: true
+        - label: My code follows the project style and Rust best practices
+          required: true
+        - label: I have added or updated tests and documentation as needed
+          required: true
+        - label: I have run `./scripts/test-ci.sh` and verified all tests pass
+          required: true
+        - label: My commit messages follow the [Conventional Commits](https://www.conventionalcommits.org/) format
+          required: true
