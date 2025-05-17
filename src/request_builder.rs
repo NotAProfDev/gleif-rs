@@ -217,6 +217,7 @@ impl GleifRequestBuilder {
             .client()
             .as_ref()
             .request(self.method.clone(), url)
+            .header("Accept", "application/vnd.api+json")
             .query(&self.query)
     }
 
