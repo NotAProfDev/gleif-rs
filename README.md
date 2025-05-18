@@ -34,7 +34,7 @@ Alternatively, you can add it using:
 cargo add gleif-rs
 ```
 
-## Example Usage
+## Usage
 
 ### Basic Example
 
