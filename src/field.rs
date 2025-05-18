@@ -1,37 +1,92 @@
-//! Field Module
+//! # API Field Definitions ([`Field`])
 //!
-//! This module defines the `Field` enum, which provides type-safe representations of field names
-//! used in GLEIF API queries. By using this enum, developers can avoid typos and reduce reliance
-//! on stringly-typed code when constructing API requests.
+//! This module provides the [`Field`] enum, a crucial tool for representing GLEIF API field names
+//! in a type-safe manner. Interacting with APIs often involves specifying field names as strings
+//! for filtering, sorting, or selecting data. The [`Field`] enum mitigates common issues
+//! like typos and inconsistencies that arise from using raw strings ("stringly-typed" code).
 //!
-//! # Features
+//! By using [`Field`] variants, you leverage the Rust compiler to catch errors at compile time,
+//! improve code readability, and make your queries more maintainable, especially if GLEIF
+//! API field names were to evolve.
 //!
-//! - Comprehensive list of known GLEIF API field names, categorized by their purpose.
-//! - Methods for converting fields to their canonical string representations (`as_str`).
-//! - Parsing functionality to convert strings into `Field` variants, with optional restrictions
-//!   on allowed fields (`parse_with_allowed`).
-//! - Integration with formatting and string conversion traits for seamless usage in APIs and logs.
+//! ## Core Purpose & Usage
+//!
+//! The [`Field`] enum is primarily intended for:
+//!
+//! - Constructing filter expressions for API queries (e.g., filter by `entity.legalName`).
+//! - Specifying sort parameters (e.g., sort by `registration.initialRegistrationDate`).
+//!
+//! ## Key Features
+//!
+//! - **Type Safety:** Prevents typos in field names during query construction, catching errors at compile time.
+//! - **Comprehensive Coverage:** Includes a wide array of known GLEIF API v1 field names. The naming convention
+//!   of variants (e.g., `entity.legalName`) helps categorize them by their typical API object.
+//! - **String Conversion:**
+//!     - Easily get the canonical string representation required by the API using the [`as_str`](Field::as_str) method.
+//!     - Implements [`std::fmt::Display`], so it can be seamlessly used in formatted strings (e.g., for logging).
+//! - **Parsing from Strings:**
+//!     - Supports parsing from string slices using the [`std::str::FromStr`] trait (e.g., `"lei".parse::<Field>()`).
+//!     - Provides advanced parsing with [`parse_with_allowed`](Field::parse_with_allowed),
+//!       allowing you to restrict parsing to a specific subset of fields, useful for validating user input
+//!       or context-specific field lists.
+//! - **Ergonomic Integration:** Designed for easy use within your API client logic.
 //!
 //! # Examples
 //!
-//! ## Convert a Field to its String Representation
+//! ## 1. Converting a [`Field`] to its String Representation
+//!
+//! This is essential when you need to pass the field name to the underlying API.
+//!
 //! ```rust
 //! use gleif_rs::field::Field;
 //!
-//! let field = Field::EntityLegalName;
-//! assert_eq!(field.as_str(), "entity.legalName");
+//! // Using as_str()
+//! let field_enum = Field::EntityLegalName;
+//! assert_eq!(field_enum.as_str(), "entity.legalName");
+//!
+//! // Using Display trait (e.g., for logging or string formatting)
+//! let display_str = format!("Querying field: {}", Field::Lei);
+//! assert_eq!(display_str, "Querying field: lei");
 //! ```
 //!
-//! ## Parse a String into a Field
+//! ## 2. Parsing a String into a [`Field`]
+//!
+//! This is useful when processing input that specifies field names as strings.
+//!
 //! ```rust
 //! use gleif_rs::field::Field;
 //!
-//! let field = Field::parse_with_allowed("lei", None).unwrap();
-//! assert_eq!(field, Field::Lei);
+//! // Assuming Field implements FromStr
+//! let parsed_field = Field::from_str("lei");
+//! assert_eq!(parsed_field.unwrap(), Field::Lei);
+//!
+//! let invalid_parse = Field::from_str("nonExistentField");
+//! assert!(invalid_parse.is_err());
 //! ```
+//!
+//! ## 3. Advanced Parsing with Allowed Fields ([`parse_with_allowed`](Field::parse_with_allowed))
+//!
+//! This method allows restricting which fields are considered valid during parsing.
+//!
+//! ```rust
+//! use gleif_rs::field::Field;
+//!
+//! // Only allow parsing 'lei' or 'entity.legalName'
+//! let allowed_fields = [Field::Lei, Field::EntityLegalName];
+//!
+//! let field_allowed = Field::parse_with_allowed("lei", Some(&allowed_fields)).unwrap();
+//! assert_eq!(field_allowed, Field::Lei);
+//!
+//! // Attempting to parse a field not in the allowed list will fail
+//! let field_not_allowed = Field::parse_with_allowed("entity.status", Some(&allowed_fields));
+//! assert!(field_not_allowed.is_err());
+//! ```
+//!
+//! By incorporating [`Field`] into your application, you create more robust, readable,
+//! and maintainable code for interacting with the GLEIF API.
 
 use crate::error::{GleifError, Result};
-use std::fmt;
+use std::{fmt, str::FromStr};
 
 /// Enum for known GLEIF API field names.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -230,6 +285,15 @@ impl AsRef<str> for Field {
     }
 }
 
+// This allows parsing a Field from a string slice, enabling easy conversion from user input.
+impl FromStr for Field {
+    type Err = GleifError;
+
+    fn from_str(s: &str) -> Result<Self> {
+        Field::parse_with_allowed(s, None)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -247,5 +311,20 @@ mod tests {
         assert_eq!(Field::Lei.to_string(), "lei");
         assert_eq!(Field::EntityLegalName.to_string(), "entity.legalName");
         assert_eq!(Field::RegistrationStatus.to_string(), "registration.status");
+    }
+
+    #[test]
+    fn test_field_from_str() {
+        use std::str::FromStr;
+        assert_eq!(Field::from_str("lei").unwrap(), Field::Lei);
+        assert_eq!(
+            Field::from_str("entity.legalName").unwrap(),
+            Field::EntityLegalName
+        );
+        assert_eq!(
+            Field::from_str("registration.status").unwrap(),
+            Field::RegistrationStatus
+        );
+        assert!(Field::from_str("not_a_field").is_err());
     }
 }

@@ -1,31 +1,70 @@
-//! GLEIF API Client
+//! # GLEIF API Client ([`GleifClient`])
 //!
-//! This module provides the `GleifClient` struct for interacting with the GLEIF v1 API.
-//! It is designed for extensibility and ergonomic request building, using reqwest and reqwest-middleware.
+//! This module provides [`GleifClient`], the main entry point for interacting with the [Global Legal Entity Identifier
+//! Foundation (GLEIF) API](https://www.gleif.org/en/lei-data/gleif-api). It is designed for both simplicity and extensibility, supporting ergonomic
+//! request building, custom configuration, and advanced middleware.
 //!
-//! # Examples
+//! ## Key Features
 //!
-//! ## Basic client creation
+//! - **Simple Default Setup:** Quickly get started with [`GleifClient::new`].
+//! - **Flexible Configuration:** Use the builder pattern ([`GleifClient::builder`]) for fine-grained control, including custom base URLs and middleware.
+//! - **Bring Your Own Client:** Integrate an existing [`reqwest::Client`] or a pre-configured [`reqwest_middleware::ClientWithMiddleware`].
+//! - **Middleware Ready:** Leverage [`reqwest-middleware`](https://docs.rs/reqwest-middleware/) for retries, logging, and more.
+//! - **Ergonomic Request Building:** Provides methods for interacting with GLEIF API endpoints using [`GleifRequestBuilder`](crate::request_builder::GleifRequestBuilder).
+//!
+//! Below are various ways to create and configure your [`GleifClient`].
+//!
+//! # Client Instantiation Examples
+//!
+//! ## 1. Basic Client Creation (Default Settings)
+//!
+//! For most common use cases, creating a client with default settings is sufficient.
+//! This uses the default GLEIF API base URL and a standard `reqwest` client.
 //!
 //! ```rust
 //! use gleif_rs::client::GleifClient;
 //!
-//! // Create a client with default settings
+//! // Create a client with sensible defaults
 //! let client = GleifClient::new();
+//! // You can now use `client` to make API calls.
 //! ```
 //!
-//! ## Using the builder pattern
+//! ## 2. Using the Builder Pattern for Customization
+//!
+//! The builder pattern allows for more control over the client's configuration,
+//! such as specifying a different base URL (e.g., for a sandbox environment).
 //!
 //! ```rust
 //! use gleif_rs::client::GleifClient;
 //!
-//! // Create a client with a custom base URL
+//! // Create a client targeting the GLEIF sandbox API
 //! let client = GleifClient::builder()
-//!     .base_url("https://api-sandbox.gleif.org/api/v1")
+//!     .base_url("[https://api-sandbox.gleif.org/api/v1](https://api-sandbox.gleif.org/api/v1)")
 //!     .build();
+//! // `client` is now configured for the sandbox.
 //! ```
 //!
-//! ## Creating a client from existing HTTP clients
+//! ## 3. Creating a Client from Existing HTTP Clients
+//!
+//! If you have an existing [`reqwest::Client`] or a [`reqwest_middleware::ClientWithMiddleware`]
+//! (perhaps shared across your application or configured with specific policies),
+//! you can easily wrap it with [`GleifClient`].
+//!
+//! ### From a plain [`reqwest::Client`]
+//!
+//! ```rust
+//! use gleif_rs::client::GleifClient;
+//! use reqwest::Client as ReqwestClient;
+//!
+//! // Assume `reqwest_client` is already configured elsewhere
+//! let reqwest_client = ReqwestClient::new();
+//! let client = GleifClient::from_reqwest_client(reqwest_client);
+//! // `client` will use your provided reqwest_client.
+//! ```
+//!
+//! ### From a pre-configured [`reqwest_middleware::ClientWithMiddleware`]
+//!
+//! This is useful if you've already set up middleware like retry mechanisms.
 //!
 //! ```rust
 //! use gleif_rs::client::GleifClient;
@@ -33,49 +72,64 @@
 //! use reqwest_middleware::{ClientBuilder, ClientWithMiddleware};
 //! use reqwest_retry::{RetryTransientMiddleware, policies::ExponentialBackoff};
 //!
-//! // Create from a plain reqwest client
-//! let reqwest_client = ReqwestClient::new();
-//! let client = GleifClient::from_reqwest_client(reqwest_client);
-//!
-//! // Create from a pre-configured middleware client
 //! let reqwest_client = ReqwestClient::new();
 //! let retry_policy = ExponentialBackoff::builder().build_with_max_retries(3);
-//! let middleware_client = ClientBuilder::new(reqwest_client)
+//!
+//! // Your existing middleware-enhanced client
+//! let preconfigured_middleware_client = ClientBuilder::new(reqwest_client)
 //!     .with(RetryTransientMiddleware::new_with_policy(retry_policy))
 //!     .build();
-//! let client = GleifClient::from_middleware_client(middleware_client);
+//!
+//! let client = GleifClient::from_middleware_client(preconfigured_middleware_client);
+//! // `client` now uses your sophisticated, pre-configured middleware client.
 //! ```
 //!
-//! ## Advanced configuration with custom HTTP client and middleware
+//! ## 4. Advanced Configuration with Custom HTTP Client and Middleware
+//!
+//! For full control, you can configure a [`reqwest::Client`] with specific settings (like timeouts),
+//! wrap it with desired middleware, and then provide this to the [`GleifClient`] builder.
 //!
 //! ```rust
 //! use gleif_rs::client::GleifClient;
-//! use reqwest::ClientBuilder as ReqwestClientBuilder;
-//! use reqwest_middleware::ClientBuilder;
+//! use reqwest::ClientBuilder as ReqwestClientBuilder; // Renamed for clarity
+//! use reqwest_middleware::ClientBuilder as MiddlewareClientBuilder; // Renamed for clarity
 //! use reqwest_retry::{RetryTransientMiddleware, policies::ExponentialBackoff};
 //! use std::time::Duration;
 //!
-//! // Configure a custom reqwest client with timeouts
-//! let reqwest_client = ReqwestClientBuilder::new()
-//!     .timeout(Duration::from_secs(30))
-//!     .connect_timeout(Duration::from_secs(5))
+//! // 1. Configure a custom reqwest client
+//! let underlying_reqwest_client = ReqwestClientBuilder::new()
+//!     .timeout(Duration::from_secs(30))       // Overall request timeout
+//!     .connect_timeout(Duration::from_secs(5)) // Connection timeout
 //!     .build()
 //!     .expect("Failed to build reqwest client");
 //!
-//! // Configure a retry policy with exponential backoff
+//! // 2. Configure a retry policy
 //! let retry_policy = ExponentialBackoff::builder()
-//!     .build_with_max_retries(3);
+//!     .build_with_max_retries(3); // Retry up to 3 times with exponential backoff
 //!
-//! // Create middleware with retry capability
-//! let middleware = ClientBuilder::new(reqwest_client)
+//! // 3. Create the middleware stack
+//! let middleware_client_builder = MiddlewareClientBuilder::new(underlying_reqwest_client)
 //!     .with(RetryTransientMiddleware::new_with_policy(retry_policy));
+//!     // You could add more .with(...) calls here for other middleware (e.g., logging)
 //!
-//! // Build the client with all configurations
+//! // 4. Build the GleifClient using the custom middleware builder
 //! let client = GleifClient::builder()
-//!     .base_url("https://api.gleif.org/api/v1")
-//!     .middleware_builder(middleware)
+//!     .base_url("[https://api.gleif.org/api/v1](https://api.gleif.org/api/v1)") // Or your preferred base URL
+//!     .middleware_builder(middleware_client_builder)
 //!     .build();
+//!
+//! // `client` is now highly customized with specific timeouts and retry logic.
 //! ```
+//!
+//! ## Making API Requests
+//!
+//! Once you have an instance of [`GleifClient`], you can use its methods to interact with the various GLEIF API endpoints.
+//! These methods handle request construction, sending the request, and deserializing the response.
+//! See [`GleifRequestBuilder`](crate::request_builder::GleifRequestBuilder) for more details on building requests.
+//!
+//! ## Error Handling
+//!
+//! All methods return [`Result<T, GleifError>`](crate::error::Result). See the [`error`](crate::error) module for details.
 
 use crate::{
     DEFAULT_BASE_URL, error::GleifError, error::Result, request_builder::GleifRequestBuilder,
@@ -95,7 +149,7 @@ pub struct GleifClient {
 }
 
 impl Default for GleifClient {
-    /// Create a new `GleifClient` with default settings.
+    /// Create a new [`GleifClient`] with default settings.
     fn default() -> Self {
         // Unwrap is safe here because the default configuration is valid.
         GleifClientBuilder::new().build().unwrap()
@@ -103,7 +157,7 @@ impl Default for GleifClient {
 }
 
 impl GleifClient {
-    /// Create a new `GleifClient` with default configuration.
+    /// Create a new [`GleifClient`] with default configuration.
     ///
     /// # Panics
     ///
@@ -159,7 +213,7 @@ impl GleifClient {
     }
 }
 
-/// Builder for configuring and constructing a `GleifClient`.
+/// Builder for configuring and constructing a [`GleifClient`].
 ///
 /// Provides a fluent interface for customizing various aspects of the client
 /// before construction, such as the base URL, middleware, and other options.
@@ -170,7 +224,7 @@ pub struct GleifClientBuilder {
 }
 
 impl Default for GleifClientBuilder {
-    /// Create a new `GleifClientBuilder` with default settings.
+    /// Create a new [`GleifClientBuilder`] with default settings.
     fn default() -> Self {
         Self {
             middleware_builder: None,
@@ -181,7 +235,7 @@ impl Default for GleifClientBuilder {
 }
 
 impl GleifClientBuilder {
-    /// Create a new `GleifClientBuilder` with default settings.
+    /// Create a new [`GleifClientBuilder`] with default settings.
     #[must_use]
     pub fn new() -> Self {
         Self::default()
@@ -210,13 +264,13 @@ impl GleifClientBuilder {
         self
     }
 
-    /// Build the `GleifClient` with the configured settings.
+    /// Build the [`GleifClient`] with the configured settings.
     ///
     /// Consumes the builder to prevent accidental reuse.
     ///
     /// # Errors
     ///
-    /// Returns a [`crate::error::GleifError`] if the base URL is invalid or the client cannot be constructed.
+    /// Returns a [`GleifError`](crate::error::GleifError) if the base URL is invalid or the client cannot be constructed.
     pub fn build(self) -> Result<GleifClient> {
         // Use the provided reqwest client or create a new one if not provided.
         let reqwest_client = self.reqwest_client.unwrap_or_default();

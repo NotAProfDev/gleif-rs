@@ -1,68 +1,85 @@
-//! # GLEIF API Client Library
+//! # GLEIF API Client Library ([`gleif_rs`])
 //!
-//! This library provides a client for interacting with the Global Legal Entity Identifier Foundation (GLEIF) API.
-//! It includes modules for constructing requests, handling responses, and working with type-safe representations
-//! of GLEIF API fields and values.
+//! This Rust library provides a type-safe, ergonomic client for interacting with the [Global Legal Entity Identifier Foundation (GLEIF) API](https://www.gleif.org/en/lei-data/gleif-api).
+//! Whether you're retrieving LEI records, filtering data, or managing API responses, this library ensures seamless integration with strong typing and clear error handling.
 //!
 //! ## Features
 //!
-//! - **Client Module**: Provides the main entry point for making API requests.
-//! - **Endpoint Module**: Defines the available API endpoints.
-//! - **Error Handling**: Centralized error types for consistent error management.
-//! - **Field and Value Modules**: Type-safe enums for API fields and values to reduce errors and improve code clarity.
-//! - **Request Builder**: Utilities for constructing API requests with ease.
-//! - **Test Utilities**: Helpers for testing deserialization and validation of API responses.
+//! - **Simple API Requests:** Easily fetch and filter LEI records via the fluent interface ([`GleifClient::lei_records`](crate::client::GleifClient::lei_records)).
+//! - **Type-Safe Fields & Values:** Use enums like [`Field`](crate::field::Field) and [`EntityCategory`](crate::value::EntityCategory) to avoid typos and invalid values.
+//! - **Comprehensive Error Handling:** Centralized error management via [`GleifError`](crate::error::GleifError).
+//! - **Customizable Requests:** Build and refine API queries with [`GleifRequestBuilder`](crate::request_builder::GleifRequestBuilder).
+//! - **Extensible HTTP Client:** Bring your own [`reqwest::Client`] or use middleware for retries, logging, and more.
 //!
-//! ## Usage
+//! ## Getting Started
 //!
-//! Add this library as a dependency in your `Cargo.toml` and use the `client` module to interact with the API.
+//! To use this library, add it to your `Cargo.toml`:
 //!
-//! ### Basic Example
+//! ```toml
+//! [dependencies]
+//! gleif_rs = "0.1"
+//! ```
+//!
+//! ### Basic Example: Fetching an LEI Record
+//!
+//! The following example demonstrates how to fetch a specific LEI record using its ID.
+//!
 //! ```rust
-//! use gleif_rs::client::GleifClient;
-//! use gleif_rs::model::{LeiRecord, LeiRecordList};
-//! use gleif_rs::field::Field;
-//! use gleif_rs::value::{RegistrationStatus, EntityCategory};
+//! use gleif_rs::{
+//!     client::GleifClient,
+//!     error::GleifError,
+//!     model::LeiRecord,
+//! };
 //!
 //! #[tokio::main]
-//! async fn main() -> Result<(), gleif_rs::error::GleifError> {
-//!     // Example LEI from Bloomberg Finance L.P.
-//!     let lei = "5493001KJTIIGC8Y1R12";
-//!
-//!     // Create a client with default settings
+//! async fn main() -> Result<(), GleifError> {
+//!     // Initialize the GLEIF client
 //!     let client = GleifClient::new();
-//!     println!("GLEIF client created with base URL: {}", client.base_url());
+//!     // Fetch a specific LEI record by its ID
+//!     let lei_record: LeiRecord = client.lei_record_by_id("5493001KJTIIGC8Y1R12").await?;
 //!
-//!     // Example usage of the client to fetch LEI records raw data
-//!     let lei_record_raw: serde_json::Value = client
-//!         .lei_record_by_id(lei)
-//!         .await?;
-//!     println!("LEI Record: {:#?}", lei_record_raw);
-//!
-//!     // Example usage of the client to fetch LEI records strongly typed
-//!     let lei_record_strongly_typed: LeiRecord = client
-//!         .lei_record_by_id(lei)
-//!         .await?;
-//!     println!(
-//!         "LEI Record (strongly typed): {:#?}",
-//!         lei_record_strongly_typed
-//!     );
-//!
-//!     // Example usage of the client to fetch LEI records with filters
-//!     let lei_records: LeiRecordList = client
-//!        .lei_records()
-//!        .filter_eq(Field::EntityCategory, EntityCategory::Fund)
-//!        .filter_eq(Field::RegistrationStatus, RegistrationStatus::Issued)
-//!        .sort(Field::EntityLegalName)
-//!        .page_size(10)
-//!        .send()
-//!        .await?;
-//!     println!("Found {} records", lei_records.data.len());
+//!     println!("LEI Record: {lei_record:#?}");
 //!     Ok(())
 //! }
 //! ```
 //!
-//! ### Advanced Client
+//! ### Filtering LEI Records
+//!
+//! You can refine your API queries using filters:
+//!
+//! ```rust
+//! use gleif_rs::{
+//!     client::GleifClient,
+//!     error::GleifError,
+//!     field::Field,
+//!     model::LeiRecordList,
+//!     value::{EntityCategory, RegistrationStatus},
+//! };
+//!
+//! #[tokio::main]
+//! async fn main() -> Result<(), GleifError> {
+//!     // Initialize the GLEIF client
+//!     let client = GleifClient::new();
+//!     // Fetch LEI records with specific filters
+//!     let lei_records: LeiRecordList = client
+//!         .lei_records()
+//!         .filter_eq(Field::EntityCategory, EntityCategory::Fund)
+//!         .filter_eq(Field::RegistrationStatus, RegistrationStatus::Issued)
+//!         .sort(Field::EntityLegalName)
+//!         .page_size(10)
+//!         .send()
+//!         .await?;
+//!
+//!     println!("Found {} matching records.", lei_records.data.len());
+//!     Ok(())
+//! }
+//! ```
+//!
+//! ### Advanced Configuration: Custom HTTP Client
+//!
+//! For greater control over API requests, such as retry policies and timeouts,
+//! you can customize the underlying HTTP client:
+//!
 //! ```rust
 //! use gleif_rs::client::GleifClient;
 //! use reqwest::Client as ReqwestClient;
@@ -72,45 +89,41 @@
 //!
 //! #[tokio::main]
 //! async fn main() {
-//!     // Configure a custom reqwest client with timeouts
 //!     let reqwest_client = ReqwestClient::builder()
 //!         .timeout(Duration::from_secs(30))
 //!         .connect_timeout(Duration::from_secs(5))
 //!         .build()
-//!         .expect("Failed to build reqwest client");
-//!
-//!     // Configure a retry policy with exponential backoff
+//!         .expect("Failed to create reqwest client");
 //!     let retry_policy = ExponentialBackoff::builder().build_with_max_retries(3);
-//!
-//!     // Create middleware with retry capability
 //!     let middleware = ClientBuilder::new(reqwest_client)
 //!         .with(RetryTransientMiddleware::new_with_policy(retry_policy))
 //!         .build();
-//!
-//!     // Build the client with all configurations
 //!     let client = GleifClient::from_middleware_client(middleware);
-//!
-//!     println!(
-//!         "Advanced GLEIF client created with custom middleware and base_url: {}",
-//!         client.base_url()
-//!     );
+//!     println!("GLEIF client initialized with custom middleware: {}", client.base_url());
 //! }
 //! ```
 //!
 //! ## Modules
 //!
-//! - [`crate::client`]: Main API client.
-//! - [`crate::endpoint`]: Definitions of API endpoints.
-//! - [`crate::error`]: Error types and handling.
-//! - [`crate::field`]: Type-safe representations of API field names.
-//! - [`crate::model`]: Data models for API responses.
-//! - [`crate::request_builder`]: Utilities for building API requests.
-//! - [`crate::value`]: Type-safe enums for common API field values.
+//! - [`client`](crate::client): Main API client and configuration.
+//! - [`endpoint`](crate::endpoint): Endpoint definitions and helpers.
+//! - [`error`](crate::error): Error types for API operations.
+//! - [`field`](crate::field): Strongly-typed field selectors.
+//! - [`model`](crate::model): Data models for API responses.
+//! - [`request_builder`](crate::request_builder): Fluent API for building requests.
+//! - [`value`](crate::value): Enumerated types for field values.
 //!
-//! ## Constants
+//! ## Error Handling
 //!
-//! - `VERSION`: The library version.
-//! - `DEFAULT_BASE_URL`: The default base URL for the GLEIF API v1.
+//! All API methods return [`Result<T, GleifError>`](crate::error::Result). See the [`error`](crate::error) module for details.
+//!
+//! ## License
+//!
+//! This project is licensed under the MIT License. See [LICENSE](https://github.com/gleif-rs/gleif-rs/blob/main/LICENSE) for details.
+//!
+//! ---
+//!
+//! Feel free to explore and extend its capabilities based on your needs!
 
 pub mod client;
 pub mod endpoint;

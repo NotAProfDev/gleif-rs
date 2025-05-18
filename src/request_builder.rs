@@ -1,19 +1,71 @@
-//! Generic request builder for the GLEIF API client.
+//! # GLEIF API Request Builder ([`GleifRequestBuilder`])
 //!
-//! This module provides the `GleifRequestBuilder` struct, which is a flexible and reusable
-//! builder for constructing and executing requests to the GLEIF API. It allows users to
-//! customize various aspects of the request, such as HTTP method, endpoint path, query
-//! parameters, filters, sorting, and pagination.
+//! This module provides [`GleifRequestBuilder`], a flexible and fluent interface
+//! for constructing and executing HTTP requests to the GLEIF API. It abstracts
+//! the complexities of URL construction, query parameter encoding, and request execution,
+//! allowing users to focus on defining the specifics of their API interaction.
 //!
-//! The builder pattern is used to enable a fluent and ergonomic API for constructing requests.
-//! Each method returns a modified instance of the builder, allowing for method chaining.
+//! The builder is typically obtained via methods on [`GleifClient`](crate::client::GleifClient)
+//! and uses a builder pattern. Each configuration method returns a modified instance
+//! of the builder, enabling intuitive method chaining to build up a request piece by piece
+//! before sending it.
 //!
-//! # Features
+//! ## Core Purpose & Usage
 //!
-//! - Add filters for exact matches, ranges, inclusion/exclusion, and comparisons.
-//! - Specify sorting and pagination options.
-//! - Add custom query parameters.
-//! - Execute the request and deserialize the response into a strongly-typed struct or raw JSON.
+//! [`GleifRequestBuilder`] is the primary tool for:
+//!
+//! * Fetching specific resources by path.
+//! * Filtering data based on various criteria (exact matches, ranges, comparisons).
+//! * Sorting results by one or more fields.
+//! * Paginating through large datasets.
+//! * Adding custom query parameters if needed.
+//! * Executing the request and deserializing the JSON response into strongly-typed
+//!   Rust structs or retrieving raw JSON.
+//!
+//! ## Key Features
+//!
+//! * **Fluent Interface:** Chainable methods for an ergonomic request-building experience.
+//! * **Comprehensive Filtering:** Supports various filter types:
+//!     * **Exact Matches:** e.g., `filter[entity.legalName]=ACME Corp` via [`filter_eq`](GleifRequestBuilder::filter_eq)
+//!     * **Comparisons:** e.g., `filter[registration.lastUpdateDate]>=2023-01-01` via [`filter_gte`](GleifRequestBuilder::filter_gte)
+//!     * **Set Inclusion/Exclusion:** e.g., `filter[entity.category]=FUND,BRANCH` via [`filter_in`](GleifRequestBuilder::filter_in)
+//! * **Flexible Sorting:** Specify one or more fields for sorting results.
+//! * **Easy Pagination:** Control `page[number]` and `page[size]` for navigating through record sets.
+//! * **Customizability:** Add arbitrary query parameters to accommodate unique or evolving API features.
+//! * **Typed Responses:** Deserialize JSON responses directly into your defined Rust types.
+//! * **Raw Data Access:** Option to retrieve the raw `serde_json::Value` for cases requiring flexible parsing.
+//!
+//! # Example
+//!
+//! ```rust
+//! use gleif_rs::client::GleifClient;
+//! use gleif_rs::field::Field;
+//! use gleif_rs::value::EntityCategory;
+//! use serde_json::Value;
+//!
+//! #[tokio::main]
+//! async fn main() -> Result<(), gleif_rs::error::GleifError> {
+//!     let client = GleifClient::new();
+//!     // Fetch LEI records for funds, sorted by legal name, paginated
+//!     let response: Value = client
+//!         .lei_records()
+//!         .filter_eq(Field::EntityCategory, EntityCategory::Fund)
+//!         .sort(Field::EntityLegalName)
+//!         .page_size(5)
+//!         .send()
+//!         .await?;
+//!     println!("Response: {response:#?}");
+//!     Ok(())
+//! }
+//! ```
+//!
+//! ## Error Handling
+//!
+//! The final [`send`](GleifRequestBuilder::send) method on the builder returns a [`Result`](crate::error::Result).
+//! See the [`gleif_rs::error`](crate::error) module for details on error handling.
+//!
+//! By leveraging [`GleifRequestBuilder`], you can construct precise and complex queries
+//! against the GLEIF API with type safety and a clear, readable syntax.
 
 use crate::{
     client::GleifClient,
