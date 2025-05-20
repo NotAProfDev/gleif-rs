@@ -5,10 +5,10 @@
 //!
 //! ## Features
 //!
-//! - **Simple API Requests:** Easily fetch and filter LEI records via the fluent interface ([`GleifClient::lei_records`](crate::client::GleifClient::lei_records)).
-//! - **Type-Safe Fields & Values:** Use enums like [`Field`](crate::field::Field) and [`EntityCategory`](crate::value::EntityCategory) to avoid typos and invalid values.
-//! - **Comprehensive Error Handling:** Centralized error management via [`GleifError`](crate::error::GleifError).
-//! - **Customizable Requests:** Build and refine API queries with [`GleifRequestBuilder`](crate::request_builder::GleifRequestBuilder).
+//! - **Simple API Requests:** Easily fetch and filter LEI records via the fluent interface ([`crate::client::GleifClient::lei_records`]).
+//! - **Type-Safe Fields & Values:** Use enums like [`crate::field::Field`] and [`crate::value::EntityCategory`] to avoid typos and invalid values.
+//! - **Comprehensive Error Handling:** Centralized error management via [`crate::error::GleifError`].
+//! - **Customizable Requests:** Build and refine API queries with [`crate::request_builder::GleifRequestBuilder`].
 //! - **Extensible HTTP Client:** Bring your own [`reqwest::Client`] or use middleware for retries, logging, and more.
 //!
 //! ## Getting Started
@@ -105,7 +105,7 @@
 //!
 //! ## Error Handling
 //!
-//! All API methods return [`Result<T, GleifError>`](crate::error::Result). See the [`error`](crate::error) module for details.
+//! All API methods return [`crate::error::Result`]. See the [`crate::error`] module for details.
 //!
 //! ## License
 //!

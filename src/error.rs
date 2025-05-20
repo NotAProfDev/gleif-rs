@@ -1,6 +1,6 @@
 //! # Error Handling ([`GleifError`]) - Error types for API operations.
 //!
-//! This module defines the error types used throughout the [`gleif_rs`] client, ensuring
+//! This module defines the error types used throughout the [`gleif-rs`](crate) client, ensuring
 //! a consistent and comprehensive error handling experience when interacting with the
 //! [GLEIF API](https://www.gleif.org/en/lei-data/gleif-api).
 //!
@@ -25,7 +25,7 @@
 //!   invalid URL formation or header construction problems.
 //!
 //! [`GleifError`] implements [`std::error::Error`] and [`std::fmt::Display`], allowing it to be easily integrated
-//! into other error handling systems (e.g., [`anyhow`], [`eyre`]).
+//! into other error handling systems (e.g., `anyhow`, `eyre`).
 //!
 //! ## Inspecting and Handling Errors
 //!

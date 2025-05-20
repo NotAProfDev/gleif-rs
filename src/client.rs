@@ -6,11 +6,11 @@
 //!
 //! ## Key Features
 //!
-//! - **Simple Default Setup:** Quickly get started with [`GleifClient::new`].
-//! - **Flexible Configuration:** Use the builder pattern ([`GleifClient::builder`]) for fine-grained control, including custom base URLs and middleware.
+//! - **Simple Default Setup:** Quickly get started with [`crate::client::GleifClient::new`].
+//! - **Flexible Configuration:** Use the builder pattern ([`crate::client::GleifClient::builder`]) for fine-grained control, including custom base URLs and middleware.
 //! - **Bring Your Own Client:** Integrate an existing [`reqwest::Client`] or a pre-configured [`reqwest_middleware::ClientWithMiddleware`].
-//! - **Middleware Ready:** Leverage [`reqwest-middleware`](https://docs.rs/reqwest-middleware/) for retries, logging, and more.
-//! - **Ergonomic Request Building:** Provides methods for interacting with GLEIF API endpoints using [`GleifRequestBuilder`](crate::request_builder::GleifRequestBuilder).
+//! - **Middleware Ready:** Leverage [`reqwest-middleware`] for retries, logging, and more.
+//! - **Ergonomic Request Building:** Provides methods for interacting with GLEIF API endpoints using [`crate::request_builder::GleifRequestBuilder`].
 //!
 //! Below are various ways to create and configure your [`GleifClient`].
 //!
@@ -123,13 +123,13 @@
 //!
 //! ## Making API Requests
 //!
-//! Once you have an instance of [`GleifClient`], you can use its methods to interact with the various GLEIF API endpoints.
+//! Once you have an instance of [`crate::client::GleifClient`], you can use its methods to interact with the various GLEIF API endpoints.
 //! These methods handle request construction, sending the request, and deserializing the response.
-//! See [`GleifRequestBuilder`](crate::request_builder::GleifRequestBuilder) for more details on building requests.
+//! See [`crate::request_builder::GleifRequestBuilder`] for more details on building requests.
 //!
 //! ## Error Handling
 //!
-//! All methods return [`Result<T, GleifError>`](crate::error::Result). See the [`error`](crate::error) module for details.
+//! All methods return [`crate::error::Result`]. See the [`crate::error`] module for details.
 
 use crate::{
     DEFAULT_BASE_URL, error::GleifError, error::Result, request_builder::GleifRequestBuilder,
@@ -270,7 +270,7 @@ impl GleifClientBuilder {
     ///
     /// # Errors
     ///
-    /// Returns a [`GleifError`](crate::error::GleifError) if the base URL is invalid or the client cannot be constructed.
+    /// Returns a [`GleifError`] if the base URL is invalid or the client cannot be constructed.
     pub fn build(self) -> Result<GleifClient> {
         // Use the provided reqwest client or create a new one if not provided.
         let reqwest_client = self.reqwest_client.unwrap_or_default();

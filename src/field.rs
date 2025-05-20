@@ -55,6 +55,7 @@
 //!
 //! ```rust
 //! use gleif_rs::field::Field;
+//! use std::str::FromStr;
 //!
 //! // Assuming Field implements FromStr
 //! let parsed_field = Field::from_str("lei");

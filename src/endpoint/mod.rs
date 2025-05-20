@@ -2,30 +2,30 @@
 //!
 //! This module provides high-level, ergonomic access to the [Global Legal Entity Identifier Foundation (GLEIF) API](https://www.gleif.org/en/lei-data/gleif-api).
 //!
-//! It offers endpoint-specific methods via the [`GleifClient`](crate::client::GleifClient), wrapping the
-//! lower-level [`GleifRequestBuilder`](crate::request_builder::GleifRequestBuilder) for a more convenient and type-safe experience. All methods are asynchronous and return a `Result` type, making them suitable for use in async Rust applications.
+//! It offers endpoint-specific methods via the [`crate::client::GleifClient`], wrapping the
+//! lower-level [`crate::request_builder::GleifRequestBuilder`] for a more convenient and type-safe experience. All methods are asynchronous and return a `Result` type, making them suitable for use in async Rust applications.
 //!
 //! ## Submodules
 //!
 //! Each submodule corresponds to a specific GLEIF API endpoint or data type:
 //!
-//! - [`auto_completion`](crate::endpoint::auto_completion): Auto-complete search queries.
-//! - [`country`](crate::endpoint::country): Country information.
-//! - [`entity_legal_form`](crate::endpoint::entity_legal_form): Legal entity structures.
-//! - [`field`](crate::endpoint::field): Data fields.
-//! - [`field_modification`](crate::endpoint::field_modification): Field change history.
-//! - [`fuzzy_completion`](crate::endpoint::fuzzy_completion): Fuzzy search completions.
-//! - [`isin`](crate::endpoint::isin): ISIN data.
-//! - [`jurisdiction`](crate::endpoint::jurisdiction): Jurisdiction details.
-//! - [`lei_issuer`](crate::endpoint::lei_issuer): LEI issuers.
-//! - [`lei_record`](crate::endpoint::lei_record): LEI records.
-//! - [`official_organizational_role`](crate::endpoint::official_organizational_role): Organizational roles.
-//! - [`region`](crate::endpoint::region): Regional data.
-//! - [`registration_agent`](crate::endpoint::registration_agent): Registration agents.
-//! - [`registration_authority`](crate::endpoint::registration_authority): Registration authorities.
-//! - [`relationship_record`](crate::endpoint::relationship_record): Entity relationships.
-//! - [`reporting_exception`](crate::endpoint::reporting_exception): Reporting exceptions.
-//! - [`vlei_issuer`](crate::endpoint::vlei_issuer): vLEI issuer data.
+//! - [`auto_completion`]: Auto-complete search queries.
+//! - [`country`]: Country information.
+//! - [`entity_legal_form`]: Legal entity structures.
+//! - [`field`]: Data fields.
+//! - [`field_modification`]: Field change history.
+//! - [`fuzzy_completion`]: Fuzzy search completions.
+//! - [`isin`]: ISIN data.
+//! - [`jurisdiction`]: Jurisdiction details.
+//! - [`lei_issuer`]: LEI issuers.
+//! - [`lei_record`]: LEI records.
+//! - [`official_organizational_role`]: Organizational roles.
+//! - [`region`]: Regional data.
+//! - [`registration_agent`]: Registration agents.
+//! - [`registration_authority`]: Registration authorities.
+//! - [`relationship_record`]: Entity relationships.
+//! - [`reporting_exception`]: Reporting exceptions.
+//! - [`vlei_issuer`]: vLEI issuer data.
 //!
 //! ## Usage Examples
 //!
@@ -103,7 +103,7 @@
 //! let lei = "5493000IBP32UQZ0KL24";
 //! let children: RelationshipRecordList =
 //!     client.direct_children(lei).page_size(100).send().await?;
-//! for record in children.data {
+//! for record in &children.data {
 //!     println!("Child LEI: {}", record.id);
 //! }
 //! println!("Total children on this page: {}", children.data.len());
@@ -141,7 +141,7 @@
 //! # }
 //! ```
 //!
-//! All methods are async and return [`Result`](crate::error::Result) with [`GleifError`](crate::error::GleifError) on failure.
+//! All methods are async and return [`crate::error::Result`] with [`crate::error::GleifError`] on failure.
 
 pub mod auto_completion;
 pub mod country;

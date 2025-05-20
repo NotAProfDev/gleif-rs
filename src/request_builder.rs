@@ -5,7 +5,7 @@
 //! the complexities of URL construction, query parameter encoding, and request execution,
 //! allowing users to focus on defining the specifics of their API interaction.
 //!
-//! The builder is typically obtained via methods on [`GleifClient`](crate::client::GleifClient)
+//! The builder is typically obtained via methods on [`GleifClient`]
 //! and uses a builder pattern. Each configuration method returns a modified instance
 //! of the builder, enabling intuitive method chaining to build up a request piece by piece
 //! before sending it.
@@ -26,9 +26,9 @@
 //!
 //! * **Fluent Interface:** Chainable methods for an ergonomic request-building experience.
 //! * **Comprehensive Filtering:** Supports various filter types:
-//!     * **Exact Matches:** e.g., `filter[entity.legalName]=ACME Corp` via [`filter_eq`](GleifRequestBuilder::filter_eq)
-//!     * **Comparisons:** e.g., `filter[registration.lastUpdateDate]>=2023-01-01` via [`filter_gte`](GleifRequestBuilder::filter_gte)
-//!     * **Set Inclusion/Exclusion:** e.g., `filter[entity.category]=FUND,BRANCH` via [`filter_in`](GleifRequestBuilder::filter_in)
+//!     * **Exact Matches:** e.g., `filter[entity.legalName]=ACME Corp` via [`crate::request_builder::GleifRequestBuilder::filter_eq`]
+//!     * **Comparisons:** e.g., `filter[registration.lastUpdateDate]>=2023-01-01` via [`crate::request_builder::GleifRequestBuilder::filter_gte`]
+//!     * **Set Inclusion/Exclusion:** e.g., `filter[entity.category]=FUND,BRANCH` via [`crate::request_builder::GleifRequestBuilder::filter_in`]
 //! * **Flexible Sorting:** Specify one or more fields for sorting results.
 //! * **Easy Pagination:** Control `page[number]` and `page[size]` for navigating through record sets.
 //! * **Customizability:** Add arbitrary query parameters to accommodate unique or evolving API features.
@@ -41,25 +41,26 @@
 //! use gleif_rs::{client::GleifClient, error::GleifError, field::Field, value::EntityCategory};
 //! use serde_json::Value;
 //!
-//! #[tokio::main]
-//! async fn main() -> Result<(), GleifError> {
-//!     let client = GleifClient::new();
-//!     // Fetch LEI records for funds, sorted by legal name, paginated
-//!     let response: Value = client
-//!         .lei_records()
-//!         .filter_eq(Field::EntityCategory, EntityCategory::Fund)
-//!         .sort(Field::EntityLegalName)
-//!         .page_size(5)
-//!         .send()
-//!         .await?;
-//!     println!("Response: {response:#?}");
-//!     Ok(())
+//! # async fn example() -> Result<(), GleifError> {
+//! let client = GleifClient::new();
+//!     
+//! // Fetch LEI records for funds, sorted by legal name, paginated
+//! let response: Value = client
+//!     .lei_records()
+//!     .filter_eq(Field::EntityCategory, EntityCategory::Fund)
+//!     .sort(Field::EntityLegalName)
+//!     .page_size(5)
+//!     .send()
+//!     .await?;
+//! println!("Response: {response:#?}");
+//! # Ok(())
+//! # }
 //! ```
 //!
 //! ## Error Handling
 //!
-//! The final [`send`](GleifRequestBuilder::send) method on the builder returns a [`Result`](crate::error::Result).
-//! See the [`gleif-rs::error`](crate::error) module for details on error handling.
+//! The final [`crate::request_builder::GleifRequestBuilder::send`] method on the builder returns a [`crate::error::Result`].
+//! See the [`crate::error`] module for details on error handling.
 //!
 //! By leveraging [`GleifRequestBuilder`], you can construct precise and complex queries
 //! against the GLEIF API with type safety and a clear, readable syntax.
