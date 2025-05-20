@@ -45,8 +45,8 @@ impl GleifClient {
     ///
     /// This method sends a request to retrieve all Registration Agents that have consented to have
     /// their information published. The response can be filtered using the following parameters:
-    /// - **`leiIssuer`**: The LEI of the associated LEI Issuer.
-    /// - **`lei`**: The LEI of the Registration Agent itself.
+    /// - `leiIssuer`: The LEI of the associated LEI Issuer.
+    /// - `lei`: The LEI of the Registration Agent itself.
     ///
     /// # Errors
     ///
@@ -70,13 +70,13 @@ impl GleifClient {
     ///
     /// # Parameters
     ///
-    /// * `id` - A string slice representing the unique identifier of the registration agent.
+    /// - `id` - A string slice representing the unique identifier of the registration agent.
     ///
     /// # Errors
     ///
     /// This method returns a [`crate::error::GleifError`] in the following cases:
-    /// * The request could not be completed due to network or server issues.
-    /// * The response body could not be deserialized into the expected type.
+    /// - The request could not be completed due to network or server issues.
+    /// - The response body could not be deserialized into the expected type.
     ///
     /// # Examples
     ///

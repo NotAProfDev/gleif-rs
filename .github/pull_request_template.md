@@ -8,13 +8,13 @@ Contributers guide: https://github.com/NotAProfDev/gleif-rs/blob/main/CONTRIBUTI
 By submitting this PR, you agree to follow our Code of Conduct: https://github.com/NotAProfDev/gleif-rs/blob/main/CODE_OF_CONDUCT.md
 -->
 
-## **Motivation**  
+## Motivation
 <!--  
 Explain the context and why you're making this change. What problem does this address (e.g. related issues)? 
 If there is no specific problem, describe the motivation behind your update.  
 -->
 
-## **Solution**  
+## Solution
 <!--  
 Summarize the solution and provide any necessary context for understanding your changes.  
 -->

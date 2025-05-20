@@ -66,13 +66,13 @@ impl GleifClient {
     ///
     /// # Parameters
     ///
-    /// * `id` - A string slice representing the unique identifier of the field.
+    /// - `id` - A string slice representing the unique identifier of the field.
     ///
     /// # Errors
     ///
     /// This method returns a [`crate::error::GleifError`] in the following cases:
-    /// * The request could not be completed due to network or server issues.
-    /// * The response body could not be deserialized into the expected type.
+    /// - The request could not be completed due to network or server issues.
+    /// - The response body could not be deserialized into the expected type.
     ///
     /// # Examples
     ///

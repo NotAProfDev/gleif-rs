@@ -48,7 +48,7 @@ impl GleifClient {
     ///
     /// # Parameters
     ///
-    /// * `lei` - A string slice representing the LEI identifier.
+    /// - `lei` - A string slice representing the LEI identifier.
     ///
     /// # Errors
     ///

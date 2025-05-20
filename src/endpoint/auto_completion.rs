@@ -53,17 +53,17 @@ impl GleifClient {
     ///
     /// # Parameters
     ///
-    /// * `field` - A string representing the field to search in. Any value other than those listed below will result in an invalid request:
-    ///   * `fulltext` - Search in all fields of the Legal Entity's LEI Record
-    ///   * `owns` - Search in LEI Records of "child" LEI Records
-    ///   * `ownedBy` - Search in LEI Records of "parent" LEI Records
-    /// * `q` - A string slice representing the search term (maximum 255 characters).
+    /// - `field` - A string representing the field to search in. Any value other than those listed below will result in an invalid request:
+    ///   - `fulltext` - Search in all fields of the Legal Entity's LEI Record
+    ///   - `owns` - Search in LEI Records of "child" LEI Records
+    ///   - `ownedBy` - Search in LEI Records of "parent" LEI Records
+    /// - `q` - A string slice representing the search term (maximum 255 characters).
     ///
     /// # Errors
     ///
     /// This method returns a [`crate::error::GleifError`] in the following cases:
-    /// * The request could not be completed due to network or server issues.
-    /// * The response body could not be deserialized into the expected type.
+    /// - The request could not be completed due to network or server issues.
+    /// - The response body could not be deserialized into the expected type.
     ///
     /// # Examples
     ///

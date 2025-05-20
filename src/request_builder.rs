@@ -14,26 +14,26 @@
 //!
 //! [`GleifRequestBuilder`] is the primary tool for:
 //!
-//! * Fetching specific resources by path.
-//! * Filtering data based on various criteria (exact matches, ranges, comparisons).
-//! * Sorting results by one or more fields.
-//! * Paginating through large datasets.
-//! * Adding custom query parameters if needed.
-//! * Executing the request and deserializing the JSON response into strongly-typed
+//! - Fetching specific resources by path.
+//! - Filtering data based on various criteria (exact matches, ranges, comparisons).
+//! - Sorting results by one or more fields.
+//! - Paginating through large datasets.
+//! - Adding custom query parameters if needed.
+//! - Executing the request and deserializing the JSON response into strongly-typed
 //!   Rust structs or retrieving raw JSON.
 //!
 //! ## Key Features
 //!
-//! * **Fluent Interface:** Chainable methods for an ergonomic request-building experience.
-//! * **Comprehensive Filtering:** Supports various filter types:
-//!     * **Exact Matches:** e.g., `filter[entity.legalName]=ACME Corp` via [`crate::request_builder::GleifRequestBuilder::filter_eq`]
-//!     * **Comparisons:** e.g., `filter[registration.lastUpdateDate]>=2023-01-01` via [`crate::request_builder::GleifRequestBuilder::filter_gte`]
-//!     * **Set Inclusion/Exclusion:** e.g., `filter[entity.category]=FUND,BRANCH` via [`crate::request_builder::GleifRequestBuilder::filter_in`]
-//! * **Flexible Sorting:** Specify one or more fields for sorting results.
-//! * **Easy Pagination:** Control `page[number]` and `page[size]` for navigating through record sets.
-//! * **Customizability:** Add arbitrary query parameters to accommodate unique or evolving API features.
-//! * **Typed Responses:** Deserialize JSON responses directly into your defined Rust types.
-//! * **Raw Data Access:** Option to retrieve the raw `serde_json::Value` for cases requiring flexible parsing.
+//! - **Fluent Interface:** Chainable methods for an ergonomic request-building experience.
+//! - **Comprehensive Filtering:** Supports various filter types:
+//!   - **Exact Matches:** e.g., `filter[entity.legalName]=ACME Corp` via [`crate::request_builder::GleifRequestBuilder::filter_eq`]
+//!   - **Comparisons:** e.g., `filter[registration.lastUpdateDate]>=2023-01-01` via [`crate::request_builder::GleifRequestBuilder::filter_gte`]
+//!   - **Set Inclusion/Exclusion:** e.g., `filter[entity.category]=FUND,BRANCH` via [`crate::request_builder::GleifRequestBuilder::filter_in`]
+//! - **Flexible Sorting:** Specify one or more fields for sorting results.
+//! - **Easy Pagination:** Control `page[number]` and `page[size]` for navigating through record sets.
+//! - **Customizability:** Add arbitrary query parameters to accommodate unique or evolving API features.
+//! - **Typed Responses:** Deserialize JSON responses directly into your defined Rust types.
+//! - **Raw Data Access:** Option to retrieve the raw `serde_json::Value` for cases requiring flexible parsing.
 //!
 //! # Example
 //!
