@@ -1,19 +1,19 @@
-//! Endpoints for GLEIF API official organizational roles metadata.
+//! # GLEIF API Official Organizational Roles Metadata Endpoints
 //!
 //! The Official Organizational Roles (OOR) Code List endpoint contains ISO 5009 OOR codes. The OOR code is an alpha-numeric code
 //! of six characters from the basic Latin character set. Official Organizational Roles represent specific roles or positions within
-//! legal entities, as defined by ISO 5009. These roles are associated with legal forms across various jurisdictions.
+//! legal entities, as defined by ISO 5009. These roles are associated with legal forms across various jurisdictions and are essential for regulatory, compliance, and entity management applications.
 //!
 //! The module includes methods to:
-//! - Fetch a list of all Official Organizational Roles, optionally filtered by specific criteria.
-//! - Fetch detailed information about a specific Official Organizational Role using its unique identifier.
+//! - Fetch a list of all Official Organizational Roles, optionally filtered by specific criteria, with support for pagination.
+//! - Fetch detailed information about a specific Official Organizational Role using its unique identifier, including name, country, and related metadata.
 //!
-//! # Endpoints
+//! ## Endpoints
 //!
-//! - `/official-organizational-roles`: Fetches a list of all Official Organizational Roles.
+//! - `/official-organizational-roles`: Fetches a list of all Official Organizational Roles. Supports filtering and pagination.
 //! - `/official-organizational-roles/{id}`: Fetches detailed information about a specific Official Organizational Role by its ID.
 //!
-//! # Examples
+//! ## Examples
 //!
 //! ```rust
 //! use gleif_rs::{client::GleifClient};
@@ -31,10 +31,10 @@
 //! # Ok(()) }
 //! ```
 //!
-//! # Errors
+//! ## Errors
 //!
 //! Errors may occur during network communication, server-side issues, or deserialization of the response.
-//! These errors are returned as [`crate::error::GleifError`] instances.
+//! These errors are returned as [`crate::error::GleifError`] instances. All methods in this module are asynchronous and return a `Result` type, making them suitable for use in async Rust applications.
 
 use crate::{client::GleifClient, error::Result, request_builder::GleifRequestBuilder};
 use serde::de::DeserializeOwned;

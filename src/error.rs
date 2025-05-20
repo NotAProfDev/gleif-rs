@@ -1,4 +1,4 @@
-//! # Error Handling ([`gleif_rs::error`])
+//! # Error Handling ([`GleifError`]) - Error types for API operations.
 //!
 //! This module defines the error types used throughout the [`gleif_rs`] client, ensuring
 //! a consistent and comprehensive error handling experience when interacting with the

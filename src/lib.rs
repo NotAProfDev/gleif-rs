@@ -1,4 +1,4 @@
-//! # GLEIF API Client Library ([`gleif_rs`])
+//! # GLEIF API Client Library ([`gleif_rs`](crate))
 //!
 //! This Rust library provides a type-safe, ergonomic client for interacting with the [Global Legal Entity Identifier Foundation (GLEIF) API](https://www.gleif.org/en/lei-data/gleif-api).
 //! Whether you're retrieving LEI records, filtering data, or managing API responses, this library ensures seamless integration with strong typing and clear error handling.
@@ -17,7 +17,7 @@
 //!
 //! ```toml
 //! [dependencies]
-//! gleif_rs = "0.1"
+//! gleif-rs = "0.1"
 //! ```
 //!
 //! ### Basic Example: Fetching an LEI Record
@@ -102,16 +102,6 @@
 //!     println!("GLEIF client initialized with custom middleware: {}", client.base_url());
 //! }
 //! ```
-//!
-//! ## Modules
-//!
-//! - [`client`](crate::client): Main API client and configuration.
-//! - [`endpoint`](crate::endpoint): Endpoint definitions and helpers.
-//! - [`error`](crate::error): Error types for API operations.
-//! - [`field`](crate::field): Strongly-typed field selectors.
-//! - [`model`](crate::model): Data models for API responses.
-//! - [`request_builder`](crate::request_builder): Fluent API for building requests.
-//! - [`value`](crate::value): Enumerated types for field values.
 //!
 //! ## Error Handling
 //!

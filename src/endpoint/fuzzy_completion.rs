@@ -1,17 +1,19 @@
+//! # GLEIF API Fuzzy Completions Endpoint
+//!
 //! This module provides functionality for interacting with the Fuzzy Completions endpoint of the GLEIF API.
 //!
 //! Fuzzy Completions is a search tool that returns approximate results based on statistical similarity, rather than exact matching.
-//! It is particularly useful for finding Legal Entity Identifiers (LEIs) or related records when the exact name or identifier is unknown.
+//! It is particularly useful for finding Legal Entity Identifiers (LEIs) or related records when the exact name or identifier is unknown, helping users discover entities with similar or misspelled names.
 //!
 //! The module includes methods to:
-//! - Perform a fuzzy search on specific fields of LEI records using a search term.
-//! - Retrieve approximate matches based on the supplied search term and field criteria.
+//! - Perform a fuzzy search on specific fields of LEI records using a search term, supporting flexible and user-friendly search experiences.
+//! - Retrieve approximate matches based on the supplied search term and field criteria, with results ranked by similarity.
 //!
-//! # Endpoints
+//! ## Endpoints
 //!
-//! - `/fuzzycompletions`: Fetches approximate matches for a given search term and field.
+//! - `/fuzzycompletions`: Fetches approximate matches for a given search term and field. The endpoint supports filtering and returns a list of similar records.
 //!
-//! # Examples
+//! ## Examples
 //!
 //! ```rust
 //! use gleif_rs::{client::GleifClient};
@@ -32,10 +34,10 @@
 //! # Ok(()) }
 //! ```
 //!
-//! # Errors
+//! ## Errors
 //!
 //! Errors may occur during network communication, server-side issues, or deserialization of the response.
-//! These errors are returned as [`crate::error::GleifError`] instances.
+//! These errors are returned as [`crate::error::GleifError`] instances. All methods in this module are asynchronous and return a `Result` type, making them suitable for use in async Rust applications.
 
 use crate::{client::GleifClient, error::Result};
 use serde::de::DeserializeOwned;

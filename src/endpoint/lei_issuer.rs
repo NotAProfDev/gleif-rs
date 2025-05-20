@@ -1,23 +1,25 @@
+//! # GLEIF API LEI Issuers Endpoints
+//!
 //! This module provides functionality for interacting with the LEI Issuers endpoint of the GLEIF API.
 //!
 //! LEI Issuers, also referred to as Local Operating Units (LOUs), are entities authorized to supply
 //! registration, renewal, and other services related to Legal Entity Identifiers (LEIs). They act as
-//! the primary interface for legal entities wishing to obtain or manage an LEI.
+//! the primary interface for legal entities wishing to obtain or manage an LEI, and are accredited by GLEIF to operate in specific jurisdictions.
 //!
 //! The module includes methods to:
-//! - Fetch a list of all LEI Issuers, optionally filtered by specific criteria.
-//! - Fetch detailed information about a specific LEI Issuer using its LEI.
-//! - Retrieve all jurisdictions for which a specific LEI Issuer is accredited.
-//! - Retrieve identification and descriptive data of the LEI Issuer responsible for administering a specific LEI.
+//! - Fetch a list of all LEI Issuers, optionally filtered by specific criteria, with support for pagination.
+//! - Fetch detailed information about a specific LEI Issuer using its LEI, including name, country, and accreditation details.
+//! - Retrieve all jurisdictions for which a specific LEI Issuer is accredited, providing insight into the issuer's operational scope.
+//! - Retrieve identification and descriptive data of the LEI Issuer responsible for administering a specific LEI, enabling traceability of LEI management.
 //!
-//! # Endpoints
+//! ## Endpoints
 //!
-//! - `/lei-issuers`: Fetches a list of all LEI Issuers.
+//! - `/lei-issuers`: Fetches a list of all LEI Issuers. Supports pagination and filtering.
 //! - `/lei-issuers/{lei}`: Fetches detailed information about a specific LEI Issuer by its LEI.
 //! - `/lei-issuers/{lei}/jurisdictions`: Fetches jurisdictions for which the LEI Issuer is accredited.
 //! - `/lei-records/{lei}/lei-issuer`: Fetches the LEI Issuer responsible for a specific LEI.
 //!
-//! # Examples
+//! ## Examples
 //!
 //! ```rust
 //! use gleif_rs::{client::GleifClient};
@@ -46,10 +48,10 @@
 //! # Ok(()) }
 //! ```
 //!
-//! # Errors
+//! ## Errors
 //!
 //! Errors may occur during network communication, server-side issues, or deserialization of the response.
-//! These errors are returned as [`crate::error::GleifError`] instances.
+//! These errors are returned as [`crate::error::GleifError`] instances. All methods in this module are asynchronous and return a `Result` type, making them suitable for use in async Rust applications.
 
 use crate::{client::GleifClient, error::Result, request_builder::GleifRequestBuilder};
 use serde::de::DeserializeOwned;

@@ -1,19 +1,21 @@
+//! # GLEIF API Reporting Exception Endpoints
+//!
 //! This module provides functionality for interacting with the reporting exception endpoints of the GLEIF API.
 //!
 //! Reporting exceptions indicate cases where a legal entity has declined to report a direct or ultimate
 //! accounting consolidation parent, based on applicable accounting standards. These exceptions are recorded
-//! and made available through the GLEIF API.
+//! and made available through the GLEIF API, supporting transparency and regulatory compliance.
 //!
 //! The module includes methods to:
 //! - Retrieve the reporting exception record for a specific LEI's direct parent.
 //! - Retrieve the reporting exception record for a specific LEI's ultimate parent.
 //!
-//! # Endpoints
+//! ## Endpoints
 //!
 //! - `/lei-records/{lei}/direct-parent-reporting-exception`: Fetches the reporting exception for a direct parent.
 //! - `/lei-records/{lei}/ultimate-parent-reporting-exception`: Fetches the reporting exception for an ultimate parent.
 //!
-//! # Examples
+//! ## Examples
 //!
 //! ```rust
 //! use gleif_rs::{client::GleifClient};
@@ -30,10 +32,10 @@
 //! # Ok(()) }
 //! ```
 //!
-//! # Errors
+//! ## Errors
 //!
 //! Errors may occur during network communication, server-side issues, or deserialization of the response.
-//! These errors are returned as [`crate::error::GleifError`] instances.
+//! These errors are returned as [`crate::error::GleifError`] instances. All methods in this module are asynchronous and return a `Result` type, making them suitable for use in async Rust applications.
 
 use crate::{client::GleifClient, error::Result};
 use serde::de::DeserializeOwned;

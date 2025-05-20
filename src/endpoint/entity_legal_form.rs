@@ -1,19 +1,20 @@
-//! Endpoints for GLEIF API entity legal forms metadata.
+//! # GLEIF API Entity Legal Forms Metadata Endpoints
 //!
 //! The Entity Legal Forms endpoint contains ISO 20275 ELF Codes, which are used to standardize
 //! the identification of legal forms of entities across jurisdictions. This module provides
-//! functionality for interacting with the Entity Legal Forms endpoint of the GLEIF API.
+//! functionality for interacting with the Entity Legal Forms endpoint of the GLEIF API, enabling
+//! applications to access authoritative and up-to-date legal form metadata for global entities.
 //!
 //! The module includes methods to:
-//! - Fetch a list of all entity legal forms, optionally filtered by specific criteria.
-//! - Fetch detailed information about a specific entity legal form using its ELF code.
+//! - Fetch a list of all entity legal forms, optionally filtered by specific criteria such as country or language.
+//! - Fetch detailed information about a specific entity legal form using its ELF code, including localized names and status.
 //!
-//! # Endpoints
+//! ## Endpoints
 //!
-//! - `/entity-legal-forms`: Fetches a list of all entity legal forms.
-//! - `/entity-legal-forms/{id}`: Fetches detailed information about a specific entity legal form by its ELF code.
+//! - `/entity-legal-forms`: Fetches a list of all entity legal forms. Supports filtering and pagination for large result sets.
+//! - `/entity-legal-forms/{id}`: Fetches detailed information about a specific entity legal form by its ELF code, returning comprehensive metadata.
 //!
-//! # Examples
+//! ## Examples
 //!
 //! ```rust
 //! use gleif_rs::{client::GleifClient};
@@ -31,10 +32,10 @@
 //! # Ok(()) }
 //! ```
 //!
-//! # Errors
+//! ## Errors
 //!
 //! Errors may occur during network communication, server-side issues, or deserialization of the response.
-//! These errors are returned as [`crate::error::GleifError`] instances.
+//! These errors are returned as [`crate::error::GleifError`] instances. All methods in this module are asynchronous and return a `Result` type, making them suitable for use in async Rust applications.
 
 use crate::{client::GleifClient, error::Result, request_builder::GleifRequestBuilder};
 use serde::de::DeserializeOwned;

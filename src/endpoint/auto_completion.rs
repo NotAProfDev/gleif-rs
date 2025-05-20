@@ -1,18 +1,20 @@
+//! # GLEIF API Auto-Completion Endpoint
+//!
 //! This module provides functionality for interacting with the Auto-Completion endpoint of the GLEIF API.
 //!
 //! Auto-Completion is a search tool that returns suggestions for search terms based on their similarity
 //! to the submitted search term. It is particularly useful for implementing type-ahead or predictive
-//! search functionalities in applications.
+//! search functionalities in applications, and helps users quickly find relevant LEI records.
 //!
 //! The module includes methods to:
 //! - Perform an auto-completion search on specific fields of LEI records using a search term.
 //! - Retrieve suggested search terms based on the supplied search term and field criteria.
 //!
-//! # Endpoints
+//! ## Endpoints
 //!
-//! - `/autocompletions`: Fetches suggested search terms for a given search term and field.
+//! - `/autocompletions`: Fetches suggested search terms for a given search term and field. This endpoint supports filtering by field and query, and returns a list of possible completions with highlights.
 //!
-//! # Examples
+//! ## Examples
 //!
 //! ```rust
 //! use gleif_rs::{client::GleifClient};
@@ -33,10 +35,10 @@
 //! # Ok(()) }
 //! ```
 //!
-//! # Errors
+//! ## Errors
 //!
 //! Errors may occur during network communication, server-side issues, or deserialization of the response.
-//! These errors are returned as [`crate::error::GleifError`] instances.
+//! These errors are returned as [`crate::error::GleifError`] instances. All methods in this module are asynchronous and return a `Result` type, making them suitable for use in async Rust applications.
 
 use crate::{client::GleifClient, error::Result};
 use serde::de::DeserializeOwned;

@@ -1,4 +1,4 @@
-//! # GLEIF API Request Builder ([`GleifRequestBuilder`])
+//! # GLEIF API Request Builder ([`GleifRequestBuilder`]) - Flexible and Fluent API Request Construction.
 //!
 //! This module provides [`GleifRequestBuilder`], a flexible and fluent interface
 //! for constructing and executing HTTP requests to the GLEIF API. It abstracts
@@ -38,13 +38,11 @@
 //! # Example
 //!
 //! ```rust
-//! use gleif_rs::client::GleifClient;
-//! use gleif_rs::field::Field;
-//! use gleif_rs::value::EntityCategory;
+//! use gleif_rs::{client::GleifClient, error::GleifError, field::Field, value::EntityCategory};
 //! use serde_json::Value;
 //!
 //! #[tokio::main]
-//! async fn main() -> Result<(), gleif_rs::error::GleifError> {
+//! async fn main() -> Result<(), GleifError> {
 //!     let client = GleifClient::new();
 //!     // Fetch LEI records for funds, sorted by legal name, paginated
 //!     let response: Value = client
@@ -56,13 +54,12 @@
 //!         .await?;
 //!     println!("Response: {response:#?}");
 //!     Ok(())
-//! }
 //! ```
 //!
 //! ## Error Handling
 //!
 //! The final [`send`](GleifRequestBuilder::send) method on the builder returns a [`Result`](crate::error::Result).
-//! See the [`gleif_rs::error`](crate::error) module for details on error handling.
+//! See the [`gleif-rs::error`](crate::error) module for details on error handling.
 //!
 //! By leveraging [`GleifRequestBuilder`], you can construct precise and complex queries
 //! against the GLEIF API with type safety and a clear, readable syntax.

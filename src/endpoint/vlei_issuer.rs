@@ -1,20 +1,22 @@
+//! # GLEIF API VLEI Issuers Endpoints
+//!
 //! This module provides functionality for interacting with the vLEI Issuers endpoint of the GLEIF API.
 //!
 //! vLEI Issuers, also known as Qualified vLEI Issuing Organizations (QVIs), are entities authorized by
 //! the Global Legal Entity Identifier Foundation (GLEIF) to issue and revoke vLEI Credentials. These
 //! credentials are used by legal entities to establish their identity in a verifiable and standardized
-//! manner.
+//! manner, supporting digital trust, compliance, and secure business transactions.
 //!
 //! The module includes methods to:
-//! - Retrieve a list of all qualified vLEI Issuers, including their identification and descriptive data.
-//! - Fetch detailed information about a specific vLEI Issuer using its LEI (Legal Entity Identifier).
+//! - Retrieve a list of all qualified vLEI Issuers, including their identification and descriptive data, with support for pagination.
+//! - Fetch detailed information about a specific vLEI Issuer using its LEI (Legal Entity Identifier), including legal name, marketing name, website, and qualification date.
 //!
-//! # Endpoints
+//! ## Endpoints
 //!
-//! - `/vlei-issuers`: Fetches a list of all qualified vLEI Issuers.
-//! - `/vlei-issuers/{lei}`: Fetches detailed information about a specific vLEI Issuer by its LEI.
+//! - `/vlei-issuers`: Fetches a list of all qualified vLEI Issuers. Supports pagination for large result sets.
+//! - `/vlei-issuers/{lei}`: Fetches detailed information about a specific vLEI Issuer by its LEI, returning comprehensive metadata.
 //!
-//! # Examples
+//! ## Examples
 //!
 //! ```rust
 //! use gleif_rs::{client::GleifClient};
@@ -32,10 +34,10 @@
 //! # Ok(()) }
 //! ```
 //!
-//! # Errors
+//! ## Errors
 //!
 //! Errors may occur during network communication, server-side issues, or deserialization of the response.
-//! These errors are returned as [`crate::error::GleifError`] instances.
+//! These errors are returned as [`crate::error::GleifError`] instances. All methods in this module are asynchronous and return a `Result` type, making them suitable for use in async Rust applications.
 
 use crate::{client::GleifClient, error::Result, request_builder::GleifRequestBuilder};
 use serde::de::DeserializeOwned;

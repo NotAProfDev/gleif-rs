@@ -1,16 +1,19 @@
+//! # GLEIF API ISIN Endpoint
+//!
 //! This module provides functionality for interacting with the ISINs (International Securities Identification Numbers)
 //! endpoint of the GLEIF API.
 //!
 //! ISINs are unique identifiers for securities, such as stocks and bonds, and are mapped to the legal entities
-//! that issue them. This module allows users to retrieve ISINs associated with a specific Legal Entity Identifier (LEI).
+//! that issue them. This module allows users to retrieve ISINs associated with a specific Legal Entity Identifier (LEI),
+//! supporting regulatory, compliance, and financial data integration use cases.
 //!
-//! # Endpoints
+//! ## Endpoints
 //!
-//! - `/lei-records/{lei}/isins`: Fetches all ISINs reported as issued by the entity identified by the given LEI.
+//! - `/lei-records/{lei}/isins`: Fetches all ISINs reported as issued by the entity identified by the given LEI. The endpoint supports pagination for large result sets.
 //!
-//! # Examples
+//! ## Examples
 //!
-//! ## Fetching ISINs for a specific LEI
+//! Fetching ISINs for a specific LEI:
 //!
 //! ```rust
 //! use gleif_rs::{client::GleifClient};
@@ -24,7 +27,7 @@
 //! ```
 //!
 //! This module provides a convenient interface for accessing ISIN data, enabling users to explore securities
-//! issued by legal entities efficiently.
+//! issued by legal entities efficiently. All methods in this module are asynchronous and return a `Result` type, making them suitable for use in async Rust applications.
 
 use crate::{client::GleifClient, request_builder::GleifRequestBuilder};
 

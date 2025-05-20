@@ -1,12 +1,14 @@
+//! # GLEIF API LEI Records Endpoints
+//!
 //! This module provides functionality for interacting with the `lei-records` endpoint of the GLEIF API.
 //!
 //! The `lei-records` endpoint allows access to all Legal Entity Identifier (LEI) records by their ID (the LEI Code itself),
-//! by applying filters, and by exploring relationships to other LEI records (links and Level 2 Data).
+//! by applying filters, and by exploring relationships to other LEI records (links and Level 2 Data). It supports both direct and hierarchical queries, enabling users to traverse entity relationships.
 //!
 //! LEI records provide essential information about legal entities, including their hierarchical relationships,
-//! parent and child entities, and associated entities such as fund managers or successor entities.
+//! parent and child entities, and associated entities such as fund managers or successor entities. These records are critical for regulatory, compliance, and financial applications.
 //!
-//! # Endpoints
+//! ## Endpoints
 //!
 //! - `/lei-records/{lei}`: Fetches a specific LEI record by its identifier.
 //! - `/lei-records`: Retrieves a list of LEI records, optionally filtered by specific criteria.
@@ -18,7 +20,7 @@
 //! - `/lei-records/{lei}/successor-entity`: Fetches the LEI record for the successor entity of a specific legal entity.
 //! - `/lei-records/{lei}/managing-lou`: Fetches the LEI record for the managing Local Operating Unit (LOU) of a specific entity.
 //!
-//! # Examples
+//! ## Examples
 //!
 //! ```rust
 //! use gleif_rs::{client::GleifClient};
@@ -40,8 +42,10 @@
 //! # Ok(()) }
 //! ```
 //!
-//! This module provides a comprehensive interface for interacting with the `lei-records` endpoint, enabling
-//! users to retrieve and explore LEI data efficiently.
+//! ## Errors
+//!
+//! Errors may occur during network communication, server-side issues, or deserialization of the response.
+//! These errors are returned as [`crate::error::GleifError`] instances. All methods in this module are asynchronous and return a `Result` type, making them suitable for use in async Rust applications.
 
 use crate::{client::GleifClient, error::Result, request_builder::GleifRequestBuilder};
 use serde::de::DeserializeOwned;

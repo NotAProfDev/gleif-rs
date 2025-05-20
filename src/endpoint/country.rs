@@ -1,18 +1,16 @@
-//! # Country Metadata Endpoints
+//! # GLEIF API Country Metadata Endpoints
 //!
 //! This module provides functionality to interact with the GLEIF API's country metadata endpoints.
-//! It allows users to retrieve information about countries based on the ISO 3166 Country Codes.
-//!
-//! ## Overview
+//! It allows users to retrieve information about countries based on the ISO 3166 Country Codes, which are internationally recognized codes for the representation of country names and territories.
 //!
 //! The GLEIF API provides access to country metadata, including a list of all ISO 3166 Country Codes
 //! and detailed information about individual countries. These endpoints are useful for applications
-//! that require standardized country data for legal, regulatory, or organizational purposes.
+//! that require standardized country data for legal, regulatory, or organizational purposes, ensuring consistency and accuracy in country identification.
 //!
 //! ## Endpoints
 //!
-//! - **`/countries`**: Retrieve a list of all ISO 3166 Country Codes.
-//! - **`/countries/{id}`**: Fetch details of a specific country by its ISO 3166 Country Code.
+//! - `/countries`: Retrieve a list of all ISO 3166 Country Codes. Supports pagination for large result sets.
+//! - `/countries/{id}`: Fetch details of a specific country by its ISO 3166 Country Code. Returns comprehensive metadata for the requested country.
 //!
 //! ## Examples
 //!
@@ -35,7 +33,7 @@
 //! ## Errors
 //!
 //! Errors may occur during network communication, server-side issues, or deserialization of the response.
-//! These errors are returned as [`crate::error::GleifError`] instances.
+//! These errors are returned as [`crate::error::GleifError`] instances. All methods in this module are asynchronous and return a `Result` type, making them suitable for use in async Rust applications.
 
 use crate::{client::GleifClient, error::Result, request_builder::GleifRequestBuilder};
 use serde::de::DeserializeOwned;

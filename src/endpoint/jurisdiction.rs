@@ -1,21 +1,21 @@
-//! Endpoints for GLEIF API jurisdiction metadata.
+//! # GLEIF API Jurisdiction Metadata Endpoints
 //!
 //! The Jurisdictions endpoint contains legal jurisdictions based on the ISO 3166 Country and Sub-Region Codes.
-//! This module provides functionality for interacting with the Jurisdictions endpoint of the GLEIF API.
+//! This module provides functionality for interacting with the Jurisdictions endpoint of the GLEIF API, enabling applications to access authoritative jurisdiction metadata for global entities.
 //!
 //! Jurisdictions represent the legal and administrative regions where entities operate. These are
-//! defined using ISO 3166 standards for countries and sub-regions.
+//! defined using ISO 3166 standards for countries and sub-regions, ensuring consistency and interoperability in legal and regulatory contexts.
 //!
 //! The module includes methods to:
-//! - Fetch a list of all jurisdictions.
-//! - Fetch detailed information about a specific jurisdiction using its unique code.
+//! - Fetch a list of all jurisdictions, supporting pagination for large result sets.
+//! - Fetch detailed information about a specific jurisdiction using its unique code, including metadata and region details.
 //!
-//! # Endpoints
+//! ## Endpoints
 //!
-//! - `/jurisdictions`: Fetches a list of all jurisdictions.
-//! - `/jurisdictions/{id}`: Fetches detailed information about a specific jurisdiction by its code.
+//! - `/jurisdictions`: Fetches a list of all jurisdictions. The endpoint supports pagination and returns metadata for each jurisdiction.
+//! - `/jurisdictions/{id}`: Fetches detailed information about a specific jurisdiction by its code, returning comprehensive metadata.
 //!
-//! # Examples
+//! ## Examples
 //!
 //! ```rust
 //! use gleif_rs::{client::GleifClient};
@@ -33,10 +33,10 @@
 //! # Ok(()) }
 //! ```
 //!
-//! # Errors
+//! ## Errors
 //!
 //! Errors may occur during network communication, server-side issues, or deserialization of the response.
-//! These errors are returned as [`crate::error::GleifError`] instances.
+//! These errors are returned as [`crate::error::GleifError`] instances. All methods in this module are asynchronous and return a `Result` type, making them suitable for use in async Rust applications.
 
 use crate::{client::GleifClient, error::Result, request_builder::GleifRequestBuilder};
 use serde::de::DeserializeOwned;

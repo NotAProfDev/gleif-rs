@@ -1,19 +1,20 @@
-//! Endpoints for GLEIF API registration agent metadata.
+//! # GLEIF API Registration Agent Endpoints
+//!
 //! This module provides functionality for interacting with the Registration Agents endpoint of the GLEIF API.
 //!
 //! Registration Agents are entities that assist legal entities in obtaining and managing Legal Entity Identifiers (LEIs).
-//! They act as intermediaries between legal entities and LEI Issuers (Local Operating Units or LOUs).
+//! They act as intermediaries between legal entities and LEI Issuers (Local Operating Units or LOUs), facilitating the LEI registration and renewal process for organizations worldwide.
 //!
 //! The module includes methods to:
-//! - Fetch a list of all Registration Agents, optionally filtered by specific criteria.
-//! - Fetch detailed information about a specific Registration Agent using its unique identifier.
+//! - Fetch a list of all Registration Agents, optionally filtered by specific criteria, with support for pagination.
+//! - Fetch detailed information about a specific Registration Agent using its unique identifier, including name, associated LEI Issuer, and other metadata.
 //!
-//! # Endpoints
+//! ## Endpoints
 //!
-//! - `/registration-agents`: Fetches a list of all Registration Agents.
-//! - `/registration-agents/{id}`: Fetches detailed information about a specific Registration Agent by its unique ID.
+//! - `/registration-agents`: Fetches a list of all Registration Agents. Supports filtering and pagination for large result sets.
+//! - `/registration-agents/{id}`: Fetches detailed information about a specific Registration Agent by its unique ID, returning comprehensive metadata.
 //!
-//! # Examples
+//! ## Examples
 //!
 //! ```rust
 //! use gleif_rs::{client::GleifClient};
@@ -31,10 +32,10 @@
 //! # Ok(()) }
 //! ```
 //!
-//! # Errors
+//! ## Errors
 //!
 //! Errors may occur during network communication, server-side issues, or deserialization of the response.
-//! These errors are returned as [`crate::error::GleifError`] instances.
+//! These errors are returned as [`crate::error::GleifError`] instances. All methods in this module are asynchronous and return a `Result` type, making them suitable for use in async Rust applications.
 
 use crate::{client::GleifClient, error::Result, request_builder::GleifRequestBuilder};
 use serde::de::DeserializeOwned;

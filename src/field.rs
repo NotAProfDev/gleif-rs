@@ -1,4 +1,4 @@
-//! # API Field Definitions ([`Field`])
+//! # API Field Definitions ([`Field`]) - Type-Safe Enum of GLEIF API Field Names
 //!
 //! This module provides the [`Field`] enum, a crucial tool for representing GLEIF API field names
 //! in a type-safe manner. Interacting with APIs often involves specifying field names as strings

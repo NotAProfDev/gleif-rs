@@ -1,18 +1,18 @@
-//! # Fields Metadata Endpoints
+//! # GLEIF API Fields Metadata Endpoints
 //!
 //! This module provides functionality for interacting with the GLEIF API's fields metadata.
-//! Fields represent the individual data points available for filtering and querying LEI (Legal Entity Identifier) records.
+//! Fields represent the individual data points available for filtering and querying LEI (Legal Entity Identifier) records, and are essential for constructing precise and efficient queries.
 //!
 //! The provided methods allow users to:
-//! - Retrieve a list of all available fields for filtering LEI records.
-//! - Fetch detailed information about a specific field by its unique identifier.
+//! - Retrieve a list of all available fields for filtering LEI records, including their metadata and usage information.
+//! - Fetch detailed information about a specific field by its unique identifier, such as its data type, description, and allowed values.
 //!
-//! # Endpoints
+//! ## Endpoints
 //!
-//! - `/fields`: Fetches a list of all available fields.
-//! - `/fields/{id}`: Fetches details of a specific field by its ID.
+//! - `/fields`: Fetches a list of all available fields. Supports pagination for large result sets.
+//! - `/fields/{id}`: Fetches details of a specific field by its ID, returning comprehensive metadata for that field.
 //!
-//! # Examples
+//! ## Examples
 //!
 //! ```rust
 //! use gleif_rs::{client::GleifClient};
@@ -30,10 +30,10 @@
 //! # Ok(()) }
 //! ```
 //!
-//! # Errors
+//! ## Errors
 //!
 //! Errors may occur during network communication, server-side issues, or deserialization of the response.
-//! These errors are returned as [`crate::error::GleifError`] instances.
+//! These errors are returned as [`crate::error::GleifError`] instances. All methods in this module are asynchronous and return a `Result` type, making them suitable for use in async Rust applications.
 
 use crate::{client::GleifClient, error::Result, request_builder::GleifRequestBuilder};
 use serde::de::DeserializeOwned;

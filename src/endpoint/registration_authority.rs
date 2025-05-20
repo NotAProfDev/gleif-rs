@@ -1,21 +1,21 @@
-//! Endpoints for GLEIF API registration authority metadata.
+//! # GLEIF API Registration Authority Endpoints
 //!
 //! The Registration Authorities endpoint contains Registration Authority (RA) Codes based on the GLEIF Registration Authority (RA) Code List.
 //! This module provides functionality for interacting with the Registration Authorities endpoint of the GLEIF API.
 //!
 //! Registration Authorities are entities responsible for assigning and maintaining unique identifiers for legal entities.
-//! They play a critical role in ensuring the integrity and consistency of legal entity data.
+//! They play a critical role in ensuring the integrity and consistency of legal entity data, supporting regulatory, compliance, and entity verification processes.
 //!
 //! The module includes methods to:
-//! - Fetch a list of all Registration Authorities, optionally filtered by specific criteria.
-//! - Fetch detailed information about a specific Registration Authority using its RA List Code.
+//! - Fetch a list of all Registration Authorities, optionally filtered by specific criteria, with support for pagination.
+//! - Fetch detailed information about a specific Registration Authority using its RA List Code, including name, country, and other metadata.
 //!
-//! # Endpoints
+//! ## Endpoints
 //!
-//! - `/registration-authorities`: Fetches a list of all Registration Authorities.
-//! - `/registration-authorities/{id}`: Fetches detailed information about a specific Registration Authority by its RA List Code.
+//! - `/registration-authorities`: Fetches a list of all Registration Authorities. Supports filtering and pagination for large result sets.
+//! - `/registration-authorities/{id}`: Fetches detailed information about a specific Registration Authority by its RA List Code, returning comprehensive metadata.
 //!
-//! # Examples
+//! ## Examples
 //!
 //! ```rust
 //! use gleif_rs::{client::GleifClient};
@@ -33,10 +33,10 @@
 //! # Ok(()) }
 //! ```
 //!
-//! # Errors
+//! ## Errors
 //!
 //! Errors may occur during network communication, server-side issues, or deserialization of the response.
-//! These errors are returned as [`crate::error::GleifError`] instances.
+//! These errors are returned as [`crate::error::GleifError`] instances. All methods in this module are asynchronous and return a `Result` type, making them suitable for use in async Rust applications.
 
 use crate::{client::GleifClient, error::Result, request_builder::GleifRequestBuilder};
 use serde::de::DeserializeOwned;

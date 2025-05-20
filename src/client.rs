@@ -1,4 +1,4 @@
-//! # GLEIF API Client ([`GleifClient`])
+//! # Main GLEIF API Client ([`GleifClient`]) - Entry Point for GLEIF API Interactions.
 //!
 //! This module provides [`GleifClient`], the main entry point for interacting with the [Global Legal Entity Identifier
 //! Foundation (GLEIF) API](https://www.gleif.org/en/lei-data/gleif-api). It is designed for both simplicity and extensibility, supporting ergonomic

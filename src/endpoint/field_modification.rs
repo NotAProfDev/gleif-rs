@@ -1,17 +1,17 @@
-//! Field Modifications Metadata Endpoints
+//! # GLEIF API Field Modifications Metadata Endpoints
 //!
 //! This module provides functionality for interacting with the GLEIF API's field modifications metadata.
-//! Field modifications represent changes made to specific fields of LEI (Legal Entity Identifier) records.
+//! Field modifications represent changes made to specific fields of LEI (Legal Entity Identifier) records, allowing for detailed audit trails and change tracking.
 //!
 //! The provided methods allow users to:
-//! - Retrieve a list of field modifications for a specific LEI record.
-//! - Filter the modifications based on various criteria, such as record type, modification date, or field name.
+//! - Retrieve a list of field modifications for a specific LEI record, supporting pagination for large change histories.
+//! - Filter the modifications based on various criteria, such as record type, modification date, or field name, to focus on relevant changes.
 //!
-//! # Endpoints
+//! ## Endpoints
 //!
-//! - `/lei-records/{lei}/field-modifications`: Fetches field modifications for a specific LEI record.
+//! - `/lei-records/{lei}/field-modifications`: Fetches field modifications for a specific LEI record. The endpoint supports filtering and returns a list of modification events with metadata.
 //!
-//! # Examples
+//! ## Examples
 //!
 //! ```rust
 //! use gleif_rs::{client::GleifClient};
@@ -26,10 +26,10 @@
 //! # Ok(()) }
 //! ```
 //!
-//! # Errors
+//! ## Errors
 //!
 //! Errors may occur during network communication, server-side issues, or deserialization of the response.
-//! These errors are returned as [`crate::error::GleifError`] instances.
+//! These errors are returned as [`crate::error::GleifError`] instances. All methods in this module are asynchronous and return a `Result` type, making them suitable for use in async Rust applications.
 
 use crate::{client::GleifClient, request_builder::GleifRequestBuilder};
 

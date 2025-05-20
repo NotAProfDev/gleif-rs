@@ -1,4 +1,4 @@
-//! # GLEIF API Field Value Enums ([`gleif_rs::value`])
+//! # GLEIF API Field Value Enums ([`value`](crate::value)) - Type-Safe Enums for GLEIF API Field values
 //!
 //! This module provides a collection of type-safe enums that represent predefined,
 //! known values for specific fields within the GLEIF API. For many API fields,

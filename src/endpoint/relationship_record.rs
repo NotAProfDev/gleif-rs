@@ -1,8 +1,10 @@
+//! # GLEIF API Relationship Endpoints
+//!
 //! This module provides functionality for interacting with the relationship endpoints of the GLEIF API.
 //!
 //! Relationships in the GLEIF API represent hierarchical connections between legal entities, such as
 //! parent-child relationships based on accounting consolidation standards. These relationships are
-//! crucial for understanding the structure and ownership of legal entities.
+//! crucial for understanding the structure and ownership of legal entities, supporting regulatory, compliance, and risk management use cases.
 //!
 //! The module includes methods to:
 //! - Retrieve the direct parent relationship for a specific LEI.
@@ -10,19 +12,14 @@
 //! - Retrieve the direct child relationships for a specific LEI.
 //! - Retrieve the ultimate child relationships for a specific LEI.
 //!
-//! # Endpoints
+//! ## Endpoints
 //!
 //! - `/lei-records/{lei}/direct-parent-relationship`: Fetches the direct parent relationship.
 //! - `/lei-records/{lei}/ultimate-parent-relationship`: Fetches the ultimate parent relationship.
 //! - `/lei-records/{lei}/direct-child-relationships`: Fetches the direct child relationships.
 //! - `/lei-records/{lei}/ultimate-child-relationships`: Fetches the ultimate child relationships.
 //!
-//! # Errors
-//!
-//! Errors may occur during network communication, server-side issues, or deserialization of the response.
-//! These errors are returned as [`crate::error::GleifError`] instances.
-//!
-//! # Examples
+//! ## Examples
 //!
 //! ```rust
 //! use gleif_rs::{client::GleifClient};
@@ -45,6 +42,11 @@
 //! let relationships: RelationshipRecordList = client.ultimate_child_relationships("5493000IBP32UQZ0KL24").send().await?;
 //! # Ok(()) }
 //! ```
+//!
+//! ## Errors
+//!
+//! Errors may occur during network communication, server-side issues, or deserialization of the response.
+//! These errors are returned as [`crate::error::GleifError`] instances. All methods in this module are asynchronous and return a `Result` type, making them suitable for use in async Rust applications.
 
 use crate::{client::GleifClient, error::Result, request_builder::GleifRequestBuilder};
 use serde::de::DeserializeOwned;
