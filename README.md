@@ -21,14 +21,7 @@ See the [full API documentation on docs.rs](https://docs.rs/gleif-rs/).
 
 ## Installation
 
-Add the following to your `Cargo.toml`:
-
-```toml
-[dependencies]
-gleif-rs = "0.1"
-```
-
-Alternatively, you can add it using:
+Run the following Cargo command in your project directory:
 
 ```shell
 cargo add gleif-rs

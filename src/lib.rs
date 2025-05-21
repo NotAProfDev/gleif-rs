@@ -13,11 +13,10 @@
 //!
 //! ## Getting Started
 //!
-//! To use this library, add it to your `Cargo.toml`:
+//! Run the following Cargo command in your project directory:
 //!
-//! ```toml
-//! [dependencies]
-//! gleif-rs = "0.1"
+//! ```shell
+//! cargo add gleif-rs
 //! ```
 //!
 //! ### Basic Example: Fetching an LEI Record
