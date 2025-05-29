@@ -17,8 +17,7 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct RelationshipRecord {
     /// The type of the data (e.g., "relationship-records").
-    #[serde(rename = "type")]
-    pub data_type: String,
+    pub r#type: String,
     /// The unique identifier of the relationship record.
     pub id: String,
     /// The attributes of the relationship record.
@@ -53,8 +52,7 @@ pub struct RelationshipDetails {
     /// The end node of the relationship.
     pub end_node: RelationshipNode,
     /// The type of the relationship.
-    #[serde(rename = "type")]
-    pub relationship_type: RelationshipType,
+    pub r#type: RelationshipType,
     /// The status of the relationship.
     pub status: RelationshipStatus,
     /// The periods during which the relationship is/was valid.
@@ -68,8 +66,7 @@ pub struct RelationshipNode {
     /// The unique identifier of the node.
     pub id: String,
     /// The type of the node.
-    #[serde(rename = "type")]
-    pub node_type: String,
+    pub r#type: String,
 }
 
 /// A period during which a relationship is/was valid.
@@ -82,8 +79,7 @@ pub struct RelationshipPeriod {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub end_date: Option<DateTime<Utc>>,
     /// The type of the period.
-    #[serde(rename = "type")]
-    pub period_type: RelationshipPeriodType,
+    pub r#type: RelationshipPeriodType,
 }
 
 /// Registration information for a relationship.
@@ -150,9 +146,9 @@ mod tests {
                     "Relationship record id should not be empty in {filename}"
                 );
                 assert_eq!(
-                    record.data.data_type, "relationship-records",
+                    record.data.r#type, "relationship-records",
                     "Unexpected type in {}: {}",
-                    filename, record.data.data_type
+                    filename, record.data.r#type
                 );
             },
             dir,

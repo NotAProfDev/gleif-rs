@@ -13,8 +13,7 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct EntityLegalForm {
     /// The type of the data (always "entityLegalForms").
-    #[serde(rename = "type")]
-    pub data_type: String,
+    pub r#type: String,
     /// The unique identifier of the entity legal form.
     pub id: String,
     /// The attributes of the entity legal form.

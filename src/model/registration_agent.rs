@@ -11,8 +11,7 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct RegistrationAgent {
     /// The type of the data (e.g., "registration-agents").
-    #[serde(rename = "type")]
-    pub data_type: String,
+    pub r#type: String,
     /// The unique identifier of the registration agent.
     pub id: String,
     /// The attributes of the registration agent.

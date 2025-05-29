@@ -13,8 +13,7 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct LeiIssuer {
     /// The type of the data (e.g., "leiIssuers").
-    #[serde(rename = "type")]
-    pub data_type: String,
+    pub r#type: String,
     /// The unique identifier of the LEI Issuer.
     pub id: String,
     /// The attributes of the LEI Issuer.
@@ -54,8 +53,7 @@ pub struct LeiIssuerRelationships {
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct LeiIssuerJurisdiction {
     /// The type of the data (e.g., "lei-issuer-accredited-jurisdictions").
-    #[serde(rename = "type")]
-    pub data_type: String,
+    pub r#type: String,
     /// The unique identifier of the LEI Issuer Jurisdiction.
     pub id: String,
     /// The attributes of the LEI Issuer Jurisdiction.

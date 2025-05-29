@@ -11,8 +11,7 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct Field {
     /// The type of the data (e.g., "fields").
-    #[serde(rename = "type")]
-    pub data_type: String,
+    pub r#type: String,
     /// The unique identifier of the field.
     pub id: String,
     /// The attributes of the field.

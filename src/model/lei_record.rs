@@ -20,8 +20,7 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct LeiRecord {
     /// The type of the data.
-    #[serde(rename = "type")]
-    pub data_type: String,
+    pub r#type: String,
     /// The unique identifier of the data.
     pub id: String,
     /// The attributes of the data.
@@ -129,8 +128,7 @@ pub struct OtherName {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub language: Option<String>,
     /// Type of alternative name for the legal entity.
-    #[serde(rename = "type")]
-    pub name_type: EntityNameType,
+    pub r#type: EntityNameType,
 }
 
 /// Represents a transliterated name with optional language and mandatory type.
@@ -142,8 +140,7 @@ pub struct TransliteratedOtherName {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub language: Option<String>,
     /// Type of alternative name for the legal entity.
-    #[serde(rename = "type")]
-    pub name_type: TransliteratedNameType,
+    pub r#type: TransliteratedNameType,
 }
 
 /// Represents an address with various details.
@@ -213,8 +210,7 @@ pub struct OtherAddress {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub postal_code: Option<String>,
     /// The type of address represented by this `OtherAddress` instance.
-    #[serde(rename = "type")]
-    pub address_type: OtherAddressType,
+    pub r#type: OtherAddressType,
 }
 
 /// Represents the registration authority details of an entity.
@@ -250,8 +246,8 @@ pub struct AssociatedEntity {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub name: Option<String>,
     /// The type of association represented by this `AssociatedEntity` instance.
-    #[serde(rename = "type", skip_serializing_if = "Option::is_none")]
-    pub association_type: Option<AssociatedEntityType>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub r#type: Option<AssociatedEntityType>,
 }
 
 /// Represents the expiration details of an entity.
@@ -291,8 +287,7 @@ pub struct EventGroup {
 #[serde(rename_all = "camelCase")]
 pub struct Event {
     /// The type of legal entity event.
-    #[serde(rename = "type")]
-    pub event_type: EventType,
+    pub r#type: EventType,
     /// The date when the legal entity event becomes legally effective.
     pub effective_date: DateTime<Utc>,
     /// The date when the legal entity event was recorded in the Global LEI System..

@@ -12,8 +12,7 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct FuzzyCompletion {
     /// The type of the fuzzy completion result (e.g., "fuzzy-completions").
-    #[serde(rename = "type")]
-    pub data_type: String,
+    pub r#type: String,
     /// Attributes of the fuzzy completion result, such as the matched value.
     pub attributes: FuzzyCompletionAttributes,
     /// Relationships to related LEI records for this fuzzy completion.
@@ -48,8 +47,7 @@ pub struct FuzzyCompletionLeiRecords {
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct FuzzyCompletionLeiRecordsData {
     /// The type of the related resource (usually "lei-records").
-    #[serde(rename = "type")]
-    pub data_type: String,
+    pub r#type: String,
     /// The LEI identifier for the related record.
     pub id: String,
 }

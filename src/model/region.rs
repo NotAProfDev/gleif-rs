@@ -11,8 +11,7 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct Region {
     /// The type of the data (e.g., "regions").
-    #[serde(rename = "type")]
-    pub data_type: String,
+    pub r#type: String,
     /// The unique identifier of the region.
     pub id: String,
     /// The attributes of the region.

@@ -11,8 +11,7 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct Jurisdiction {
     /// The type of the data (e.g., "jurisdictions").
-    #[serde(rename = "type")]
-    pub data_type: String,
+    pub r#type: String,
     /// The unique identifier of the jurisdiction.
     pub id: String,
     /// The attributes of the jurisdiction.

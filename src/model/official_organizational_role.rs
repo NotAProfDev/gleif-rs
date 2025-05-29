@@ -13,8 +13,7 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct OfficialOrganizationalRole {
     /// The type of the data (e.g., "officialOrganizationalRoles").
-    #[serde(rename = "type")]
-    pub data_type: String,
+    pub r#type: String,
     /// The unique identifier of the official organizational role.
     pub id: String,
     /// The attributes of the official organizational role.

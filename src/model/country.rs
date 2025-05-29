@@ -11,8 +11,7 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct Country {
     /// The type of the data (always "countries").
-    #[serde(rename = "type")]
-    pub data_type: String,
+    pub r#type: String,
     /// ISO 3166-1 alpha-2 code of the country (e.g., "DE").
     pub id: String,
     /// The attributes of the country, including code and name.

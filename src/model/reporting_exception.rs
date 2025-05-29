@@ -13,8 +13,7 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct ReportingException {
     /// The type of the data (should be "reporting-exceptions").
-    #[serde(rename = "type")]
-    pub data_type: String,
+    pub r#type: String,
     /// The unique identifier of the reporting exception.
     pub id: String,
     /// The attributes of the reporting exception.
@@ -78,7 +77,7 @@ mod tests {
             |filename, response| {
                 let data = &response.data;
                 assert_eq!(
-                    data.data_type, "reporting-exceptions",
+                    data.r#type, "reporting-exceptions",
                     "Type mismatch in {filename}"
                 );
                 assert_eq!(

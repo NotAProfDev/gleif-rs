@@ -12,8 +12,7 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct VLeiIssuer {
     /// The type of the data (e.g., "vlei-issuers").
-    #[serde(rename = "type")]
-    pub data_type: String,
+    pub r#type: String,
     /// The unique identifier of the vLEI Issuer.
     pub id: String,
     /// The attributes of the vLEI Issuer.

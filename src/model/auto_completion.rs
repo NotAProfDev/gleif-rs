@@ -11,8 +11,7 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct AutoCompletion {
     /// The type of the data (usually "autocompletions").
-    #[serde(rename = "type")]
-    pub data_type: String,
+    pub r#type: String,
     /// Attributes of the auto completion result.
     pub attributes: AutoCompletionAttributes,
 }
