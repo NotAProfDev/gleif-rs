@@ -70,7 +70,7 @@
 //! of your interactions with the GLEIF API, catching potential errors related to field values
 //! at compile time or through controlled parsing.
 
-use crate::error::GleifError;
+use crate::error::{GleifError, ParseErrorKind};
 use std::{fmt, str::FromStr};
 
 // Re-exporting the enums for external use
@@ -114,9 +114,10 @@ impl FromStr for EntityCategory {
             "SOLE_PROPRIETOR" => Ok(EntityCategory::SoleProprietor),
             "RESIDENT_GOVERNMENT_ENTITY" => Ok(EntityCategory::ResidentGovernmentEntity),
             "INTERNATIONAL_ORGANIZATION" => Ok(EntityCategory::InternationalOrganization),
-            _ => Err(GleifError::ValueParseError(
-                "Unknown EntityCategory variant".to_string(),
-            )),
+            _ => Err(GleifError::ParseError {
+                kind: ParseErrorKind::Value,
+                message: "Unknown EntityCategory variant".to_string(),
+            }),
         }
     }
 }
@@ -172,9 +173,10 @@ impl FromStr for RegistrationStatus {
             "PENDING_TRANSFER" => Ok(RegistrationStatus::PendingTransfer),
             "PENDING_ARCHIVAL" => Ok(RegistrationStatus::PendingArchival),
             "PUBLISHED" => Ok(RegistrationStatus::Published),
-            _ => Err(GleifError::ValueParseError(
-                "Unknown RegistrationStatus variant".to_string(),
-            )),
+            _ => Err(GleifError::ParseError {
+                kind: ParseErrorKind::Value,
+                message: "Unknown RegistrationStatus variant".to_string(),
+            }),
         }
     }
 }
@@ -212,9 +214,10 @@ impl FromStr for ConformityFlag {
             "CONFORMING" => Ok(ConformityFlag::Conforming),
             "NON_CONFORMING" => Ok(ConformityFlag::NonConforming),
             "NOT_APPLICABLE" => Ok(ConformityFlag::NotApplicable),
-            _ => Err(GleifError::ValueParseError(
-                "Unknown ConformityFlag variant".to_string(),
-            )),
+            _ => Err(GleifError::ParseError {
+                kind: ParseErrorKind::Value,
+                message: "Unknown ConformityFlag variant".to_string(),
+            }),
         }
     }
 }

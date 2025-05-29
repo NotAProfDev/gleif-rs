@@ -86,7 +86,7 @@
 //! By incorporating [`Field`] into your application, you create more robust, readable,
 //! and maintainable code for interacting with the GLEIF API.
 
-use crate::error::{GleifError, Result};
+use crate::error::{GleifError, ParseErrorKind, Result};
 use std::{fmt, str::FromStr};
 
 /// Enum for known GLEIF API field names.
@@ -220,7 +220,7 @@ impl Field {
     ///
     /// # Errors
     ///
-    /// Returns [`crate::error::GleifError::FieldParseError`] if the input string is not a valid field name or is not allowed.
+    /// Returns [`crate::error::GleifError::ParseError`] if the input string is not a valid field name or is not allowed.
     pub fn parse_with_allowed(input: &str, allowed: Option<&[Field]>) -> Result<Field> {
         let parsed = match input {
             "lei" => Field::Lei,
@@ -256,16 +256,18 @@ impl Field {
             "relationship.type" => Field::RelationshipType,
             "fulltext" => Field::Fulltext,
             _ => {
-                return Err(GleifError::FieldParseError(
-                    "Unknown field name".to_string(),
-                ));
+                return Err(GleifError::ParseError {
+                    kind: ParseErrorKind::Field,
+                    message: "Unknown field name".to_string(),
+                });
             }
         };
         if let Some(allowed) = allowed {
             if !allowed.contains(&parsed) {
-                return Err(GleifError::FieldParseError(
-                    "Field not allowed for this operation".to_string(),
-                ));
+                return Err(GleifError::ParseError {
+                    kind: ParseErrorKind::Field,
+                    message: "Field not allowed for this operation".to_string(),
+                });
             }
         }
         Ok(parsed)

@@ -67,7 +67,7 @@
 
 use crate::{
     client::GleifClient,
-    error::{GleifError, Result},
+    error::{GleifError, ResponseContent, Result},
 };
 use reqwest::Method;
 use serde::de::DeserializeOwned;
@@ -287,12 +287,20 @@ impl GleifRequestBuilder {
         let req = self.build_request(url);
         let resp = req.send().await.map_err(GleifError::from)?;
 
-        // Attempt to deserialize the response body into the type R
-        let parsed_response = resp
-            .json::<R>()
-            .await
-            .map_err(|e| GleifError::from(reqwest_middleware::Error::from(e)))?;
-        Ok(parsed_response)
+        let status = resp.status();
+        let resp_text = resp.text().await?;
+
+        if !status.is_client_error() && !status.is_server_error() {
+            let parsed_response: R = serde_json::from_str(&resp_text).map_err(GleifError::from)?;
+            Ok(parsed_response)
+        } else {
+            // If the response is not successful, we can return an error
+            // with the status code and response text for debugging.
+            Err(GleifError::ResponseError(ResponseContent {
+                status,
+                content: resp_text,
+            }))
+        }
     }
 }
 
