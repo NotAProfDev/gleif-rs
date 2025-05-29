@@ -10,7 +10,7 @@
 //! wrapper around various potential issues, including:
 //!
 //! - **Network Issues:** Problems establishing a connection, DNS failures, timeouts,
-//!   or other [`reqwest`] related network errors.
+//!   or other [`reqwest`] network errors.
 //! - **API Errors:** HTTP status codes returned by the GLEIF API indicating an issue
 //!   with the request (e.g., 400 Bad Request, 401 Unauthorized, 404 Not Found,
 //!   500 Internal Server Error). [`GleifError`] provides methods to inspect these
@@ -18,9 +18,9 @@
 //! - **Response Processing Errors:** Failures during the processing of a response,
 //!   such as:
 //!     - **JSON Deserialization Failures:** If the API response isn't the expected JSON
-//!       structure, or if there's an error parsing it (typically wrapped in [`reqwest_middleware::Error`]).
+//!       structure, or if there's an error parsing it (typically wrapped in [`serde_json::Error`]).
 //!     - **Middleware Errors:** Errors originating from the [`reqwest-middleware`](https://docs.rs/reqwest-middleware/) stack,
-//!       like retry policies being exhausted.
+//!       such as retry policies being exhausted.
 //! - **Request Building Errors:** Issues that occur before a request is sent, such as
 //!   invalid URL formation or header construction problems.
 //!
@@ -37,7 +37,7 @@
 //! ### Example: Categorizing and Responding to Errors
 //!
 //! The following example demonstrates how to use the helper methods on [`GleifError`]
-//! to differentiate between various error conditions and respond accordingly.
+//! to differentiate between various error conditions and respond accordingly:
 //!
 //! ```rust
 //! use gleif_rs::error::GleifError;
@@ -58,11 +58,12 @@
 //! ```
 //!
 //! By using these methods, you can build robust error handling logic tailored to the
-//! specifics of your application's needs when interacting with the GLEIF API.
+//! needs of your application when interacting with the GLEIF API.
 //! For more details on specific error variants or if you need to access the underlying
 //! source error, you can use the `source()` method from the [`std::error::Error`] trait.
 
-use thiserror::Error;
+use std::error;
+use std::fmt;
 use url::Url;
 
 /// Type alias for the result type used throughout the GLEIF API client.
@@ -70,34 +71,124 @@ use url::Url;
 pub type Result<T> = std::result::Result<T, GleifError>;
 
 /// Errors that can occur when using the GLEIF API client.
-#[derive(Debug, Error)]
+#[derive(Debug)]
 pub enum GleifError {
-    /// Wrapper for all errors originating from the HTTP client layer
-    #[error(transparent)]
-    ReqwestMiddlewareError(#[from] reqwest_middleware::Error),
+    /// Error from reqwest directly
+    ReqwestError(reqwest::Error),
+
+    /// Error from `reqwest_middleware`
+    ReqwestMiddlewareError(reqwest_middleware::Error),
 
     /// Error when the URL is invalid
-    #[error(transparent)]
-    UrlParseError(#[from] url::ParseError),
+    UrlParseError(url::ParseError),
 
-    /// Error when parsing a field name fails or the field is not allowed
-    #[error("Field parse error: {0}")]
-    FieldParseError(String),
+    /// Error from `serde_json`
+    SerdeError(serde_json::Error),
 
-    /// Error when parsing a value name fails
-    #[error("Value parse error: {0}")]
-    ValueParseError(String),
+    /// Error from `std::io`
+    IoError(std::io::Error),
+
+    /// Error with attached response content
+    ResponseError(ResponseContent),
+
+    /// Error when parsing a field or value fails
+    ParseError {
+        /// The kind of parse error.
+        kind: ParseErrorKind,
+        /// The error message describing the parse failure.
+        message: String,
+    },
+}
+
+/// Generic response content for errors with attached payloads.
+#[derive(Debug, Clone)]
+pub struct ResponseContent {
+    /// The HTTP status code of the response.
+    pub status: reqwest::StatusCode,
+    /// The content of the response as a string.
+    pub content: String,
+}
+
+/// Kinds of parse errors for fields and values.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum ParseErrorKind {
+    /// Error related to parsing a field name.
+    Field,
+    /// Error related to parsing a value.
+    Value,
+}
+
+impl fmt::Display for GleifError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let (module, e) = match self {
+            GleifError::ReqwestError(e) => ("reqwest", e.to_string()),
+            GleifError::ReqwestMiddlewareError(e) => ("reqwest-middleware", e.to_string()),
+            GleifError::UrlParseError(e) => ("url", e.to_string()),
+            GleifError::SerdeError(e) => ("serde", e.to_string()),
+            GleifError::IoError(e) => ("IO", e.to_string()),
+            GleifError::ResponseError(e) => ("response", format!("status code {}", e.status)),
+            GleifError::ParseError { kind, message } => match kind {
+                ParseErrorKind::Field => ("field", message.to_owned()),
+                ParseErrorKind::Value => ("value", message.to_owned()),
+            },
+        };
+        write!(f, "error in {module}: {e}")
+    }
+}
+
+impl error::Error for GleifError {
+    fn source(&self) -> Option<&(dyn error::Error + 'static)> {
+        match self {
+            GleifError::ReqwestError(e) => Some(e),
+            GleifError::ReqwestMiddlewareError(e) => Some(e),
+            GleifError::SerdeError(e) => Some(e),
+            GleifError::IoError(e) => Some(e),
+            GleifError::UrlParseError(e) => Some(e),
+            GleifError::ParseError { .. } | GleifError::ResponseError(_) => None,
+        }
+    }
+}
+
+impl From<reqwest::Error> for GleifError {
+    fn from(e: reqwest::Error) -> Self {
+        GleifError::ReqwestError(e)
+    }
+}
+
+impl From<reqwest_middleware::Error> for GleifError {
+    fn from(e: reqwest_middleware::Error) -> Self {
+        GleifError::ReqwestMiddlewareError(e)
+    }
+}
+
+impl From<url::ParseError> for GleifError {
+    fn from(e: url::ParseError) -> Self {
+        GleifError::UrlParseError(e)
+    }
+}
+
+impl From<serde_json::Error> for GleifError {
+    fn from(e: serde_json::Error) -> Self {
+        GleifError::SerdeError(e)
+    }
+}
+
+impl From<std::io::Error> for GleifError {
+    fn from(e: std::io::Error) -> Self {
+        GleifError::IoError(e)
+    }
 }
 
 impl GleifError {
     /// Returns the URL associated with this error, if available.
+    ///
+    /// This will extract the URL from `reqwest_middleware::Error` or `reqwest::Error` if present.
     #[must_use]
     pub fn url(&self) -> Option<&Url> {
         match self {
+            GleifError::ReqwestError(inner) => inner.url(),
             GleifError::ReqwestMiddlewareError(inner) => inner.url(),
-            GleifError::UrlParseError(_)
-            | GleifError::FieldParseError(_)
-            | GleifError::ValueParseError(_) => None,
+            _ => None,
         }
     }
 
@@ -105,12 +196,12 @@ impl GleifError {
     ///
     /// This is useful if you need to remove sensitive information from the URL
     /// (e.g. an API key in the query), but do not want to remove the URL entirely.
+    #[must_use]
     pub fn url_mut(&mut self) -> Option<&mut Url> {
         match self {
+            GleifError::ReqwestError(inner) => inner.url_mut(),
             GleifError::ReqwestMiddlewareError(inner) => inner.url_mut(),
-            GleifError::UrlParseError(_)
-            | GleifError::FieldParseError(_)
-            | GleifError::ValueParseError(_) => None,
+            _ => None,
         }
     }
 
@@ -118,25 +209,25 @@ impl GleifError {
     #[must_use]
     pub fn with_url(self, url: Url) -> Self {
         match self {
+            GleifError::ReqwestError(inner) => GleifError::ReqwestError(inner.with_url(url)),
             GleifError::ReqwestMiddlewareError(inner) => {
                 GleifError::ReqwestMiddlewareError(inner.with_url(url))
             }
-            GleifError::UrlParseError(e) => GleifError::UrlParseError(e),
-            GleifError::FieldParseError(e) => GleifError::FieldParseError(e),
-            GleifError::ValueParseError(e) => GleifError::ValueParseError(e),
+            // For all other variants, attaching a URL is not applicable; return self unchanged.
+            _ => self,
         }
     }
 
-    /// Returns a error with the URL removed (if, for example, it contains sensitive information).
+    /// Returns an error with the URL removed (if, for example, it contains sensitive information).
     #[must_use]
     pub fn without_url(self) -> Self {
         match self {
+            GleifError::ReqwestError(inner) => GleifError::ReqwestError(inner.without_url()),
             GleifError::ReqwestMiddlewareError(inner) => {
                 GleifError::ReqwestMiddlewareError(inner.without_url())
             }
-            GleifError::UrlParseError(e) => GleifError::UrlParseError(e),
-            GleifError::FieldParseError(e) => GleifError::FieldParseError(e),
-            GleifError::ValueParseError(e) => GleifError::ValueParseError(e),
+            // For all other variants, removing a URL is not applicable; return self unchanged.
+            _ => self,
         }
     }
 
@@ -145,9 +236,7 @@ impl GleifError {
     pub fn is_middleware(&self) -> bool {
         match self {
             GleifError::ReqwestMiddlewareError(inner) => inner.is_middleware(),
-            GleifError::UrlParseError(_)
-            | GleifError::FieldParseError(_)
-            | GleifError::ValueParseError(_) => false,
+            _ => false,
         }
     }
 
@@ -156,9 +245,7 @@ impl GleifError {
     pub fn is_builder(&self) -> bool {
         match self {
             GleifError::ReqwestMiddlewareError(inner) => inner.is_builder(),
-            GleifError::UrlParseError(_)
-            | GleifError::FieldParseError(_)
-            | GleifError::ValueParseError(_) => false,
+            _ => false,
         }
     }
 
@@ -166,10 +253,9 @@ impl GleifError {
     #[must_use]
     pub fn is_redirect(&self) -> bool {
         match self {
+            GleifError::ReqwestError(inner) => inner.is_redirect(),
             GleifError::ReqwestMiddlewareError(inner) => inner.is_redirect(),
-            GleifError::UrlParseError(_)
-            | GleifError::FieldParseError(_)
-            | GleifError::ValueParseError(_) => false,
+            _ => false,
         }
     }
 
@@ -177,10 +263,10 @@ impl GleifError {
     #[must_use]
     pub fn is_status(&self) -> bool {
         match self {
+            GleifError::ReqwestError(inner) => inner.is_status(),
             GleifError::ReqwestMiddlewareError(inner) => inner.is_status(),
-            GleifError::UrlParseError(_)
-            | GleifError::FieldParseError(_)
-            | GleifError::ValueParseError(_) => false,
+            GleifError::ResponseError(_) => true,
+            _ => false,
         }
     }
 
@@ -188,10 +274,10 @@ impl GleifError {
     #[must_use]
     pub fn is_timeout(&self) -> bool {
         match self {
+            GleifError::ReqwestError(inner) => inner.is_timeout(),
             GleifError::ReqwestMiddlewareError(inner) => inner.is_timeout(),
-            GleifError::UrlParseError(_)
-            | GleifError::FieldParseError(_)
-            | GleifError::ValueParseError(_) => false,
+            // For all other variants, timeout is not applicable.
+            _ => false,
         }
     }
 
@@ -199,10 +285,9 @@ impl GleifError {
     #[must_use]
     pub fn is_request(&self) -> bool {
         match self {
+            GleifError::ReqwestError(inner) => inner.is_request(),
             GleifError::ReqwestMiddlewareError(inner) => inner.is_request(),
-            GleifError::UrlParseError(_)
-            | GleifError::FieldParseError(_)
-            | GleifError::ValueParseError(_) => false,
+            _ => false,
         }
     }
 
@@ -210,10 +295,9 @@ impl GleifError {
     #[must_use]
     pub fn is_connect(&self) -> bool {
         match self {
+            GleifError::ReqwestError(inner) => inner.is_connect(),
             GleifError::ReqwestMiddlewareError(inner) => inner.is_connect(),
-            GleifError::UrlParseError(_)
-            | GleifError::FieldParseError(_)
-            | GleifError::ValueParseError(_) => false,
+            _ => false,
         }
     }
 
@@ -221,10 +305,9 @@ impl GleifError {
     #[must_use]
     pub fn is_body(&self) -> bool {
         match self {
+            GleifError::ReqwestError(inner) => inner.is_body(),
             GleifError::ReqwestMiddlewareError(inner) => inner.is_body(),
-            GleifError::UrlParseError(_)
-            | GleifError::FieldParseError(_)
-            | GleifError::ValueParseError(_) => false,
+            _ => false,
         }
     }
 
@@ -232,10 +315,10 @@ impl GleifError {
     #[must_use]
     pub fn is_decode(&self) -> bool {
         match self {
+            GleifError::ReqwestError(inner) => inner.is_decode(),
             GleifError::ReqwestMiddlewareError(inner) => inner.is_decode(),
-            GleifError::UrlParseError(_)
-            | GleifError::FieldParseError(_)
-            | GleifError::ValueParseError(_) => false,
+            GleifError::ParseError { .. } => true,
+            _ => false,
         }
     }
 
@@ -243,10 +326,10 @@ impl GleifError {
     #[must_use]
     pub fn status(&self) -> Option<reqwest::StatusCode> {
         match self {
+            GleifError::ReqwestError(inner) => inner.status(),
             GleifError::ReqwestMiddlewareError(inner) => inner.status(),
-            GleifError::UrlParseError(_)
-            | GleifError::FieldParseError(_)
-            | GleifError::ValueParseError(_) => None,
+            GleifError::ResponseError(resp) => Some(resp.status),
+            _ => None,
         }
     }
 }
