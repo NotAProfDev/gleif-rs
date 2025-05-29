@@ -4,6 +4,24 @@ All notable changes to the gleif-rs library will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.0](https://github.com/NotAProfDev/gleif-rs/compare/v0.1.0...v0.2.0) - 2025-05-29
+
+### Added
+
+- Enhance serialization for GLEIF API models
+
+### Other
+
+- Standardize error handling by replacing specific error types with a unified ParseError structure
+- Update serde field names for consistency in FuzzyCompletion and ReportingException models
+- Change data_type field to r#type for consistency across models and responses
+- update installation instructions to use only Cargo command
+- consistent unordered list symbol
+- fix documentation to include crate paths for types and methods
+- Enhance documentation across GLEIF API modules
+- enhance module documentation
+- shorten workflow name and update section header in README
+
 ## [0.1.0] - 2025-05-15
 
 ### Added
