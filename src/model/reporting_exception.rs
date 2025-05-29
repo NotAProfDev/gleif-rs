@@ -48,7 +48,6 @@ pub struct ReportingExceptionAttributes {
 #[serde(rename_all = "kebab-case")]
 pub struct ReportingExceptionRelationships {
     /// The related LEI record.
-    #[serde(rename = "lei-record")]
     pub lei_record: ReportingExceptionLeiRecordRelationship,
 }
 

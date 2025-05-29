@@ -28,9 +28,9 @@ pub struct FuzzyCompletionAttributes {
 
 /// Relationships for a fuzzy completion, including related LEI records.
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "kebab-case")]
 pub struct FuzzyCompletionRelationships {
     /// Related LEI records for this fuzzy completion.
-    #[serde(rename = "lei-records")]
     pub lei_records: FuzzyCompletionLeiRecords,
 }
 
