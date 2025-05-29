@@ -6,10 +6,10 @@
 //! For endpoint usage and client methods, see [`crate::endpoint::field_modification`] (`src/endpoint/field_modification.rs`).
 
 use chrono::{DateTime, Utc};
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 /// Represents a field modification record as returned by the GLEIF API.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct FieldModification {
     /// The type of the data (e.g., "fieldModifications").
     #[serde(rename = "type")]
@@ -21,7 +21,7 @@ pub struct FieldModification {
 }
 
 /// Attributes of a field modification as returned by the GLEIF API.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct FieldModificationAttributes {
     /// The LEI associated with the modification.
@@ -35,22 +35,27 @@ pub struct FieldModificationAttributes {
     /// The date and time of the modification.
     pub date: DateTime<Utc>,
     /// The old value of the field, if available.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub value_old: Option<String>,
     /// The new value of the field.
     pub value_new: String,
     /// Additional context for the modification, if available.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub context: Option<FieldModificationContext>,
 }
 
 /// Context information for a field modification, if available.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct FieldModificationContext {
     /// The type of relationship, if applicable.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub relationship_type: Option<String>,
     /// The end node of the relationship, if applicable.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub end_node: Option<String>,
     /// The exception category, if applicable.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub exception_category: Option<String>,
 }
 

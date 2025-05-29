@@ -7,10 +7,10 @@
 
 use crate::model::common::RelatedLink;
 use chrono::{DateTime, Utc};
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 /// A single reporting exception as returned by the GLEIF API.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct ReportingException {
     /// The type of the data (should be "reporting-exceptions").
     #[serde(rename = "type")]
@@ -24,12 +24,14 @@ pub struct ReportingException {
 }
 
 /// Attributes of a reporting exception.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ReportingExceptionAttributes {
     /// The start date of the exception validity period (nullable).
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub valid_from: Option<DateTime<Utc>>,
     /// The end date of the exception validity period (nullable).
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub valid_to: Option<DateTime<Utc>>,
     /// The LEI to which this exception applies.
     pub lei: String,
@@ -38,11 +40,12 @@ pub struct ReportingExceptionAttributes {
     /// The reason for the exception (e.g., `NO_KNOWN_PERSON`).
     pub reason: String,
     /// An optional reference for the exception.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub reference: Option<String>,
 }
 
 /// Relationships for a reporting exception.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "kebab-case")]
 pub struct ReportingExceptionRelationships {
     /// The related LEI record.
@@ -51,7 +54,7 @@ pub struct ReportingExceptionRelationships {
 }
 
 /// Relationship to a LEI record from a reporting exception.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct ReportingExceptionLeiRecordRelationship {
     /// The links object for the related LEI record.
     pub links: RelatedLink,

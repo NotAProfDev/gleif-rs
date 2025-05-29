@@ -5,10 +5,10 @@
 //!
 //! For endpoint usage and client methods, see [`crate::endpoint::region`] (`src/endpoint/region.rs`).
 
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 /// Represents a region as returned by the GLEIF API.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct Region {
     /// The type of the data (e.g., "regions").
     #[serde(rename = "type")]
@@ -20,18 +20,19 @@ pub struct Region {
 }
 
 /// Attributes of a region as returned by the GLEIF API.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct RegionAttributes {
     /// The code of the region.
     pub code: String,
     /// The name of the region, if available.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub name: Option<String>,
     /// A list of names associated with the region in different languages.
     pub names: Vec<RegionName>,
 }
 
 /// A name associated with the region in a specific language.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct RegionName {
     /// The name in the language.
     pub name: String,

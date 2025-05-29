@@ -5,10 +5,10 @@
 //!
 //! For endpoint usage and client methods, see [`crate::endpoint::isin`] (`src/endpoint/isin.rs`).
 
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 /// ISIN resource object for GLEIF API.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct Isin {
     /// The type of the data (e.g., "isins").
     #[serde(rename = "type")]
@@ -20,7 +20,7 @@ pub struct Isin {
 }
 
 /// Attributes for an ISIN resource as returned by the GLEIF API.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct IsinAttributes {
     /// A Legal Entity Identifier (LEI) code, in the format specified by ISO 17442.
     pub lei: String,

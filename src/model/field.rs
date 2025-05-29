@@ -5,10 +5,10 @@
 //!
 //! For endpoint usage and client methods, see [`crate::endpoint::field`] (`src/endpoint/field.rs`).
 
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 /// Represents a field definition as returned by the GLEIF API.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct Field {
     /// The type of the data (e.g., "fields").
     #[serde(rename = "type")]
@@ -20,7 +20,7 @@ pub struct Field {
 }
 
 /// Attributes of a field as returned by the GLEIF API.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct FieldAttributes {
     /// The field name.
     pub field: String,
@@ -29,19 +29,23 @@ pub struct FieldAttributes {
     /// The data type of the field.
     pub data_type: String,
     /// The possible enum values for the field, if any.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub enum_values: Option<Vec<String>>,
     /// The resource associated with the field, if any.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub resource: Option<String>,
     /// Whether the field is sortable.
     pub sortable: bool,
     /// The supported operators for the field, if any.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub operators: Option<Vec<String>>,
     /// The contexts in which the field is used.
     pub contexts: Vec<String>,
     /// The `JSONPath` for the field, if any.
-    #[serde(rename = "jsonPath")]
+    #[serde(rename = "jsonPath", skip_serializing_if = "Option::is_none")]
     pub json_path: Option<String>,
     /// The `XPath` for the field, if any.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub xpath: Option<String>,
 }
 

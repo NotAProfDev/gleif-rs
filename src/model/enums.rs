@@ -12,12 +12,12 @@
 //!
 //! For endpoint-specific usage and client methods, refer to the corresponding modules in [`crate::endpoint`].
 
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 // -- Enums used by Level 1 (who is who) --
 
 /// Represents the type of the name.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum EntityNameType {
     /// Registered name of the entity in an alternative language in the legal jurisdiction in which the entity is registered.
@@ -29,7 +29,7 @@ pub enum EntityNameType {
 }
 
 /// Entity Categories for Legal Entities in the GLEIF database.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq, Hash)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum EntityCategory {
     /// The legal entity is a general legal entity.
@@ -47,7 +47,7 @@ pub enum EntityCategory {
 }
 
 /// Represents the type of the transliterated name.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum TransliteratedNameType {
     /// Legal name of the entity transliterated to ASCII characters, provided by the entity for this purpose.
@@ -57,7 +57,7 @@ pub enum TransliteratedNameType {
 }
 
 /// Represents the type of the other address.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum OtherAddressType {
     /// Registered address of the entity in the legal jurisdiction, in an alternative language used in the legal jurisdiction.
@@ -67,7 +67,7 @@ pub enum OtherAddressType {
 }
 
 /// Represents the type of the transliterated address.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum TransliteratedAddressType {
     /// Registered address of the entity in the legal jurisdiction, transliterated to ASCII characters, auto-transliterated by the managing LOU.
@@ -81,7 +81,7 @@ pub enum TransliteratedAddressType {
 }
 
 /// Represents the sub-category of an entity.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum EntitySubCategory {
     /// The legal entity is a central government subsector which consists of the institutional units plus non-profit institution (NPI) controlled by the central government institutions.
@@ -95,7 +95,7 @@ pub enum EntitySubCategory {
 }
 
 /// Represents the type of the associated entity.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum AssociatedEntityType {
     /// The legal entity is a fund, and the associated entity is the manager of the fund.
@@ -103,7 +103,7 @@ pub enum AssociatedEntityType {
 }
 
 /// Represents the status of an entity.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "UPPERCASE")]
 pub enum EntityStatus {
     /// As of the last report or update, the legal entity reported that it was legally registered and operating.
@@ -115,7 +115,7 @@ pub enum EntityStatus {
 }
 
 /// Represents the reason for the expiration of an entity.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum ExpirationReason {
     /// The entity ceased to operate.
@@ -127,7 +127,7 @@ pub enum ExpirationReason {
 }
 
 /// Represents the group type of an event.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum GroupType {
     /// This event is part of a reverse takeover event.
@@ -141,7 +141,7 @@ pub enum GroupType {
 }
 
 /// Represents the type of an event.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum EventType {
     /// Change in the legal name of the legal entity.
@@ -185,7 +185,7 @@ pub enum EventType {
 }
 
 /// Represents the status of an event.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum EventStatus {
     /// The legal entity event activity and processing is in progress.
@@ -197,7 +197,7 @@ pub enum EventStatus {
 }
 
 /// Conformity Flags for LEI records in the GLEIF database.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq, Hash)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum ConformityFlag {
     /// If the LEI record is timely renewed and the Level 2 data reporting is complete.
@@ -211,7 +211,7 @@ pub enum ConformityFlag {
 // -- Enums used by Level 2 (who owns whom) --
 
 /// A unique code designating the specific category of a directional relationship between two legal entities.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum RelationshipType {
     /// The `StartNode` is directly consolidated by the `EndNode`. The `StartNode` "child" entity has its accounts fully consolidated by the `EndNode` "parent" entity, in the sense given by the accounting standard(s) specified in `RelationshipQualifiers`; the `EndNode` entity is the closest fully consolidating parent to the `StartNode` entity in any applicable hierarchical ownership structure.
@@ -230,7 +230,7 @@ pub enum RelationshipType {
 }
 
 /// The particular type of period, for example, the duration of the relationship itself, the filing or validity period of any documents demonstrating the relationship, or the accounting period they refer to.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum RelationshipPeriodType {
     /// The dates in this instance of `RelationshipPeriod` indicate the accounting period covered by the most recent validation documents for this relationship.
@@ -242,7 +242,7 @@ pub enum RelationshipPeriodType {
 }
 
 /// Represents the status of a relationship.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "UPPERCASE")]
 pub enum RelationshipStatus {
     /// As of the last report or update, the reporting legal entity reported that it is legally registered and/or operating, AND that the relationship detailed in this `RelationshipRecord` is still valid.
@@ -254,7 +254,7 @@ pub enum RelationshipStatus {
 }
 
 /// Designates the optional list of additional qualitative attributes that help to categorize the relationship.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum QualifierDimension {
     /// The accounting standard applied to determine the definition of e.g. ultimate or direct accounting consolidating parent for the relationship detailed in this `RelationshipRecord`. The relevant accounting standard is that applicable to the `EndNode` (the "parent" entity).
@@ -262,7 +262,7 @@ pub enum QualifierDimension {
 }
 
 /// Specifies the additional qualitative attributes that help to categorize the relationship.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum QualifierCategoryType {
     /// United States-Generally Accepted Accounting Principles.
@@ -276,7 +276,7 @@ pub enum QualifierCategoryType {
 }
 
 /// Specifies the method of measurement (or set of rules) used to quantitatively categorize the relationship.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum MeasurementMethodType {
     /// Accounting consolidation holds when "[in the] financial statements of a group [...] the assets, liabilities, equity, income, expenses and cash flows of the parent and its subsidiaries are presented as those of a single economic entity (please see [http://www.iasplus.com/en/standards/ias/ias27-2011](http://www.iasplus.com/en/standards/ias/ias27-2011)).
@@ -284,7 +284,7 @@ pub enum MeasurementMethodType {
 }
 
 /// Specifies the units, where applicable, of a measurement made on a relationship.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "UPPERCASE")]
 pub enum QuantifierUnitsType {
     /// Percentage type for representing percentage values.
@@ -294,7 +294,7 @@ pub enum QuantifierUnitsType {
 // -- Enums used by Level 1 (who is who) and Level 2 (who owns whom) --
 
 /// Registration Statuses for LEI records in the GLEIF database.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq, Hash)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum RegistrationStatus {
     /// An application for an LEI or relationship data report that has been submitted and which is being processed and validated.
@@ -324,7 +324,7 @@ pub enum RegistrationStatus {
 }
 
 /// Represents the validation documents for an event.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum CorroborationDocuments {
     /// A consolidated financial (accounting) statement, prepared and submitted to the relevant authority.
@@ -340,7 +340,7 @@ pub enum CorroborationDocuments {
 }
 
 /// Represents the corroboration level of a registration.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum CorroborationLevel {
     /// The validation of the reference data provided by the registrant has not yet occurred.
@@ -356,7 +356,7 @@ pub enum CorroborationLevel {
 // -- Other Enums --
 
 /// `ELFStatus` represents the status of an Entity Legal Form (ELF).
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum ELFStatus {
     /// The entity is active.

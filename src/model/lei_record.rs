@@ -14,10 +14,10 @@ use crate::model::{
     },
 };
 use chrono::{DateTime, Utc};
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 /// A single LEI record as returned by the GLEIF API.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct LeiRecord {
     /// The type of the data.
     #[serde(rename = "type")]
@@ -31,7 +31,7 @@ pub struct LeiRecord {
 }
 
 /// Attributes of a LEI record (core data).
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct LeiRecordAttributes {
     /// A Legal Entity Identifier (LEI) code, in the format specified by ISO 17442.
@@ -41,46 +41,55 @@ pub struct LeiRecordAttributes {
     /// The Registration container element contains all information on the legal entity's LEI registration with the `ManagingLOU`.
     pub registration: Registration,
     /// The optional Bank Identifier Codes (BIC).
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub bic: Option<Vec<String>>,
     /// The optional Market Identifier Codes (MIC).
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub mic: Option<Vec<String>>,
     /// The optional Open Corporates ID (OCID).
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub ocid: Option<String>,
     /// The optional QCC identifier.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub qcc: Option<String>,
     /// The optional S&P Global identifiers.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub spglobal: Option<Vec<String>>,
     /// The conformity flag.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub conformity_flag: Option<ConformityFlag>,
 }
 
 /// Represents an entity with various details.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Entity {
     /// The legal name of the legal entity.
     pub legal_name: Name,
-    /// An optional list of other names (excluding transliterations) for the legal entity.
+    /// A list of other names (excluding transliterations) for the legal entity.
     pub other_names: Vec<OtherName>,
-    /// An optional list of ASCII-transliterated (i.e. Latin- or Romanized) representations of names for the legal entity.
+    /// A list of ASCII-transliterated (i.e. Latin- or Romanized) representations of names for the legal entity.
     pub transliterated_other_names: Vec<TransliteratedOtherName>,
     /// The address of the legal entity as recorded in the registration of the legal entity in its legal jurisdiction.
     pub legal_address: Address,
     /// The address of the headquarters of the legal entity.
     pub headquarters_address: Address,
-    /// An optional list of other addresses for the legal entity, excluding transliterations.
+    /// A list of other addresses for the legal entity, excluding transliterations.
     pub other_addresses: Vec<OtherAddress>,
     /// An optional list of transliterated addresses for the legal entity.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub transliterated_other_addresses: Option<Vec<OtherAddress>>,
     /// Information about the official authority in the legal entity's jurisdiction of legal registration, for example a business registry, and the corresponding identification of the legal entity by that official source.
     pub registered_at: RegistrationAuthority,
     /// The registered name of the entity.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub registered_as: Option<String>,
     /// The jurisdiction of legal formation of the legal entity; i.e. where the `LegalForm` of the legal entity originates.
     pub jurisdiction: String,
     /// Indicates (where applicable) the category of legal entity identified by this LEI data record, as a more specific category within the broad definition given in ISO 17442. These categories are based on use cases specified in ROC policies, found at <https://www.leiroc.org/leiroc_gls/index.htm>.
     pub category: EntityCategory,
     /// Indicates and specifies further (where applicable) the sub-category (sub-sector) of Legal Entity identified by this LEI Record and already categorized by the `EntityCategory` field.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub sub_category: Option<EntitySubCategory>,
     /// The legal form of the legal entity.
     pub legal_form: LegalForm,
@@ -89,6 +98,7 @@ pub struct Entity {
     /// The operational and/or legal registration status of the legal entity.
     pub status: EntityStatus,
     /// The date on which the legal entity was first established, as represented by ISO 8601 (as defined in ISO 17442).
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub creation_date: Option<DateTime<Utc>>,
     /// The date and reason that the legal entity ceased to operate, whether due to dissolution, merger or acquisition. (Deprecated as of LEI-CDF 3.0)
     pub expiration: Expiration,
@@ -101,20 +111,22 @@ pub struct Entity {
 }
 
 /// Represents a name with optional language.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct Name {
     /// The name. An element of this type has minimum length of one character and may not contain any of: the carriage return (#xD), line feed (#xA) nor tab (#x9) characters, shall not begin or end with a space (#x20) character, or a sequence of two or more adjacent space characters.
     pub name: String,
     /// The language of this element's text content. An IETF Language Code conforming to the latest RFC from IETF BCP 47. Note that the first characters of an IETF Language Code, up to the hyphen (if any), are all lowercase, and those following the hyphen (if any) are all uppercase.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub language: Option<String>,
 }
 
 /// Represents an alternative name with optional language and mandatory type.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct OtherName {
     /// The name. An element of this type has minimum length of one character and may not contain any of: the carriage return (#xD), line feed (#xA) nor tab (#x9) characters, shall not begin or end with a space (#x20) character, or a sequence of two or more adjacent space characters.
     pub name: String,
     /// The language of this element's text content. An IETF Language Code conforming to the latest RFC from IETF BCP 47. Note that the first characters of an IETF Language Code, up to the hyphen (if any), are all lowercase, and those following the hyphen (if any) are all uppercase.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub language: Option<String>,
     /// Type of alternative name for the legal entity.
     #[serde(rename = "type")]
@@ -122,11 +134,12 @@ pub struct OtherName {
 }
 
 /// Represents a transliterated name with optional language and mandatory type.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct TransliteratedOtherName {
     /// The name.
     pub name: String,
     /// The language of this element's text content. An IETF Language Code conforming to the latest RFC from IETF BCP 47. Note that the first characters of an IETF Language Code, up to the hyphen (if any), are all lowercase, and those following the hyphen (if any) are all uppercase.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub language: Option<String>,
     /// Type of alternative name for the legal entity.
     #[serde(rename = "type")]
@@ -134,56 +147,70 @@ pub struct TransliteratedOtherName {
 }
 
 /// Represents an address with various details.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Address {
     /// The language in which all of the string-valued components of this address are expressed. An IETF Language Code conforming to the latest RFC from IETF BCP 47. Note that the first characters of an IETF Language Code, up to the hyphen (if any), are all lowercase, and those following the hyphen (if any) are all uppercase.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub language: Option<String>,
     /// The mandatory first address line element.
     pub address_lines: Vec<String>,
     /// Optional, additional structured version of an external house number, or range of numbers, contained in one of the address line elements. This could be a numeral, a letter or code made up of mixed characters (e.g. 221B).
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub address_number: Option<String>,
     /// Optional, additional structured version of an internal location number, or range of numbers, contained in one of the address line elements.This could be a numeral, a letter or code made up of mixed characters (e.g. 13) of a floor, suite or apartment within a building.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub address_number_within_building: Option<String>,
     /// Optional free text address line to hold content from other address lines containing explicit routing information.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub mail_routing: Option<String>,
     /// One to three optional additional address line elements.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub additional_address_line: Option<Vec<String>>,
     /// The mandatory name of the city.
     pub city: String,
     /// The (optional) 4- to 6-character ISO 3166-2 region code of the region.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub region: Option<String>,
     /// The 2-character ISO 3166-1 country code of the country.
     pub country: String,
     /// The (optional) postal code of this address as specified by the local postal service.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub postal_code: Option<String>,
 }
 
 /// Represents an address with various details.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct OtherAddress {
     /// The type of address represented by this `OtherAddress` instance.
     pub field_type: String,
     /// The language in which all of the string-valued components of this address are expressed. An IETF Language Code conforming to the latest RFC from IETF BCP 47. Note that the first characters of an IETF Language Code, up to the hyphen (if any), are all lowercase, and those following the hyphen (if any) are all uppercase.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub language: Option<String>,
     /// The mandatory first address line element.
     pub address_lines: Vec<String>,
     /// Optional, additional structured version of an external house number, or range of numbers, contained in one of the address line elements. This could be a numeral, a letter or code made up of mixed characters (e.g. 221B).
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub address_number: Option<String>,
     /// Optional, additional structured version of an internal location number, or range of numbers, contained in one of the address line elements.This could be a numeral, a letter or code made up of mixed characters (e.g. 13) of a floor, suite or apartment within a building.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub address_number_within_building: Option<String>,
     /// Optional free text address line to hold content from other address lines containing explicit routing information.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub mail_routing: Option<String>,
     /// One to three optional additional address line elements.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub additional_address_line: Option<Vec<String>>,
     /// The mandatory name of the city.
     pub city: String,
     /// The (optional) 4- to 6-character ISO 3166-2 region code of the region.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub region: Option<String>,
     /// The 2-character ISO 3166-1 country code of the country.
     pub country: String,
     /// The (optional) postal code of this address as specified by the local postal service.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub postal_code: Option<String>,
     /// The type of address represented by this `OtherAddress` instance.
     #[serde(rename = "type")]
@@ -191,57 +218,66 @@ pub struct OtherAddress {
 }
 
 /// Represents the registration authority details of an entity.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct RegistrationAuthority {
     /// The reference code of the registration authority, taken from the Registration Authorities Code List maintained by GLEIF.
     pub id: String,
     /// An optional legacy / historical reference code of a registration authority which is not yet entered in the Registration Authorities Code List (RA list) maintained by GLEIF, or the designation of an interim register until such time as an entry from RA list can be delivered.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub other: Option<String>,
     /// The identifier of the entity at the indicated registration authority.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub entity_id: Option<String>,
 }
 
 /// Represents the legal form of an entity.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct LegalForm {
     /// A current code from the GLEIF-maintained list SHALL be used (ISO 20275). Values of the `LegalFormEnum` code list are maintained by ISO / GLEIF through the Entity Legal Form (ELF), available from <http://www.gleif.org>.
     pub id: String,
     /// An optional legacy code or textual description for the legal entity's legal form, used until a current code from the GLEIF-maintained list can be used.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub other: Option<String>,
 }
 
 /// Represents an associated entity with optional LEI and name.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct AssociatedEntity {
     /// The LEI of an entity associated with the LEI of this registration.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub lei: Option<String>,
     /// The name of an entity associated with the LEI of this registration.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub name: Option<String>,
     /// The type of association represented by this `AssociatedEntity` instance.
-    #[serde(rename = "type")]
+    #[serde(rename = "type", skip_serializing_if = "Option::is_none")]
     pub association_type: Option<AssociatedEntityType>,
 }
 
 /// Represents the expiration details of an entity.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct Expiration {
     /// The date that the legal entity ceased to operate, whether due to dissolution, merger or acquisition. (Deprecated as of LEI-CDF 3.0)
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub date: Option<DateTime<Utc>>,
     /// The reason that a legal entity ceased to exist and/or operate. (Deprecated as of LEI-CDF 3.0)
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub reason: Option<ExpirationReason>,
 }
 
 /// Represents the successor entity details.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct SuccessorEntity {
     /// The LEI of the successor entity.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub lei: Option<String>,
     /// The name of the successor entity.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub name: Option<String>,
 }
 
 /// Represents an event group with type and events.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct EventGroup {
     /// Describes whether or not this legal entity event is part of a group of multiple or a complex event.
@@ -251,7 +287,7 @@ pub struct EventGroup {
 }
 
 /// Container for a single event specified by the ROC in the life of a legal entity that would impact the Reference Data in the Global LEI System.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Event {
     /// The type of legal entity event.
@@ -264,15 +300,17 @@ pub struct Event {
     /// Type of source document(s) used for validating the legal entity event.
     pub validation_documents: CorroborationDocuments,
     /// A reference to a specific document or other source used as the basis of validation for this legal entity event.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub validation_reference: Option<String>,
     /// A list of LEI Record Set elements that are expected to be updated in the LEI Record Set as a result of a legal entity event.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub affected_fields: Option<Vec<AffectedFields>>,
     /// Describes the status of the legal entity event with regard to event timeline.
     pub status: EventStatus,
 }
 
 /// Represents an affected field in an event.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct AffectedFields {
     /// A single element and its value that is expected to be updated in the LEI Record Set as a result of a legal entity event.
     pub value: String,
@@ -281,7 +319,7 @@ pub struct AffectedFields {
 }
 
 /// Represents the registration details of an entity.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Registration {
     /// The date of the first LEI assignment, being the date of publication of the identifier and its supporting data record as represented in ISO 8601.
@@ -299,22 +337,24 @@ pub struct Registration {
     /// Information about the (primary) official authority in the legal entity's jurisdiction of legal registration, for example a business registry, and the corresponding identification of the legal entity by that official source used to validate the legal entity reference data.
     pub validated_at: ValidationAuthority,
     /// The identifier of the entity at the indicated registration authority.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub validated_as: Option<String>,
     /// An optional list of additional registration authorities used by the LEI Issuer to validate the entity data.
     pub other_validation_authorities: Vec<OtherValidationAuthority>,
 }
 
 /// Represents the validation authority used by the LOU to validate the entity data.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct ValidationAuthority {
     /// The reference code of the registration authority, taken from the Registration Authorities Code List (RA list) maintained by GLEIF.
     pub id: String,
     /// An optional legacy / historical reference code of a registration authority which is not yet entered in the Registration Authorities Code List (RA list) maintained by GLEIF, or the designation of an interim register until such time as an entry from RA list can be delivered.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub other: Option<String>,
 }
 
 /// Represents an additional registration authority used by the LOU to validate the entity data.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct OtherValidationAuthority {
     /// Information about the other validation authority.
@@ -324,7 +364,7 @@ pub struct OtherValidationAuthority {
 }
 
 /// Represents the relationships of an entity.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "kebab-case")]
 pub struct Relationships {
     /// The managing LOU.
@@ -334,28 +374,40 @@ pub struct Relationships {
     /// The field modifications.
     pub field_modifications: RelationshipLinks,
     /// The direct parent.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub direct_parent: Option<RelationshipLinks>,
     /// The ultimate parent.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub ultimate_parent: Option<RelationshipLinks>,
     /// The head office.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub head_office: Option<RelationshipLinks>,
     /// The direct children.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub direct_children: Option<RelationshipLinks>,
     /// The ultimate children.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub ultimate_children: Option<RelationshipLinks>,
     /// The successor entity.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub successor_entity: Option<RelationshipLinks>,
     /// The successor entities.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub successor_entities: Option<RelationshipLinks>,
     /// The ISINs.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub isins: Option<RelationshipLinks>,
     /// The fund manager.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub fund_manager: Option<RelationshipLinks>,
     /// The umbrella fund.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub umbrella_fund: Option<RelationshipLinks>,
     /// The managed funds.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub managed_funds: Option<RelationshipLinks>,
     /// The branches.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub branches: Option<RelationshipLinks>,
 }
 

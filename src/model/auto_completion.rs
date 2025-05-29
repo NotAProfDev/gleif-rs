@@ -5,10 +5,10 @@
 //!
 //! For endpoint usage and client methods, see [`crate::endpoint::auto_completion`] (`src/endpoint/auto_completion.rs`).
 
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 /// Represents a single auto completion result from the GLEIF API.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct AutoCompletion {
     /// The type of the data (usually "autocompletions").
     #[serde(rename = "type")]
@@ -18,7 +18,7 @@ pub struct AutoCompletion {
 }
 
 /// Attributes for an auto completion result, such as the matched value and highlighting.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct AutoCompletionAttributes {
     /// The matched value for the auto completion.
     pub value: String,

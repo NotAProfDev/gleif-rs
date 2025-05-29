@@ -11,10 +11,10 @@ use crate::model::enums::{
     RelationshipStatus, RelationshipType,
 };
 use chrono::{DateTime, Utc};
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 /// A single relationship record as returned by the GLEIF API.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct RelationshipRecord {
     /// The type of the data (e.g., "relationship-records").
     #[serde(rename = "type")]
@@ -28,12 +28,13 @@ pub struct RelationshipRecord {
 }
 
 /// Attributes of a relationship record.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct RelationshipRecordAttributes {
     /// The start date/time when the relationship is valid.
     pub valid_from: DateTime<Utc>,
     /// The end date/time when the relationship is valid, if available.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub valid_to: Option<DateTime<Utc>>,
     /// The details of the relationship.
     pub relationship: RelationshipDetails,
@@ -44,7 +45,7 @@ pub struct RelationshipRecordAttributes {
 }
 
 /// Details of a relationship.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct RelationshipDetails {
     /// The start node of the relationship.
@@ -61,7 +62,7 @@ pub struct RelationshipDetails {
 }
 
 /// A node in a relationship (start or end).
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct RelationshipNode {
     /// The unique identifier of the node.
@@ -72,12 +73,13 @@ pub struct RelationshipNode {
 }
 
 /// A period during which a relationship is/was valid.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct RelationshipPeriod {
     /// The start date of the period.
     pub start_date: DateTime<Utc>,
     /// The end date of the period, if available.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub end_date: Option<DateTime<Utc>>,
     /// The type of the period.
     #[serde(rename = "type")]
@@ -85,12 +87,13 @@ pub struct RelationshipPeriod {
 }
 
 /// Registration information for a relationship.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct RelationshipRegistration {
     /// The initial registration date.
     pub initial_registration_date: DateTime<Utc>,
     /// The last update date, if available.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub last_update_date: Option<DateTime<Utc>>,
     /// The registration status.
     pub status: RegistrationStatus,
@@ -103,19 +106,21 @@ pub struct RelationshipRegistration {
     /// The corroboration documents.
     pub corroboration_documents: CorroborationDocuments,
     /// The corroboration reference, if available.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub corroboration_reference: Option<String>,
 }
 
 /// Extension information for a relationship.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct RelationshipExtension {
     /// The deletion date/time, if the relationship was deleted.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub deleted_at: Option<DateTime<Utc>>,
 }
 
 /// Relationship links for the start and end nodes.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "kebab-case")]
 pub struct RelationshipRecordRelationships {
     /// The links for the start node.

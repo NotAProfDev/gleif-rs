@@ -5,10 +5,10 @@
 //!
 //! For endpoint usage and client methods, see [`crate::endpoint::registration_agent`] (`src/endpoint/registration_agent.rs`).
 
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 /// Represents a registration agent as returned by the GLEIF API.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct RegistrationAgent {
     /// The type of the data (e.g., "registration-agents").
     #[serde(rename = "type")]
@@ -20,12 +20,13 @@ pub struct RegistrationAgent {
 }
 
 /// Attributes of a registration agent as returned by the GLEIF API.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct RegistrationAgentAttributes {
     /// The name of the registration agent.
     pub name: String,
     /// The LEI code of the registration agent.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub lei: Option<String>,
     ///The lei issuer of the registration agent.
     pub lei_issuer: String,
