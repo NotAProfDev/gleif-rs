@@ -13,9 +13,8 @@ categories = ["api-bindings", "data-structures", "finance"]
 keywords = ["gleif", "lei", "api", "client", "finance"]
 
 [dependencies]
-thiserror = "2.0.12"
 url = "2.5.4"
-reqwest = { version = "0.12.15", features = ["json"] }
+reqwest = { version = "0.12.18", features = ["json"] }
 reqwest-middleware = "0.4.2"
 serde = { version = "1.0.219", features = ["derive"] }
 serde_json = "1.0.140"
@@ -23,7 +22,7 @@ chrono = { version = "0.4.41", features = ["serde"] }
 
 [dev-dependencies]
 reqwest-retry = "0.7"
-tokio = { version = "1.45.0", features = ["full"] }
+tokio = { version = "1.45.1", features = ["full"] }
 
 # https://doc.rust-lang.org/cargo/reference/profiles.html
 [profile.release]
