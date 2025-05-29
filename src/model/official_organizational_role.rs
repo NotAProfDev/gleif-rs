@@ -7,14 +7,13 @@
 
 use crate::model::enums::ELFStatus;
 use chrono::NaiveDate;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 /// Represents an official organizational role as returned by the GLEIF API.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct OfficialOrganizationalRole {
     /// The type of the data (e.g., "officialOrganizationalRoles").
-    #[serde(rename = "type")]
-    pub data_type: String,
+    pub r#type: String,
     /// The unique identifier of the official organizational role.
     pub id: String,
     /// The attributes of the official organizational role.
@@ -22,7 +21,7 @@ pub struct OfficialOrganizationalRole {
 }
 
 /// Attributes of an official organizational role as returned by the GLEIF API.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct OfficialOrganizationalRoleAttributes {
     /// The code of the official organizational role.
@@ -30,10 +29,12 @@ pub struct OfficialOrganizationalRoleAttributes {
     /// The country associated with the official organizational role.
     pub country: String,
     /// The jurisdiction associated with the official organizational role, if available.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub jurisdiction: Option<String>,
     /// The country code of the official organizational role.
     pub country_code: String,
     /// The subdivision code of the official organizational role, if available.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub subdivision_code: Option<String>,
     /// The date when the official organizational role was created.
     pub date_created: NaiveDate,
@@ -46,7 +47,7 @@ pub struct OfficialOrganizationalRoleAttributes {
 }
 
 /// A name associated with the official organizational role in a specific language.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct OfficialOrganizationalRoleName {
     /// The name in the local language.

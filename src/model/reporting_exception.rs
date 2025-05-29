@@ -7,14 +7,13 @@
 
 use crate::model::common::RelatedLink;
 use chrono::{DateTime, Utc};
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 /// A single reporting exception as returned by the GLEIF API.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct ReportingException {
     /// The type of the data (should be "reporting-exceptions").
-    #[serde(rename = "type")]
-    pub data_type: String,
+    pub r#type: String,
     /// The unique identifier of the reporting exception.
     pub id: String,
     /// The attributes of the reporting exception.
@@ -24,12 +23,14 @@ pub struct ReportingException {
 }
 
 /// Attributes of a reporting exception.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ReportingExceptionAttributes {
     /// The start date of the exception validity period (nullable).
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub valid_from: Option<DateTime<Utc>>,
     /// The end date of the exception validity period (nullable).
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub valid_to: Option<DateTime<Utc>>,
     /// The LEI to which this exception applies.
     pub lei: String,
@@ -38,20 +39,20 @@ pub struct ReportingExceptionAttributes {
     /// The reason for the exception (e.g., `NO_KNOWN_PERSON`).
     pub reason: String,
     /// An optional reference for the exception.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub reference: Option<String>,
 }
 
 /// Relationships for a reporting exception.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "kebab-case")]
 pub struct ReportingExceptionRelationships {
     /// The related LEI record.
-    #[serde(rename = "lei-record")]
     pub lei_record: ReportingExceptionLeiRecordRelationship,
 }
 
 /// Relationship to a LEI record from a reporting exception.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct ReportingExceptionLeiRecordRelationship {
     /// The links object for the related LEI record.
     pub links: RelatedLink,
@@ -75,7 +76,7 @@ mod tests {
             |filename, response| {
                 let data = &response.data;
                 assert_eq!(
-                    data.data_type, "reporting-exceptions",
+                    data.r#type, "reporting-exceptions",
                     "Type mismatch in {filename}"
                 );
                 assert_eq!(

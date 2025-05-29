@@ -6,14 +6,13 @@
 //! For endpoint usage and client methods, see [`crate::endpoint::vlei_issuer`] (`src/endpoint/vlei_issuer.rs`).
 
 use chrono::{DateTime, Utc};
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 /// Represents a vLEI Issuer as returned by the GLEIF API.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct VLeiIssuer {
     /// The type of the data (e.g., "vlei-issuers").
-    #[serde(rename = "type")]
-    pub data_type: String,
+    pub r#type: String,
     /// The unique identifier of the vLEI Issuer.
     pub id: String,
     /// The attributes of the vLEI Issuer.
@@ -21,7 +20,7 @@ pub struct VLeiIssuer {
 }
 
 /// Attributes of a vLEI Issuer as returned by the GLEIF API.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct VLeiIssuerAttributes {
     /// The LEI code of the issuer.

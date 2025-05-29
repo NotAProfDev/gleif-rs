@@ -7,14 +7,13 @@
 
 use crate::model::enums::ELFStatus;
 use chrono::NaiveDate;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 /// A single entity legal form record as returned by the GLEIF API.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct EntityLegalForm {
     /// The type of the data (always "entityLegalForms").
-    #[serde(rename = "type")]
-    pub data_type: String,
+    pub r#type: String,
     /// The unique identifier of the entity legal form.
     pub id: String,
     /// The attributes of the entity legal form.
@@ -22,7 +21,7 @@ pub struct EntityLegalForm {
 }
 
 /// Attributes of an entity legal form as returned by the GLEIF API.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct EntityLegalFormAttributes {
     /// The code of the entity legal form.
@@ -30,10 +29,12 @@ pub struct EntityLegalFormAttributes {
     /// The country associated with the entity legal form.
     pub country: String,
     /// The jurisdiction of the entity legal form.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub jurisdiction: Option<String>,
     /// The country code (ISO) of the entity legal form.
     pub country_code: String,
     /// The subdivision code of the entity legal form.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub subdivision_code: Option<String>,
     /// The creation date of the entity legal form record.
     pub date_created: NaiveDate,
@@ -44,7 +45,7 @@ pub struct EntityLegalFormAttributes {
 }
 
 /// A localized or transliterated name for an entity legal form.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct EntityLegalFormName {
     /// The local name of the entity legal form.

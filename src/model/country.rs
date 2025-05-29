@@ -5,21 +5,20 @@
 //!
 //! For endpoint usage and client methods, see [`crate::endpoint::country`] (`src/endpoint/country.rs`).
 
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 /// A country record as returned by the GLEIF API.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct Country {
     /// The type of the data (always "countries").
-    #[serde(rename = "type")]
-    pub data_type: String,
+    pub r#type: String,
     /// ISO 3166-1 alpha-2 code of the country (e.g., "DE").
     pub id: String,
     /// The attributes of the country, including code and name.
     pub attributes: CountryAttributes,
 }
 
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 /// Attributes of a country as returned by the GLEIF API.
 pub struct CountryAttributes {
     /// ISO 3166-1 alpha-2 code of the country (e.g., "DE").

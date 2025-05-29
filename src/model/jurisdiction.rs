@@ -5,14 +5,13 @@
 //!
 //! For endpoint usage and client methods, see [`crate::endpoint::jurisdiction`] (`src/endpoint/jurisdiction.rs`).
 
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 /// Represents a jurisdiction as returned by the GLEIF API.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct Jurisdiction {
     /// The type of the data (e.g., "jurisdictions").
-    #[serde(rename = "type")]
-    pub data_type: String,
+    pub r#type: String,
     /// The unique identifier of the jurisdiction.
     pub id: String,
     /// The attributes of the jurisdiction.
@@ -20,11 +19,12 @@ pub struct Jurisdiction {
 }
 
 /// Attributes of a jurisdiction as returned by the GLEIF API.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct JurisdictionAttributes {
     /// The code of the jurisdiction.
     pub code: String,
     /// The name of the jurisdiction, if available.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub name: Option<String>,
 }
 

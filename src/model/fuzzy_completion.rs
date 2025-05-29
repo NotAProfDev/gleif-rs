@@ -6,14 +6,13 @@
 //! For endpoint usage and client methods, see [`crate::endpoint::fuzzy_completion`] (`src/endpoint/fuzzy_completion.rs`).
 
 use crate::model::common::RelatedLink;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 /// Represents a single fuzzy completion result from the GLEIF API.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct FuzzyCompletion {
     /// The type of the fuzzy completion result (e.g., "fuzzy-completions").
-    #[serde(rename = "type")]
-    pub data_type: String,
+    pub r#type: String,
     /// Attributes of the fuzzy completion result, such as the matched value.
     pub attributes: FuzzyCompletionAttributes,
     /// Relationships to related LEI records for this fuzzy completion.
@@ -21,22 +20,22 @@ pub struct FuzzyCompletion {
 }
 
 /// Attributes for a fuzzy completion result, such as the matched value.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct FuzzyCompletionAttributes {
     /// The matched value for the fuzzy completion result.
     pub value: String,
 }
 
 /// Relationships for a fuzzy completion, including related LEI records.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "kebab-case")]
 pub struct FuzzyCompletionRelationships {
     /// Related LEI records for this fuzzy completion.
-    #[serde(rename = "lei-records")]
     pub lei_records: FuzzyCompletionLeiRecords,
 }
 
 /// Data and links for a related LEI record in a fuzzy completion.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct FuzzyCompletionLeiRecords {
     /// Data about the related LEI record, such as its type and ID.
     pub data: FuzzyCompletionLeiRecordsData,
@@ -45,11 +44,10 @@ pub struct FuzzyCompletionLeiRecords {
 }
 
 /// Data for a related LEI record, including type and ID.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct FuzzyCompletionLeiRecordsData {
     /// The type of the related resource (usually "lei-records").
-    #[serde(rename = "type")]
-    pub type_: String,
+    pub r#type: String,
     /// The LEI identifier for the related record.
     pub id: String,
 }

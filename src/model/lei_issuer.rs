@@ -7,24 +7,24 @@
 
 use crate::model::common::RelationshipLinks;
 use chrono::{DateTime, Utc};
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 /// Represents a LEI Issuer as returned by the GLEIF API.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct LeiIssuer {
     /// The type of the data (e.g., "leiIssuers").
-    #[serde(rename = "type")]
-    pub data_type: String,
+    pub r#type: String,
     /// The unique identifier of the LEI Issuer.
     pub id: String,
     /// The attributes of the LEI Issuer.
     pub attributes: LeiIssuerAttributes,
     /// The relationships associated with the LEI Issuer, if any.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub relationships: Option<LeiIssuerRelationships>,
 }
 
 /// Attributes of a LEI Issuer as returned by the GLEIF API.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct LeiIssuerAttributes {
     /// The LEI code of the issuer.
@@ -40,7 +40,7 @@ pub struct LeiIssuerAttributes {
 }
 
 /// Relationships associated with a LEI Issuer, such as the jurisdiction.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct LeiIssuerRelationships {
     /// The jurisdiction(s) associated with the LEI Issuer.
@@ -50,11 +50,10 @@ pub struct LeiIssuerRelationships {
 }
 
 /// Represents a LEI Issuer Jurisdiction as returned by the GLEIF API.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct LeiIssuerJurisdiction {
     /// The type of the data (e.g., "lei-issuer-accredited-jurisdictions").
-    #[serde(rename = "type")]
-    pub data_type: String,
+    pub r#type: String,
     /// The unique identifier of the LEI Issuer Jurisdiction.
     pub id: String,
     /// The attributes of the LEI Issuer Jurisdiction.
@@ -62,7 +61,7 @@ pub struct LeiIssuerJurisdiction {
 }
 
 /// Attributes of a LEI Issuer Jurisdiction as returned by the GLEIF API.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct LeiIssuerJurisdictionAttributes {
     /// The country code of the LEI Issuer Jurisdiction.
@@ -72,6 +71,7 @@ pub struct LeiIssuerJurisdictionAttributes {
     /// The start date of the accreditation.
     pub start_date: DateTime<Utc>,
     /// The end date of the accreditation, if applicable.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub end_date: Option<DateTime<Utc>>,
     /// Whether the LEI Issuer is accredited for funds.
     pub is_accredited_for_funds: bool,

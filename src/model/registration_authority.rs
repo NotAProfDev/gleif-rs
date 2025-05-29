@@ -5,14 +5,13 @@
 //!
 //! For endpoint usage and client methods, see [`crate::endpoint::registration_authority`] (`src/endpoint/registration_authority.rs`).
 
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 /// Represents a registration authority as returned by the GLEIF API.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct RegistrationAuthority {
     /// The type of the data (e.g., "registration-authorities").
-    #[serde(rename = "type")]
-    pub data_type: String,
+    pub r#type: String,
     /// The unique identifier of the registration authority.
     pub id: String,
     /// The attributes of the registration authority.
@@ -20,18 +19,22 @@ pub struct RegistrationAuthority {
 }
 
 /// Attributes of a registration authority as returned by the GLEIF API.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct RegistrationAuthorityAttributes {
     /// The code of the registration authority.
     pub code: String,
     /// The international name of the registration authority, if available.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub international_name: Option<String>,
     /// The local name of the registration authority, if available.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub local_name: Option<String>,
     /// The international organization name, if available.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub international_organization_name: Option<String>,
     /// The local organization name, if available.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub local_organization_name: Option<String>,
     /// The website of the registration authority.
     pub website: String,
@@ -40,7 +43,7 @@ pub struct RegistrationAuthorityAttributes {
 }
 
 /// Represents a registration authority jurisdiction as returned by the GLEIF API.
-#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct RegistrationAuthorityJurisdiction {
     /// The country associated with the registration authority.
