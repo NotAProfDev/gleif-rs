@@ -21,7 +21,7 @@ serde_json = "^1.0"
 url = "^2.5"
 
 [dev-dependencies]
-reqwest-retry = "^0.7"
+reqwest-retry = "^0.8"
 tokio = { version = "^1.45", features = ["full"] }
 
 # https://doc.rust-lang.org/cargo/reference/profiles.html
